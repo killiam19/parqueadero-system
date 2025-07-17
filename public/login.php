@@ -40,7 +40,7 @@ if (isset($_GET['logout'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión - Sistema de Parqueadero</title>
+    <title>Iniciar Sesión - Sistema de Parqueadero-3Shape</title>
     <style>
         * {
             margin: 0;
@@ -50,7 +50,7 @@ if (isset($_GET['logout'])) {
         
         body {
             font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
+            background-color: #223142;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -129,8 +129,8 @@ if (isset($_GET['logout'])) {
 <body>
     <div class="login-container">
         <div class="login-header">
-            <h1>🚗 Sistema de Parqueadero</h1>
-            <p>Inicia sesión para gestionar tus reservas</p>
+            <h1>🚗 Sistema de Parqueadero-3Shape</h1>
+            <p>Inicia sesión para gestionar tus reservas de parqueadero del edificio</p>
         </div>
         
         <?php if (isset($mensaje)): ?>

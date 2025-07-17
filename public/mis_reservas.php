@@ -35,6 +35,22 @@ if (isset($_POST['action']) && $_POST['action'] == 'cancelar') {
 
 // Obtener todas las reservas
 $pdo = conectarDB();
+
+// --- NUEVO: Tabla para ocultar reservas canceladas vistas por el usuario ---
+if (isset($_POST['action']) && $_POST['action'] == 'limpiar_canceladas') {
+    $usuario_id = $_SESSION['usuario_id'];
+    $pdo->prepare("DELETE FROM reservas_canceladas_vistas WHERE usuario_id = ?")->execute([$usuario_id]);
+    $mensaje = 'Reservas canceladas ocultadas.';
+    $tipo_mensaje = 'success';
+}
+
+// Crear tabla auxiliar si no existe (solo la primera vez)
+$pdo->exec("CREATE TABLE IF NOT EXISTS reservas_canceladas_vistas (
+    usuario_id INT NOT NULL,
+    reserva_id INT NOT NULL,
+    PRIMARY KEY (usuario_id, reserva_id)
+)");
+
 $stmt = $pdo->query("
     SELECT r.*, u.nombre, u.email 
     FROM reservas r 
@@ -46,9 +62,17 @@ $reservas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Agrupar reservas por fecha y por estado
 $reservas_por_fecha = [];
 $reservas_canceladas = [];
+$usuario_id = $_SESSION['usuario_id'];
+// Obtener ids de reservas canceladas ocultas para este usuario
+$stmt = $pdo->prepare("SELECT reserva_id FROM reservas_canceladas_vistas WHERE usuario_id = ?");
+$stmt->execute([$usuario_id]);
+$reservas_canceladas_ocultas = array_column($stmt->fetchAll(PDO::FETCH_ASSOC), 'reserva_id');
 foreach ($reservas as $reserva) {
     if ($reserva['estado'] === 'cancelada') {
-        $reservas_canceladas[] = $reserva;
+        // Solo mostrar si la reserva es del usuario actual y no está oculta
+        if ($reserva['usuario_id'] == $usuario_id && !in_array($reserva['id'], $reservas_canceladas_ocultas)) {
+            $reservas_canceladas[] = $reserva;
+        }
         continue;
     }
     $fecha = $reserva['fecha_reserva'];
@@ -312,6 +336,10 @@ foreach ($reservas as $reserva) {
         <?php if (!empty($reservas_canceladas)): ?>
             <div class="card">
                 <h3 style="margin-bottom: 18px; color: #dc3545;">Reservas Canceladas</h3>
+                <form method="POST" action="" style="margin-bottom: 12px;">
+                    <input type="hidden" name="action" value="limpiar_canceladas">
+                    <button type="submit" class="btn-cancelar" style="background:#888;">Limpiar esta vista</button>
+                </form>
                 <?php foreach ($reservas_canceladas as $reserva): ?>
                     <div class="reserva-item cancelada">
                         <div class="reserva-info">
