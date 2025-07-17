@@ -68,7 +68,7 @@ $reservas_recientes = $pdo->query("
     FROM reservas 
     WHERE fecha_reserva >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
     GROUP BY DATE(fecha_reserva)
-    ORDER BY fecha_reserva DESC
+    ORDER BY fecha DESC
 ")->fetchAll(PDO::FETCH_ASSOC);
 
 // Usuarios más activos

@@ -42,7 +42,7 @@
     }
 
     .footer-title {
-        color: #3498db;
+        color: #c5102e;
         font-size: 1.1rem;
         margin-bottom: 1.5rem;
         display: flex;
@@ -96,14 +96,14 @@
 
     .developer-name {
         font-weight: bold;
-        color: #3498db;
+        color: #c5102e;
         margin-bottom: 0.5rem !important;
     }
 
     /* Estilos para los botones */
     .footer-btn {
         display: inline-block;
-        background-color: #3498db;
+        background-color: #c5102e;
         color: white;
         padding: 0.5rem 1rem;
         border-radius: 4px;

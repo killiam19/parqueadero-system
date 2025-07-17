@@ -68,7 +68,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'reservar') {
     $hora_fin = $_POST['hora_fin'];
     $placa_vehiculo = strtoupper($_POST['placa_vehiculo']);
     $tipo_vehiculo = $_POST['tipo_vehiculo'];
-    $numero_espacio = isset($_POST['numero_espacio']) ? intval($_POST['numero_espacio']) : null;
+    $numero_espacio = isset($_POST['numero_espacio']) ? $_POST['numero_espacio'] : null;
     
     $mensaje = '';
     $tipo_mensaje = '';
@@ -172,26 +172,48 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
         
         body {
             font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            color: #333;
+            background-color: #fff;
+            color: #222;
         }
         
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            background: #fff;
         }
         
         .header {
-            background-color: #2c3e50;
-            color: white;
+            width: 100vw;
+            min-width: 100vw;
+            margin-left: 0;
+            margin-right: 0;
+            background-color: #223142;
+            color: #c7264e;
+            padding: 0;
+            border-radius: 0;
+            border: none;
+            box-shadow: 0 2px 8px rgba(199,38,78,0.04);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            left: 50%;
+            right: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .header-inner {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
             padding: 20px;
-            text-align: center;
-            margin-bottom: 30px;
             border-radius: 10px;
+            border: 1px solid #223142;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background: #223142;
         }
         
         .header-content {
@@ -204,17 +226,18 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
         }
         
         .header-actions a {
-            color: white;
+            color: #c7264e;
             text-decoration: none;
             padding: 8px 16px;
-            border: 1px solid white;
+            border: 1px solid #c7264e;
             border-radius: 5px;
             transition: all 0.3s;
+            background: #fff;
         }
         
         .header-actions a:hover {
-            background-color: white;
-            color: #2c3e50;
+            background-color: #c7264e;
+            color: #fff;
         }
         
         .nav {
@@ -223,26 +246,28 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
         }
         
         .nav a {
-            color: #3498db;
+            color: #c7264e;
             text-decoration: none;
             margin: 0 15px;
             padding: 10px 20px;
-            border: 1px solid #3498db;
+            border: 1px solid #c7264e;
             border-radius: 5px;
             transition: all 0.3s;
+            background: #fff;
         }
         
         .nav a:hover {
-            background-color: #3498db;
-            color: white;
+            background-color: #c7264e;
+            color: #fff;
         }
         
         .card {
-            background: white;
+            background: #fff;
             border-radius: 10px;
             padding: 20px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(199,38,78,0.07);
+            border: 1px solid #ececec;
         }
         
         .form-group {
@@ -253,18 +278,21 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
+            color: #c7264e;
         }
         
         input, select, textarea {
             width: 100%;
             padding: 10px;
-            border: 1px solid #ddd;
+            border: 1px solid #e0e0e0;
             border-radius: 5px;
             font-size: 16px;
+            background: #faf9fa;
+            color: #222;
         }
         
         button {
-            background-color: #3498db;
+            background-color: #c7264e;
             color: white;
             padding: 12px 30px;
             border: none;
@@ -275,7 +303,7 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
         }
         
         button:hover {
-            background-color: #2980b9;
+            background-color: #a81d3e;
         }
         
         .mensaje {
@@ -287,9 +315,9 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
         }
         
         .mensaje.success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            background-color: #f6e6ea;
+            color: #c7264e;
+            border: 1px solid #c7264e;
         }
         
         .mensaje.error {
@@ -299,15 +327,15 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
         }
         
         .cupos-info {
-            background-color: #e8f4f8;
-            border-left: 4px solid #3498db;
+            background-color: #f6e6ea;
+            border-left: 4px solid #c7264e;
             padding: 15px;
             margin-bottom: 20px;
         }
         
         .reserva-item {
-            background-color: #f8f9fa;
-            border-left: 4px solid #28a745;
+            background-color: #faf9fa;
+            border-left: 4px solid #c7264e;
             padding: 15px;
             margin-bottom: 10px;
             border-radius: 5px;
@@ -315,7 +343,7 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
         
         .reserva-item h4 {
             margin-bottom: 8px;
-            color: #2c3e50;
+            color: #c7264e;
         }
         
         .reserva-item p {
@@ -361,6 +389,7 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
             display: flex;
             align-items: center;
             gap: 6px;
+            color: #c7264e;
         }
         .mapa-espacios-bg {
             background: #f8fafc;
@@ -418,8 +447,8 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
             color: #fff;
         }
         .espacio-btn.ocupado {
-            background: #cbd5e1;
-            color: #6b7280;
+            background: #b0b0b0;
+            color: #fff;
             cursor: not-allowed;
             opacity: 0.7;
         }
@@ -427,6 +456,7 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
             background: #2563eb;
             color: #fff;
             box-shadow: 0 0 0 4px #2563eb33;
+            border: 2px solid #2563eb;
         }
         .espacio-btn .icono-auto {
             font-size: 1.5rem;
@@ -547,8 +577,8 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
+    <div class="header">
+        <div class="header-inner">
             <div class="header-content">
                 <h1>🚗 Sistema de Agendamiento de Parqueadero de 3Shape <img src="assets/images/3shape-intraoral-logo.png" alt="" width="75" height="75"></h1>
                 <p>Bienvenido, <?php echo htmlspecialchars($_SESSION['usuario_nombre']); ?></p>
@@ -558,6 +588,8 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
                 <a href="login.php?logout=1">🚪 Cerrar Sesión</a>
             </div>
         </div>
+    </div>
+    <div class="container">
         
         <div class="nav">
             <a href="mis_reservas.php">📋 Mis Reservas</a>
@@ -588,8 +620,8 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
                         </div>
                         <div class="mapa-leyenda" style="justify-content: flex-start;">
                             <span><span style="display:inline-block;width:18px;height:18px;background:#22c55e;border-radius:4px;"></span> Disponible</span>
-                            <span><span style="display:inline-block;width:18px;height:18px;background:#cbd5e1;border-radius:4px;"></span> Ocupado</span>
-                            <span><span style="display:inline-block;width:18px;height:18px;background:#2563eb;border-radius:4px;"></span> Seleccionado</span>
+                            <span><span style="display:inline-block;width:18px;height:18px;background:#b0b0b0;border-radius:4px;"></span> Ocupado</span>
+                            <span><span style="display:inline-block;width:18px;height:18px;background:#f6e6ea;border-radius:4px;"></span> Seleccionado</span>
                         </div>
                         <div class="mapa-espacios-bg">
                             <div id="mapa-espacios-carro">
@@ -604,7 +636,9 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
                                             }
                                         }
                                     ?>
-                                    <button type="button" class="espacio-btn <?php echo $estado; ?>" data-espacio="<?php echo $i; ?>" data-tipo="carro" <?php echo ($estado=='ocupado'?'disabled':''); ?>>
+                                    <button type="button" class="espacio-btn <?php echo $estado; ?>" data-espacio="<?php echo $i; ?>" data-tipo="carro" <?php echo ($estado=='ocupado'?'disabled':''); ?>
+                                    <?php if($estado=='seleccionado'): ?> style="background:#2563eb;color:#fff;border:2px solid #2563eb;box-shadow:0 0 0 4px #2563eb33;"<?php endif; ?>
+                                    >
                                         <span class="icono-auto"><i class="fa-solid fa-car-side"></i></span>
                                         <span><?php echo $i; ?></span>
                                     </button>
@@ -620,8 +654,8 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
                         </div>
                         <div class="mapa-leyenda" style="justify-content: flex-start;">
                             <span><span style="display:inline-block;width:18px;height:18px;background:#22c55e;border-radius:4px;"></span> Disponible</span>
-                            <span><span style="display:inline-block;width:18px;height:18px;background:#cbd5e1;border-radius:4px;"></span> Ocupado</span>
-                            <span><span style="display:inline-block;width:18px;height:18px;background:#2563eb;border-radius:4px;"></span> Seleccionado</span>
+                            <span><span style="display:inline-block;width:18px;height:18px;background:#b0b0b0;border-radius:4px;"></span> Ocupado</span>
+                            <span><span style="display:inline-block;width:18px;height:18px;background:#f6e6ea;border-radius:4px;"></span> Seleccionado</span>
                         </div>
                         <div class="mapa-espacios-bg" style="display: flex; flex-direction: column; align-items: center;">
                             <div id="mapa-motos-grid">
@@ -735,6 +769,7 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
                     <form method="POST" action="">
                         <input type="hidden" name="action" value="reservar">
                         <input type="hidden" name="numero_espacio" id="numero_espacio" required>
+                        <input type="hidden" name="tipo_vehiculo" id="tipo_vehiculo" value="carro">
                         <?php if ($_SESSION['usuario_rol'] == 'admin'): ?>
                             <div class="form-group">
                                 <label for="usuario_id">Usuario:</label>
