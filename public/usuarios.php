@@ -377,5 +377,6 @@ foreach ($stats as $stat) {
             this.textContent = type === 'password' ? '👁️' : '🙈';
         });
     </script>
+    <?php require __DIR__ . '/../resources/partials/footer.php'; ?>
 </body>
 </html>

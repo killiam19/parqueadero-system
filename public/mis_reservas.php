@@ -330,5 +330,6 @@ foreach ($reservas as $reserva) {
             </div>
         <?php endif; ?>
     </div>
+    <?php require __DIR__ . '/../resources/partials/footer.php'; ?>
 </body>
 </html> 

@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <button type="submit">Actualizar Contraseña</button>
         </form>
-        <a class="volver" href="index.php">&larr; Volver al inicio</a>
+        <?php require __DIR__ . '/../resources/partials/footer.php'; ?>
     </div>
 </body>
 </html> 

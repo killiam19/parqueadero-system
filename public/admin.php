@@ -461,5 +461,6 @@ $cupos_manana = getCuposDisponibles(date('Y-m-d', strtotime('+1 day')));
             </div>
         </div>
     </div>
+    <?php require __DIR__ . '/../resources/partials/footer.php'; ?>
 </body>
 </html>

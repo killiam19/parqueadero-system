@@ -1,6 +1,25 @@
 <link rel="stylesheet" href="/parqueadero-system/public/Css/footer.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-<footer>
+<style>
+.footer-parqueadero {
+    width: 100%;
+    background: #223142;
+    color: #fff;
+    margin-top: 40px;
+    padding: 40px 0 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    z-index: 10;
+}
+@media (max-width: 900px) {
+    .footer-parqueadero {
+        padding: 30px 0 10px 0;
+    }
+}
+</style>
+<div class="footer-parqueadero">
     <div class="footer-container">
         <div class="footer-row">
             <!-- Sección Legal -->
@@ -61,4 +80,4 @@
             </div>
         </div>
     </div>
-</footer>
+</div>

@@ -32,6 +32,28 @@ foreach ($espacios_ocupados as $esp) {
     $ocupados_map[$esp['numero_espacio']] = $esp['usuario_id'];
 }
 
+// Definición de bloques de motos y sus cupos
+$moto_blocks = [
+    // Primera fila (grandes)
+    ['id' => 476, 'label' => '476', 'max' => 6, 'row' => 1, 'col' => 1],
+    ['id' => 475, 'label' => '475', 'max' => 6, 'row' => 1, 'col' => 2],
+    ['id' => 474, 'label' => '474', 'max' => 6, 'row' => 1, 'col' => 3],
+    // Segunda fila (pequeños)
+    ['id' => '476a', 'label' => '1', 'max' => 1, 'row' => 2, 'col' => 1, 'parent' => 476],
+    ['id' => '475a', 'label' => '1', 'max' => 1, 'row' => 2, 'col' => 2, 'parent' => 475],
+    ['id' => '474a', 'label' => '1', 'max' => 1, 'row' => 2, 'col' => 3, 'parent' => 474],
+    ['id' => '474b', 'label' => '1', 'max' => 1, 'row' => 3, 'col' => 3, 'parent' => 474],
+    // Tercera fila (bloque 441)
+    ['id' => 441, 'label' => '441', 'max' => 4, 'row' => 4, 'col' => 3],
+];
+// Obtener reservas activas de motos para mañana
+$moto_reservas = $pdo->prepare("SELECT numero_espacio, COUNT(*) as ocupados FROM reservas WHERE fecha_reserva = ? AND estado = 'activa' AND tipo_vehiculo = 'moto' GROUP BY numero_espacio");
+$moto_reservas->execute([$manana]);
+$moto_ocupados = [];
+foreach ($moto_reservas as $row) {
+    $moto_ocupados[$row['numero_espacio']] = $row['ocupados'];
+}
+
 // Procesar formulario de reserva
 if (isset($_POST['action']) && $_POST['action'] == 'reservar') {
     // Para usuarios normales, usar su propio ID; para admin, permitir seleccionar
@@ -139,6 +161,8 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Agendamiento - Parqueadero de 3Shape</title>
     <link rel="shortcut icon" href="assets/images/3shape-intraoral-logo.png" type="image/x-icon">
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-papmQv7Qn1v8Qw1Q6Qw1Q6Qw1Q6Qw1Q6Qw1Q6Qw1Q6Qw1Q6Qw1Q6Qw1Q6Qw1Q6Qw1Q6Qw1Q6Qw1Q6Qw1Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         * {
             margin: 0;
@@ -457,6 +481,69 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
         #mapa-espacios-carro::-webkit-scrollbar-track, #mapa-espacios-moto::-webkit-scrollbar-track {
             background: #f8fafc;
         }
+        #mapa-motos-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-auto-rows: 100px;
+            gap: 18px;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 12px;
+            min-height: 420px;
+        }
+        @media (max-width: 600px) {
+            #mapa-motos-grid {
+                grid-template-columns: repeat(3, 60px);
+                grid-auto-rows: 60px;
+                gap: 8px;
+                min-height: 250px;
+            }
+        }
+        .tooltip-cupos {
+            visibility: hidden;
+            opacity: 0;
+            background: #222;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 6px 12px;
+            position: absolute;
+            z-index: 10;
+            bottom: 110%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+        }
+        .espacio-btn:hover .tooltip-cupos,
+        .espacio-btn:focus .tooltip-cupos {
+            visibility: visible;
+            opacity: 1;
+        }
+        @media (max-width: 700px) {
+            .tooltip-cupos {
+                display: none;
+            }
+            #info-cupos-movil {
+                display: block;
+                margin: 10px auto 0 auto;
+                text-align: center;
+                font-size: 15px;
+                color: #2563eb;
+                background: #f1f5fa;
+                border-radius: 8px;
+                padding: 7px 12px;
+                max-width: 300px;
+            }
+        }
+        @media (min-width: 701px) {
+            #info-cupos-movil {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -518,7 +605,7 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
                                         }
                                     ?>
                                     <button type="button" class="espacio-btn <?php echo $estado; ?>" data-espacio="<?php echo $i; ?>" data-tipo="carro" <?php echo ($estado=='ocupado'?'disabled':''); ?>>
-                                        <span class="icono-auto">&#128663;</span>
+                                        <span class="icono-auto"><i class="fa-solid fa-car-side"></i></span>
                                         <span><?php echo $i; ?></span>
                                     </button>
                                 <?php endfor; ?>
@@ -536,27 +623,110 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
                             <span><span style="display:inline-block;width:18px;height:18px;background:#cbd5e1;border-radius:4px;"></span> Ocupado</span>
                             <span><span style="display:inline-block;width:18px;height:18px;background:#2563eb;border-radius:4px;"></span> Seleccionado</span>
                         </div>
-                        <div class="mapa-espacios-bg">
-                            <div id="mapa-espacios-moto">
-                                <?php foreach ([476, 475, 474, 441] as $i): ?>
-                                    <?php
-                                        $estado = 'disponible';
-                                        if (isset($ocupados_map[$i])) {
-                                            if ($ocupados_map[$i] == $_SESSION['usuario_id']) {
-                                                $estado = 'seleccionado';
-                                            } else {
-                                                $estado = 'ocupado';
-                                            }
-                                        }
-                                    ?>
-                                    <button type="button" class="espacio-btn <?php echo $estado; ?>" data-espacio="<?php echo $i; ?>" data-tipo="moto" <?php echo ($estado=='ocupado'?'disabled':''); ?>>
-                                        <span class="icono-auto">&#128663;</span>
-                                        <span><?php echo $i; ?></span>
-                                    </button>
-                                <?php endforeach; ?>
+                        <div class="mapa-espacios-bg" style="display: flex; flex-direction: column; align-items: center;">
+                            <div id="mapa-motos-grid">
+                                <!-- Columna 1 -->
+                                <?php
+                                    $id = 476;
+                                    $ocupados = $moto_ocupados[$id] ?? 0;
+                                    $max = 6;
+                                    $estado = ($ocupados >= $max) ? 'ocupado' : 'disponible';
+                                    $info = "$ocupados/$max cupos reservados";
+                                ?>
+                                <button type="button" class="espacio-btn moto-btn <?php echo $estado; ?>" data-espacio="476" data-tipo="moto" data-cupos="<?php echo $info; ?>" <?php echo ($estado=='ocupado'?'disabled':''); ?> style="grid-column:1;grid-row:1;position:relative;">
+                                    <span class="icono-auto"><i class="fa-solid fa-motorcycle"></i></span>
+                                    <span>476</span>
+                                    <span class="tooltip-cupos"><?php echo $info; ?></span>
+                                </button>
+                                <?php
+                                    $id = '476a';
+                                    $ocupados = $moto_ocupados[$id] ?? 0;
+                                    $max = 1;
+                                    $estado = ($ocupados >= $max) ? 'ocupado' : 'disponible';
+                                    $info = "$ocupados/$max cupos reservados";
+                                ?>
+                                <button type="button" class="espacio-btn moto-btn <?php echo $estado; ?>" data-espacio="476a" data-tipo="moto" data-cupos="<?php echo $info; ?>" <?php echo ($estado=='ocupado'?'disabled':''); ?> style="grid-column:1;grid-row:2;position:relative;">
+                                    <span class="icono-auto"><i class="fa-solid fa-motorcycle"></i></span>
+                                    <span>1</span>
+                                    <span class="tooltip-cupos"><?php echo $info; ?></span>
+                                </button>
+                                <!-- Columna 2 -->
+                                <?php
+                                    $id = 475;
+                                    $ocupados = $moto_ocupados[$id] ?? 0;
+                                    $max = 6;
+                                    $estado = ($ocupados >= $max) ? 'ocupado' : 'disponible';
+                                    $info = "$ocupados/$max cupos reservados";
+                                ?>
+                                <button type="button" class="espacio-btn moto-btn <?php echo $estado; ?>" data-espacio="475" data-tipo="moto" data-cupos="<?php echo $info; ?>" <?php echo ($estado=='ocupado'?'disabled':''); ?> style="grid-column:2;grid-row:1;position:relative;">
+                                    <span class="icono-auto"><i class="fa-solid fa-motorcycle"></i></span>
+                                    <span>475</span>
+                                    <span class="tooltip-cupos"><?php echo $info; ?></span>
+                                </button>
+                                <?php
+                                    $id = '475a';
+                                    $ocupados = $moto_ocupados[$id] ?? 0;
+                                    $max = 1;
+                                    $estado = ($ocupados >= $max) ? 'ocupado' : 'disponible';
+                                    $info = "$ocupados/$max cupos reservados";
+                                ?>
+                                <button type="button" class="espacio-btn moto-btn <?php echo $estado; ?>" data-espacio="475a" data-tipo="moto" data-cupos="<?php echo $info; ?>" <?php echo ($estado=='ocupado'?'disabled':''); ?> style="grid-column:2;grid-row:2;position:relative;">
+                                    <span class="icono-auto"><i class="fa-solid fa-motorcycle"></i></span>
+                                    <span>1</span>
+                                    <span class="tooltip-cupos"><?php echo $info; ?></span>
+                                </button>
+                                <!-- Columna 3 -->
+                                <?php
+                                    $id = 474;
+                                    $ocupados = $moto_ocupados[$id] ?? 0;
+                                    $max = 6;
+                                    $estado = ($ocupados >= $max) ? 'ocupado' : 'disponible';
+                                    $info = "$ocupados/$max cupos reservados";
+                                ?>
+                                <button type="button" class="espacio-btn moto-btn <?php echo $estado; ?>" data-espacio="474" data-tipo="moto" data-cupos="<?php echo $info; ?>" <?php echo ($estado=='ocupado'?'disabled':''); ?> style="grid-column:3;grid-row:1;position:relative;">
+                                    <span class="icono-auto"><i class="fa-solid fa-motorcycle"></i></span>
+                                    <span>474</span>
+                                    <span class="tooltip-cupos"><?php echo $info; ?></span>
+                                </button>
+                                <?php
+                                    $id = '474a';
+                                    $ocupados = $moto_ocupados[$id] ?? 0;
+                                    $max = 1;
+                                    $estado = ($ocupados >= $max) ? 'ocupado' : 'disponible';
+                                    $info = "$ocupados/$max cupos reservados";
+                                ?>
+                                <button type="button" class="espacio-btn moto-btn <?php echo $estado; ?>" data-espacio="474a" data-tipo="moto" data-cupos="<?php echo $info; ?>" <?php echo ($estado=='ocupado'?'disabled':''); ?> style="grid-column:3;grid-row:2;position:relative;">
+                                    <span class="icono-auto"><i class="fa-solid fa-motorcycle"></i></span>
+                                    <span>1</span>
+                                    <span class="tooltip-cupos"><?php echo $info; ?></span>
+                                </button>
+                                <?php
+                                    $id = '474b';
+                                    $ocupados = $moto_ocupados[$id] ?? 0;
+                                    $max = 1;
+                                    $estado = ($ocupados >= $max) ? 'ocupado' : 'disponible';
+                                    $info = "$ocupados/$max cupos reservados";
+                                ?>
+                                <button type="button" class="espacio-btn moto-btn <?php echo $estado; ?>" data-espacio="474b" data-tipo="moto" data-cupos="<?php echo $info; ?>" <?php echo ($estado=='ocupado'?'disabled':''); ?> style="grid-column:3;grid-row:3;position:relative;">
+                                    <span class="icono-auto"><i class="fa-solid fa-motorcycle"></i></span>
+                                    <span>1</span>
+                                    <span class="tooltip-cupos"><?php echo $info; ?></span>
+                                </button>
+                                <?php
+                                    $id = 441;
+                                    $ocupados = $moto_ocupados[$id] ?? 0;
+                                    $max = 4;
+                                    $estado = ($ocupados >= $max) ? 'ocupado' : 'disponible';
+                                    $info = "$ocupados/$max cupos reservados";
+                                ?>
+                                <button type="button" class="espacio-btn moto-btn <?php echo $estado; ?>" data-espacio="441" data-tipo="moto" data-cupos="<?php echo $info; ?>" <?php echo ($estado=='ocupado'?'disabled':''); ?> style="grid-column:3;grid-row:4;position:relative;">
+                                    <span class="icono-auto"><i class="fa-solid fa-motorcycle"></i></span>
+                                    <span>441</span>
+                                    <span class="tooltip-cupos"><?php echo $info; ?></span>
+                                </button>
                             </div>
                         </div>
-                        <div id="ayuda-espacio-moto" style="font-size: 13px; color: #888; margin-top: 3px; text-align:center;">Selecciona un espacio disponible (verde).</div>
+                        <div id="ayuda-espacio-moto" style="font-size: 13px; color: #888; margin-top: 3px; text-align:center;">Selecciona un espacio disponible (verde). Pasa el mouse para ver los cupos ocupados.</div>
                     </div>
                 </div>
 
@@ -591,13 +761,6 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
                         <div class="form-group">
                             <label for="placa_vehiculo">Placa del Vehículo:</label>
                             <input type="text" name="placa_vehiculo" id="placa_vehiculo" placeholder="ABC123" maxlength="10" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="tipo_vehiculo">Tipo de Vehículo:</label>
-                            <select name="tipo_vehiculo" id="tipo_vehiculo" required>
-                                <option value="carro">Carro</option>
-                                <option value="moto">Moto</option>
-                            </select>
                         </div>
                         <button type="submit">Reservar Cupo</button>
                     </form>
@@ -676,7 +839,10 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
             botones.forEach(btn => {
                 btn.addEventListener('click', function() {
                     if (btn.hasAttribute('disabled')) return;
-                    botones.forEach(b => b.classList.remove('seleccionado'));
+                    // Quitar seleccionado de todos los botones de motos
+                    document.querySelectorAll('.moto-btn').forEach(b => b.classList.remove('seleccionado'));
+                    // Quitar seleccionado de todos los botones de carros
+                    document.querySelectorAll('.espacio-btn:not(.moto-btn)').forEach(b => b.classList.remove('seleccionado'));
                     btn.classList.add('seleccionado');
                     inputEspacio.value = btn.getAttribute('data-espacio');
                     tituloEspacio.textContent = btn.getAttribute('data-espacio');
@@ -684,11 +850,23 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
                     formReserva.classList.remove('form-reserva-oculto');
                     formReserva.classList.add('form-reserva-visible');
                     window.scrollTo({ top: formReserva.offsetTop - 40, behavior: 'smooth' });
+                    // Mostrar info de cupos en móviles
+                    mostrarInfoCuposMovil(btn.getAttribute('data-cupos'));
                 });
             });
         }
         activarSeleccionEspacios('#mapa-espacios-carro .espacio-btn.disponible, #mapa-espacios-carro .espacio-btn.seleccionado', 'carro');
-        activarSeleccionEspacios('#mapa-espacios-moto .espacio-btn.disponible, #mapa-espacios-moto .espacio-btn.seleccionado', 'moto');
+        activarSeleccionEspacios('.moto-btn.disponible, .moto-btn.seleccionado', 'moto');
+
+        // Refrescar el mapa de motos tras una reserva exitosa
+        const formReserva = document.querySelector('#formulario-reserva form');
+        if (formReserva) {
+            formReserva.addEventListener('submit', function(e) {
+                setTimeout(() => {
+                    location.reload();
+                }, 500);
+            });
+        }
     </script>
 </body>
 </html>
