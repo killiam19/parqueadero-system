@@ -57,3 +57,6 @@ function verificarAdmin() {
         exit();
     }
 }
+
+$hoy = date('Y-m-d');
+$manana = date('Y-m-d', strtotime('+1 day'));

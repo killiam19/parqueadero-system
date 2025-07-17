@@ -73,13 +73,15 @@ if (isset($_POST['action']) && $_POST['action'] == 'reservar') {
     $mensaje = '';
     $tipo_mensaje = '';
     
+    // Obtener fechas permitidas
+    $hoy = date('Y-m-d');
     $manana = date('Y-m-d', strtotime('+1 day'));
     // Validaciones
     if (empty($fecha_reserva) || empty($hora_inicio) || empty($hora_fin) || empty($placa_vehiculo) || empty($numero_espacio)) {
         $mensaje = 'Todos los campos son obligatorios, incluido el espacio de parqueadero';
         $tipo_mensaje = 'error';
-    } elseif ($fecha_reserva != $manana) {
-        $mensaje = 'Solo puedes agendar cupos para el día siguiente (' . date('d/m/Y', strtotime($manana)) . ')';
+    } elseif ($fecha_reserva != $hoy && $fecha_reserva != $manana) {
+        $mensaje = 'Solo puedes agendar cupos para hoy (' . date('d/m/Y', strtotime($hoy)) . ') o para el día siguiente (' . date('d/m/Y', strtotime($manana)) . ')';
         $tipo_mensaje = 'error';
     } elseif ($hora_inicio >= $hora_fin) {
         $mensaje = 'La hora de inicio debe ser anterior a la hora de fin';
@@ -88,7 +90,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'reservar') {
         $mensaje = 'Ya tienes una reserva para esta fecha';
         $tipo_mensaje = 'error';
     } elseif (getCuposDisponibles($fecha_reserva) <= 0) {
-        $mensaje = 'No hay cupos disponibles para el día siguiente. Intenta más tarde o consulta con el administrador.';
+        $mensaje = 'No hay cupos disponibles para la fecha seleccionada. Intenta más tarde o consulta con el administrador.';
         $tipo_mensaje = 'error';
     } elseif (isset($ocupados_map[$numero_espacio])) {
         $mensaje = 'El espacio seleccionado ya está ocupado, elige otro.';
@@ -125,32 +127,36 @@ if (isset($_POST['action']) && $_POST['action'] == 'reservar') {
     }
 }
 
-// Obtener reservas del usuario actual para mañana (o todas si es admin)
-$manana = date('Y-m-d', strtotime('+1 day'));
+// Obtener reservas del usuario actual para hoy y mañana (o todas si es admin)
+$fechas_consulta = [$hoy, $manana];
 if ($_SESSION['usuario_rol'] == 'admin') {
+    $in = str_repeat('?,', count($fechas_consulta) - 1) . '?';
     $reservas_manana = $pdo->prepare("
         SELECT r.*, u.nombre, u.email 
         FROM reservas r 
         JOIN usuarios u ON r.usuario_id = u.id 
-        WHERE r.fecha_reserva = ? 
+        WHERE r.fecha_reserva IN ($in)
         AND r.estado = 'activa'
-        ORDER BY r.hora_inicio
+        ORDER BY r.fecha_reserva, r.hora_inicio
     ");
-    $reservas_manana->execute([$manana]);
+    $reservas_manana->execute($fechas_consulta);
 } else {
+    $in = str_repeat('?,', count($fechas_consulta) - 1) . '?';
     $reservas_manana = $pdo->prepare("
         SELECT r.*, u.nombre, u.email 
         FROM reservas r 
         JOIN usuarios u ON r.usuario_id = u.id 
-        WHERE r.fecha_reserva = ? 
+        WHERE r.fecha_reserva IN ($in)
         AND r.estado = 'activa'
         AND r.usuario_id = ?
-        ORDER BY r.hora_inicio
+        ORDER BY r.fecha_reserva, r.hora_inicio
     ");
-    $reservas_manana->execute([$manana, $_SESSION['usuario_id']]);
+    $params = array_merge($fechas_consulta, [$_SESSION['usuario_id']]);
+    $reservas_manana->execute($params);
 }
 $reservas_manana = $reservas_manana->fetchAll(PDO::FETCH_ASSOC);
 
+$cupos_disponibles_hoy = getCuposDisponibles($hoy);
 $cupos_disponibles_manana = getCuposDisponibles($manana);
 ?>
 
@@ -580,12 +586,12 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
     <div class="header">
         <div class="header-inner">
             <div class="header-content">
-                <h1>🚗 Sistema de Agendamiento de Parqueadero de 3Shape <img src="assets/images/3shape-intraoral-logo.png" alt="" width="75" height="75"></h1>
+                <h1>🚗 Sistema de Agendamiento de Parqueadero de 3Shape <img src="assets/images/3shape-intraoral-logo.png" alt="" width="50" height="50"></h1>
                 <p>Bienvenido, <?php echo htmlspecialchars($_SESSION['usuario_nombre']); ?></p>
             </div>
             <div class="header-actions">
-                <a href="cambiar_password.php">🔒 Cambiar Contraseña</a>
-                <a href="login.php?logout=1">🚪 Cerrar Sesión</a>
+                <a href="cambiar_password.php"><i class="fas fa-lock"></i> Cambiar Contraseña</a>
+                <a href="login.php?logout=1"><i class="	fas fa-sign-out-alt"></i> Cerrar Sesión</a>
             </div>
         </div>
     </div>
@@ -783,7 +789,7 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
                         <?php endif; ?>
                         <div class="form-group">
                             <label for="fecha_reserva">Fecha de Reserva:</label>
-                            <input type="date" name="fecha_reserva" id="fecha_reserva" min="<?php echo date('Y-m-d', strtotime('+1 day')); ?>" max="<?php echo date('Y-m-d', strtotime('+1 day')); ?>" value="<?php echo date('Y-m-d', strtotime('+1 day')); ?>" required>
+                            <input type="date" name="fecha_reserva" id="fecha_reserva" min="<?php echo $hoy; ?>" max="<?php echo $manana; ?>" value="<?php echo $hoy; ?>" required>
                         </div>
                         <div class="form-group">
                             <label for="hora_inicio">Hora de Inicio:</label>
@@ -837,8 +843,8 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
                     });
             }
         });
-        // Deshabilitar el input si solo hay una fecha posible
-        document.getElementById('fecha_reserva').readOnly = true;
+        // Habilitar el input de fecha para que el usuario pueda elegir entre hoy y mañana
+        document.getElementById('fecha_reserva').readOnly = false;
 
         // Selector de tipo de vehículo y mapas
         const tipoVehiculoRadios = document.getElementsByName('tipo_vehiculo_selector');
