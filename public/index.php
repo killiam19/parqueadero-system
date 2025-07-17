@@ -436,6 +436,27 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: none; }
         }
+        #mapa-espacios-carro, #mapa-espacios-moto {
+            display: flex;
+            gap: 18px;
+            flex-wrap: nowrap;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            overflow-x: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #2563eb #f8fafc;
+        }
+        #mapa-espacios-carro::-webkit-scrollbar, #mapa-espacios-moto::-webkit-scrollbar {
+            height: 10px;
+        }
+        #mapa-espacios-carro::-webkit-scrollbar-thumb, #mapa-espacios-moto::-webkit-scrollbar-thumb {
+            background: #2563eb;
+            border-radius: 6px;
+        }
+        #mapa-espacios-carro::-webkit-scrollbar-track, #mapa-espacios-moto::-webkit-scrollbar-track {
+            background: #f8fafc;
+        }
     </style>
 </head>
 <body>
@@ -468,36 +489,75 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
         <div class="grid">
             <div>
                 <div class="card" style="margin-bottom: 32px; width: 100%; max-width: 100vw;">
-                    <div class="mapa-titulo" style="justify-content: flex-start;">
-                        <span style="color:#2563eb;font-size:2.2rem;">&#128205;</span>
-                        Mapa de Espacios de Parqueadero
+                    <div style="margin-bottom: 18px;">
+                        <label style="font-weight:bold; font-size:1.1rem; margin-right: 18px;">Tipo de Vehículo:</label>
+                        <label style="margin-right: 12px;"><input type="radio" name="tipo_vehiculo_selector" value="carro" checked> Carro</label>
+                        <label><input type="radio" name="tipo_vehiculo_selector" value="moto"> Moto</label>
                     </div>
-                    <div class="mapa-leyenda" style="justify-content: flex-start;">
-                        <span><span style="display:inline-block;width:18px;height:18px;background:#22c55e;border-radius:4px;"></span> Disponible</span>
-                        <span><span style="display:inline-block;width:18px;height:18px;background:#cbd5e1;border-radius:4px;"></span> Ocupado</span>
-                        <span><span style="display:inline-block;width:18px;height:18px;background:#2563eb;border-radius:4px;"></span> Seleccionado</span>
-                    </div>
-                    <div class="mapa-espacios-bg">
-                        <div id="mapa-espacios">
-                            <?php for ($i = 281; $i >= 270; $i--): ?>
-                                <?php
-                                    $estado = 'disponible';
-                                    if (isset($ocupados_map[$i])) {
-                                        if ($ocupados_map[$i] == $_SESSION['usuario_id']) {
-                                            $estado = 'seleccionado';
-                                        } else {
-                                            $estado = 'ocupado';
-                                        }
-                                    }
-                                ?>
-                                <button type="button" class="espacio-btn <?php echo $estado; ?>" data-espacio="<?php echo $i; ?>" <?php echo ($estado=='ocupado'?'disabled':''); ?>>
-                                    <span class="icono-auto">&#128663;</span>
-                                    <span><?php echo $i; ?></span>
-                                </button>
-                            <?php endfor; ?>
+                    <div id="mapa-carro" style="display:block;">
+                        <div class="mapa-titulo" style="justify-content: flex-start;">
+                            <span style="color:#2563eb;font-size:2.2rem;">&#128205;</span>
+                            Mapa de Espacios de Parqueadero (Carros)
                         </div>
+                        <div class="mapa-leyenda" style="justify-content: flex-start;">
+                            <span><span style="display:inline-block;width:18px;height:18px;background:#22c55e;border-radius:4px;"></span> Disponible</span>
+                            <span><span style="display:inline-block;width:18px;height:18px;background:#cbd5e1;border-radius:4px;"></span> Ocupado</span>
+                            <span><span style="display:inline-block;width:18px;height:18px;background:#2563eb;border-radius:4px;"></span> Seleccionado</span>
+                        </div>
+                        <div class="mapa-espacios-bg">
+                            <div id="mapa-espacios-carro">
+                                <?php for ($i = 281; $i >= 270; $i--): ?>
+                                    <?php
+                                        $estado = 'disponible';
+                                        if (isset($ocupados_map[$i])) {
+                                            if ($ocupados_map[$i] == $_SESSION['usuario_id']) {
+                                                $estado = 'seleccionado';
+                                            } else {
+                                                $estado = 'ocupado';
+                                            }
+                                        }
+                                    ?>
+                                    <button type="button" class="espacio-btn <?php echo $estado; ?>" data-espacio="<?php echo $i; ?>" data-tipo="carro" <?php echo ($estado=='ocupado'?'disabled':''); ?>>
+                                        <span class="icono-auto">&#128663;</span>
+                                        <span><?php echo $i; ?></span>
+                                    </button>
+                                <?php endfor; ?>
+                            </div>
+                        </div>
+                        <div id="ayuda-espacio-carro" style="font-size: 13px; color: #888; margin-top: 3px; text-align:center;">Selecciona un espacio disponible (verde).</div>
                     </div>
-                    <div id="ayuda-espacio" style="font-size: 13px; color: #888; margin-top: 3px; text-align:center;">Selecciona un espacio disponible (verde).</div>
+                    <div id="mapa-moto" style="display:none;">
+                        <div class="mapa-titulo" style="justify-content: flex-start;">
+                            <span style="color:#2563eb;font-size:2.2rem;">&#128205;</span>
+                            Mapa de Espacios de Parqueadero (Motos)
+                        </div>
+                        <div class="mapa-leyenda" style="justify-content: flex-start;">
+                            <span><span style="display:inline-block;width:18px;height:18px;background:#22c55e;border-radius:4px;"></span> Disponible</span>
+                            <span><span style="display:inline-block;width:18px;height:18px;background:#cbd5e1;border-radius:4px;"></span> Ocupado</span>
+                            <span><span style="display:inline-block;width:18px;height:18px;background:#2563eb;border-radius:4px;"></span> Seleccionado</span>
+                        </div>
+                        <div class="mapa-espacios-bg">
+                            <div id="mapa-espacios-moto">
+                                <?php foreach ([476, 475, 474, 441] as $i): ?>
+                                    <?php
+                                        $estado = 'disponible';
+                                        if (isset($ocupados_map[$i])) {
+                                            if ($ocupados_map[$i] == $_SESSION['usuario_id']) {
+                                                $estado = 'seleccionado';
+                                            } else {
+                                                $estado = 'ocupado';
+                                            }
+                                        }
+                                    ?>
+                                    <button type="button" class="espacio-btn <?php echo $estado; ?>" data-espacio="<?php echo $i; ?>" data-tipo="moto" <?php echo ($estado=='ocupado'?'disabled':''); ?>>
+                                        <span class="icono-auto">&#128663;</span>
+                                        <span><?php echo $i; ?></span>
+                                    </button>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                        <div id="ayuda-espacio-moto" style="font-size: 13px; color: #888; margin-top: 3px; text-align:center;">Selecciona un espacio disponible (verde).</div>
+                    </div>
                 </div>
 
                 <div id="formulario-reserva" class="card form-reserva-oculto">
@@ -582,24 +642,53 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
         // Deshabilitar el input si solo hay una fecha posible
         document.getElementById('fecha_reserva').readOnly = true;
 
-        // Selección dinámica de espacio y mostrar formulario
-        const botones = document.querySelectorAll('.espacio-btn.disponible, .espacio-btn.seleccionado');
-        const inputEspacio = document.getElementById('numero_espacio');
-        const formReserva = document.getElementById('formulario-reserva');
-        const tituloEspacio = document.getElementById('espacio-seleccionado-titulo');
+        // Selector de tipo de vehículo y mapas
+        const tipoVehiculoRadios = document.getElementsByName('tipo_vehiculo_selector');
+        const mapaCarro = document.getElementById('mapa-carro');
+        const mapaMoto = document.getElementById('mapa-moto');
+        const formTipoVehiculo = document.getElementById('tipo_vehiculo');
 
-        botones.forEach(btn => {
-            btn.addEventListener('click', function() {
-                if (btn.hasAttribute('disabled')) return;
-                botones.forEach(b => b.classList.remove('seleccionado'));
-                btn.classList.add('seleccionado');
-                inputEspacio.value = btn.getAttribute('data-espacio');
-                tituloEspacio.textContent = btn.getAttribute('data-espacio');
-                formReserva.classList.remove('form-reserva-oculto');
-                formReserva.classList.add('form-reserva-visible');
-                window.scrollTo({ top: formReserva.offsetTop - 40, behavior: 'smooth' });
+        // Mostrar el mapa correcto según selección
+        Array.from(tipoVehiculoRadios).forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.value === 'carro') {
+                    mapaCarro.style.display = 'block';
+                    mapaMoto.style.display = 'none';
+                    if (formTipoVehiculo) formTipoVehiculo.value = 'carro';
+                } else {
+                    mapaCarro.style.display = 'none';
+                    mapaMoto.style.display = 'block';
+                    if (formTipoVehiculo) formTipoVehiculo.value = 'moto';
+                }
+                // Limpiar selección previa
+                document.getElementById('numero_espacio').value = '';
+                document.getElementById('formulario-reserva').classList.add('form-reserva-oculto');
             });
         });
+
+        // Selección dinámica de espacio y mostrar formulario
+        function activarSeleccionEspacios(selector, tipo) {
+            const botones = document.querySelectorAll(selector);
+            const inputEspacio = document.getElementById('numero_espacio');
+            const formReserva = document.getElementById('formulario-reserva');
+            const tituloEspacio = document.getElementById('espacio-seleccionado-titulo');
+            const tipoVehiculoInput = document.getElementById('tipo_vehiculo');
+            botones.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (btn.hasAttribute('disabled')) return;
+                    botones.forEach(b => b.classList.remove('seleccionado'));
+                    btn.classList.add('seleccionado');
+                    inputEspacio.value = btn.getAttribute('data-espacio');
+                    tituloEspacio.textContent = btn.getAttribute('data-espacio');
+                    if (tipoVehiculoInput) tipoVehiculoInput.value = tipo;
+                    formReserva.classList.remove('form-reserva-oculto');
+                    formReserva.classList.add('form-reserva-visible');
+                    window.scrollTo({ top: formReserva.offsetTop - 40, behavior: 'smooth' });
+                });
+            });
+        }
+        activarSeleccionEspacios('#mapa-espacios-carro .espacio-btn.disponible, #mapa-espacios-carro .espacio-btn.seleccionado', 'carro');
+        activarSeleccionEspacios('#mapa-espacios-moto .espacio-btn.disponible, #mapa-espacios-moto .espacio-btn.seleccionado', 'moto');
     </script>
 </body>
 </html>

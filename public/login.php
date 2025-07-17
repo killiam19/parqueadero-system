@@ -164,6 +164,7 @@ if (isset($_GET['logout'])) {
             ¿No tienes cuenta aún? <a href="registro.php">Registrate aquí</a>
         </p>
     </div>
+    
     <script>
         const passwordInput = document.getElementById('password');
         const togglePassword = document.getElementById('togglePassword');
