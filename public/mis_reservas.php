@@ -43,9 +43,14 @@ $stmt = $pdo->query("
 ");
 $reservas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Agrupar reservas por fecha
+// Agrupar reservas por fecha y por estado
 $reservas_por_fecha = [];
+$reservas_canceladas = [];
 foreach ($reservas as $reserva) {
+    if ($reserva['estado'] === 'cancelada') {
+        $reservas_canceladas[] = $reserva;
+        continue;
+    }
     $fecha = $reserva['fecha_reserva'];
     if (!isset($reservas_por_fecha[$fecha])) {
         $reservas_por_fecha[$fecha] = [];
@@ -241,8 +246,10 @@ foreach ($reservas as $reserva) {
         
         <div class="nav">
             <a href="index.php">🏠 Inicio</a>
-            <a href="usuarios.php">👥 Usuarios</a>
-            <a href="admin.php">⚙️ Administración</a>
+            <?php if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] == 'admin'): ?>
+                <a href="usuarios.php">👥 Usuarios</a>
+                <a href="admin.php">⚙️ Administración</a>
+            <?php endif; ?>
         </div>
         
         <?php if (isset($mensaje)): ?>
@@ -252,7 +259,7 @@ foreach ($reservas as $reserva) {
         <?php endif; ?>
         
         <div class="card">
-            <?php if (empty($reservas)): ?>
+            <?php if (empty($reservas_por_fecha)): ?>
                 <div class="no-reservas">
                     <h3>No hay reservas registradas</h3>
                     <p>Aún no se han realizado reservas en el sistema.</p>
@@ -267,7 +274,6 @@ foreach ($reservas as $reserva) {
                                 <?php echo getCuposDisponibles($fecha); ?> cupos disponibles
                             </span>
                         </div>
-                        
                         <?php foreach ($reservas_fecha as $reserva): ?>
                             <div class="reserva-item <?php echo $reserva['estado']; ?>">
                                 <div class="reserva-info">
@@ -275,14 +281,13 @@ foreach ($reservas as $reserva) {
                                     <p><strong>Horario:</strong> <?php echo date('H:i', strtotime($reserva['hora_inicio'])); ?> - <?php echo date('H:i', strtotime($reserva['hora_fin'])); ?></p>
                                     <p><strong>Placa:</strong> <?php echo $reserva['placa_vehiculo']; ?></p>
                                     <p><strong>Email:</strong> <?php echo $reserva['email']; ?></p>
-                                    <p><strong>Reservado:</strong> <?php echo date('d/m/Y H:i', strtotime($reserva['fecha_creacion'])); ?></p>
+                                    <p><strong>Reservado el:</strong> <?php echo date('d/m/Y H:i', strtotime($reserva['fecha_creacion'])); ?></p>
+                                    <p><strong>Para el día:</strong> <?php echo date('d/m/Y', strtotime($reserva['fecha_reserva'])); ?></p>
                                 </div>
-                                
                                 <div class="reserva-actions">
                                     <span class="estado-badge estado-<?php echo $reserva['estado']; ?>">
                                         <?php echo $reserva['estado']; ?>
                                     </span>
-                                    
                                     <?php if ($reserva['estado'] == 'activa' && $reserva['fecha_reserva'] >= date('Y-m-d')): ?>
                                         <?php if (
                                             (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] == 'admin') ||
@@ -304,6 +309,26 @@ foreach ($reservas as $reserva) {
                 <?php endforeach; ?>
             <?php endif; ?>
         </div>
+        <?php if (!empty($reservas_canceladas)): ?>
+            <div class="card">
+                <h3 style="margin-bottom: 18px; color: #dc3545;">Reservas Canceladas</h3>
+                <?php foreach ($reservas_canceladas as $reserva): ?>
+                    <div class="reserva-item cancelada">
+                        <div class="reserva-info">
+                            <h4><?php echo $reserva['nombre']; ?></h4>
+                            <p><strong>Horario:</strong> <?php echo date('H:i', strtotime($reserva['hora_inicio'])); ?> - <?php echo date('H:i', strtotime($reserva['hora_fin'])); ?></p>
+                            <p><strong>Placa:</strong> <?php echo $reserva['placa_vehiculo']; ?></p>
+                            <p><strong>Email:</strong> <?php echo $reserva['email']; ?></p>
+                            <p><strong>Reservado el:</strong> <?php echo date('d/m/Y H:i', strtotime($reserva['fecha_creacion'])); ?></p>
+                            <p><strong>Para el día:</strong> <?php echo date('d/m/Y', strtotime($reserva['fecha_reserva'])); ?></p>
+                        </div>
+                        <div class="reserva-actions">
+                            <span class="estado-badge estado-cancelada">Cancelada</span>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
     </div>
 </body>
 </html> 

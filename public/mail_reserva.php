@@ -2,7 +2,7 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require __DIR__ . '/vendor/autoload.php'; // Ajusta la ruta si es necesario
+require __DIR__ . '/../vendor/autoload.php'; // Ajusta la ruta si es necesario
 
 function enviarCorreoReserva($to, $nombre, $datosReserva) {
     $mail = new PHPMailer(true);

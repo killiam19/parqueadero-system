@@ -18,6 +18,20 @@ if ($_SESSION['usuario_rol'] == 'admin') {
     $usuarios = $pdo->query("SELECT id, nombre FROM usuarios ORDER BY nombre")->fetchAll(PDO::FETCH_ASSOC);
 }
 
+// Obtener total de cupos desde la configuración
+$config = $pdo->query("SELECT total_cupos FROM configuracion ORDER BY id DESC LIMIT 1")->fetch(PDO::FETCH_ASSOC);
+$total_cupos = $config['total_cupos'] ?? 10;
+
+// Obtener espacios ocupados para mañana
+$manana = date('Y-m-d', strtotime('+1 day'));
+$stmt = $pdo->prepare("SELECT numero_espacio, usuario_id FROM reservas WHERE fecha_reserva = ? AND estado = 'activa'");
+$stmt->execute([$manana]);
+$espacios_ocupados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$ocupados_map = [];
+foreach ($espacios_ocupados as $esp) {
+    $ocupados_map[$esp['numero_espacio']] = $esp['usuario_id'];
+}
+
 // Procesar formulario de reserva
 if (isset($_POST['action']) && $_POST['action'] == 'reservar') {
     // Para usuarios normales, usar su propio ID; para admin, permitir seleccionar
@@ -32,14 +46,15 @@ if (isset($_POST['action']) && $_POST['action'] == 'reservar') {
     $hora_fin = $_POST['hora_fin'];
     $placa_vehiculo = strtoupper($_POST['placa_vehiculo']);
     $tipo_vehiculo = $_POST['tipo_vehiculo'];
+    $numero_espacio = isset($_POST['numero_espacio']) ? intval($_POST['numero_espacio']) : null;
     
     $mensaje = '';
     $tipo_mensaje = '';
     
     $manana = date('Y-m-d', strtotime('+1 day'));
     // Validaciones
-    if (empty($fecha_reserva) || empty($hora_inicio) || empty($hora_fin) || empty($placa_vehiculo)) {
-        $mensaje = 'Todos los campos son obligatorios';
+    if (empty($fecha_reserva) || empty($hora_inicio) || empty($hora_fin) || empty($placa_vehiculo) || empty($numero_espacio)) {
+        $mensaje = 'Todos los campos son obligatorios, incluido el espacio de parqueadero';
         $tipo_mensaje = 'error';
     } elseif ($fecha_reserva != $manana) {
         $mensaje = 'Solo puedes agendar cupos para el día siguiente (' . date('d/m/Y', strtotime($manana)) . ')';
@@ -53,10 +68,13 @@ if (isset($_POST['action']) && $_POST['action'] == 'reservar') {
     } elseif (getCuposDisponibles($fecha_reserva) <= 0) {
         $mensaje = 'No hay cupos disponibles para el día siguiente. Intenta más tarde o consulta con el administrador.';
         $tipo_mensaje = 'error';
+    } elseif (isset($ocupados_map[$numero_espacio])) {
+        $mensaje = 'El espacio seleccionado ya está ocupado, elige otro.';
+        $tipo_mensaje = 'error';
     } else {
         try {
-            $stmt = $pdo->prepare("INSERT INTO reservas (usuario_id, fecha_reserva, hora_inicio, hora_fin, placa_vehiculo, tipo_vehiculo) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$usuario_id, $fecha_reserva, $hora_inicio, $hora_fin, $placa_vehiculo, $tipo_vehiculo]);
+            $stmt = $pdo->prepare("INSERT INTO reservas (usuario_id, numero_espacio, fecha_reserva, hora_inicio, hora_fin, placa_vehiculo, tipo_vehiculo) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$usuario_id, $numero_espacio, $fecha_reserva, $hora_inicio, $hora_fin, $placa_vehiculo, $tipo_vehiculo]);
             $mensaje = 'Reserva creada exitosamente';
             $tipo_mensaje = 'success';
 
@@ -120,6 +138,7 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Agendamiento - Parqueadero de 3Shape</title>
+    <link rel="shortcut icon" href="assets/images/3shape-intraoral-logo.png" type="image/x-icon">
     <style>
         * {
             margin: 0;
@@ -299,13 +318,131 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
                 flex-wrap: wrap;
             }
         }
+        .mapa-titulo {
+            display: flex;
+            align-items: center;
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 18px;
+            gap: 10px;
+        }
+        .mapa-leyenda {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        .mapa-leyenda span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .mapa-espacios-bg {
+            background: #f8fafc;
+            border-radius: 18px;
+            padding: 28px 16px 18px 16px;
+            margin-bottom: 18px;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            min-height: 120px;
+            box-sizing: border-box;
+        }
+        #mapa-espacios {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+            gap: 18px;
+            justify-items: center;
+            align-items: center;
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        #mapa-espacios::-webkit-scrollbar {
+            height: 10px;
+        }
+        #mapa-espacios::-webkit-scrollbar-thumb {
+            background: #2563eb;
+            border-radius: 6px;
+        }
+        #mapa-espacios::-webkit-scrollbar-track {
+            background: #f8fafc;
+        }
+        .espacio-btn {
+            min-width: 60px;
+            max-width: 80px;
+            width: 70px;
+            height: 80px;
+            border-radius: 14px;
+            border: none;
+            font-size: 18px;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(44,62,80,0.07);
+            transition: box-shadow 0.2s, transform 0.2s, background 0.2s;
+            margin-bottom: 0;
+            cursor: pointer;
+            outline: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .espacio-btn.disponible {
+            background: #22c55e;
+            color: #fff;
+        }
+        .espacio-btn.ocupado {
+            background: #cbd5e1;
+            color: #6b7280;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .espacio-btn.seleccionado {
+            background: #2563eb;
+            color: #fff;
+            box-shadow: 0 0 0 4px #2563eb33;
+        }
+        .espacio-btn .icono-auto {
+            font-size: 1.5rem;
+            margin-bottom: 4px;
+        }
+        @media (max-width: 900px) {
+            #mapa-espacios {
+                grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+                gap: 10px;
+                max-width: 100vw;
+            }
+            .espacio-btn {
+                min-width: 40px;
+                max-width: 60px;
+                width: 50px;
+                height: 60px;
+                font-size: 13px;
+            }
+            .espacio-btn .icono-auto {
+                font-size: 1.1rem;
+            }
+        }
+        .form-reserva-oculto {
+            display: none;
+        }
+        .form-reserva-visible {
+            display: block;
+            animation: fadeIn 0.4s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: none; }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <div class="header-content">
-                <h1>🚗 Sistema de Agendamiento de Parqueadero de 3Shape</h1>
+                <h1>🚗 Sistema de Agendamiento de Parqueadero de 3Shape <img src="assets/images/3shape-intraoral-logo.png" alt="" width="75" height="75"></h1>
                 <p>Bienvenido, <?php echo htmlspecialchars($_SESSION['usuario_nombre']); ?></p>
             </div>
             <div class="header-actions">
@@ -330,16 +467,44 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
         
         <div class="grid">
             <div>
-                <div class="card">
-                    <h2>📅 Nueva Reserva</h2>
-                    
-                    <div class="cupos-info">
-                        <strong>Cupos disponibles para mañana (<?php echo date('d/m/Y', strtotime('+1 day')); ?>): <?php echo $cupos_disponibles_manana; ?>/10</strong>
+                <div class="card" style="margin-bottom: 32px; width: 100%; max-width: 100vw;">
+                    <div class="mapa-titulo" style="justify-content: flex-start;">
+                        <span style="color:#2563eb;font-size:2.2rem;">&#128205;</span>
+                        Mapa de Espacios de Parqueadero
                     </div>
-                    
+                    <div class="mapa-leyenda" style="justify-content: flex-start;">
+                        <span><span style="display:inline-block;width:18px;height:18px;background:#22c55e;border-radius:4px;"></span> Disponible</span>
+                        <span><span style="display:inline-block;width:18px;height:18px;background:#cbd5e1;border-radius:4px;"></span> Ocupado</span>
+                        <span><span style="display:inline-block;width:18px;height:18px;background:#2563eb;border-radius:4px;"></span> Seleccionado</span>
+                    </div>
+                    <div class="mapa-espacios-bg">
+                        <div id="mapa-espacios">
+                            <?php for ($i = 281; $i >= 270; $i--): ?>
+                                <?php
+                                    $estado = 'disponible';
+                                    if (isset($ocupados_map[$i])) {
+                                        if ($ocupados_map[$i] == $_SESSION['usuario_id']) {
+                                            $estado = 'seleccionado';
+                                        } else {
+                                            $estado = 'ocupado';
+                                        }
+                                    }
+                                ?>
+                                <button type="button" class="espacio-btn <?php echo $estado; ?>" data-espacio="<?php echo $i; ?>" <?php echo ($estado=='ocupado'?'disabled':''); ?>>
+                                    <span class="icono-auto">&#128663;</span>
+                                    <span><?php echo $i; ?></span>
+                                </button>
+                            <?php endfor; ?>
+                        </div>
+                    </div>
+                    <div id="ayuda-espacio" style="font-size: 13px; color: #888; margin-top: 3px; text-align:center;">Selecciona un espacio disponible (verde).</div>
+                </div>
+
+                <div id="formulario-reserva" class="card form-reserva-oculto">
+                    <h2 style="margin-bottom: 18px;"><span style="color:#2563eb;">&#128100;</span> Reservar Espacio <span id="espacio-seleccionado-titulo"></span></h2>
                     <form method="POST" action="">
                         <input type="hidden" name="action" value="reservar">
-                        
+                        <input type="hidden" name="numero_espacio" id="numero_espacio" required>
                         <?php if ($_SESSION['usuario_rol'] == 'admin'): ?>
                             <div class="form-group">
                                 <label for="usuario_id">Usuario:</label>
@@ -351,27 +516,22 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
                                 </select>
                             </div>
                         <?php endif; ?>
-                        
                         <div class="form-group">
                             <label for="fecha_reserva">Fecha de Reserva:</label>
                             <input type="date" name="fecha_reserva" id="fecha_reserva" min="<?php echo date('Y-m-d', strtotime('+1 day')); ?>" max="<?php echo date('Y-m-d', strtotime('+1 day')); ?>" value="<?php echo date('Y-m-d', strtotime('+1 day')); ?>" required>
                         </div>
-                        
                         <div class="form-group">
                             <label for="hora_inicio">Hora de Inicio:</label>
                             <input type="time" name="hora_inicio" id="hora_inicio" required>
                         </div>
-                        
                         <div class="form-group">
                             <label for="hora_fin">Hora de Fin:</label>
                             <input type="time" name="hora_fin" id="hora_fin" required>
                         </div>
-                        
                         <div class="form-group">
                             <label for="placa_vehiculo">Placa del Vehículo:</label>
                             <input type="text" name="placa_vehiculo" id="placa_vehiculo" placeholder="ABC123" maxlength="10" required>
                         </div>
-
                         <div class="form-group">
                             <label for="tipo_vehiculo">Tipo de Vehículo:</label>
                             <select name="tipo_vehiculo" id="tipo_vehiculo" required>
@@ -379,7 +539,6 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
                                 <option value="moto">Moto</option>
                             </select>
                         </div>
-                        
                         <button type="submit">Reservar Cupo</button>
                     </form>
                 </div>
@@ -405,6 +564,7 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
             </div>
         </div>
     </div>
+     <?php require __DIR__ . '/../resources/partials/footer.php'; ?>
     
     <script>
         // Actualizar cupos disponibles cuando cambie la fecha
@@ -421,6 +581,25 @@ $cupos_disponibles_manana = getCuposDisponibles($manana);
         });
         // Deshabilitar el input si solo hay una fecha posible
         document.getElementById('fecha_reserva').readOnly = true;
+
+        // Selección dinámica de espacio y mostrar formulario
+        const botones = document.querySelectorAll('.espacio-btn.disponible, .espacio-btn.seleccionado');
+        const inputEspacio = document.getElementById('numero_espacio');
+        const formReserva = document.getElementById('formulario-reserva');
+        const tituloEspacio = document.getElementById('espacio-seleccionado-titulo');
+
+        botones.forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (btn.hasAttribute('disabled')) return;
+                botones.forEach(b => b.classList.remove('seleccionado'));
+                btn.classList.add('seleccionado');
+                inputEspacio.value = btn.getAttribute('data-espacio');
+                tituloEspacio.textContent = btn.getAttribute('data-espacio');
+                formReserva.classList.remove('form-reserva-oculto');
+                formReserva.classList.add('form-reserva-visible');
+                window.scrollTo({ top: formReserva.offsetTop - 40, behavior: 'smooth' });
+            });
+        });
     </script>
 </body>
 </html>

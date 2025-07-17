@@ -27,6 +27,7 @@ CREATE TABLE configuracion (
 CREATE TABLE reservas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT NOT NULL,
+    numero_espacio INT NOT NULL,
     fecha_reserva DATE NOT NULL,
     hora_inicio TIME NOT NULL,
     hora_fin TIME NOT NULL,
