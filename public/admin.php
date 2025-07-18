@@ -302,7 +302,7 @@ $cupos_manana = getCuposDisponibles(date('Y-m-d', strtotime('+1 day')));
         
         <div class="nav">
             <a href="index.php">🏠 Inicio</a>
-            <a href="mis_reservas.php">📋 Reservas</a>
+            <a href="mis_reservas.php"> Reservas</a>
             <a href="usuarios.php">👥 Usuarios</a>
         </div>
         
