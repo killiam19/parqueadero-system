@@ -1,5 +1,6 @@
 
     <?php require __DIR__ . '/partials/header.php'; ?>
+<<<<<<< HEAD
 <style>
 .radio-inputs {
   display: flex;
@@ -98,6 +99,8 @@
   width: 1px;
 }
 </style>
+=======
+>>>>>>> 9e48f2e7c5ea5190f470d242aab08f9db2d5bf14
  
   <div class="border-b border-gray-200 pb-8 mb-8">
  <h1>🚗 Sistema de Agendamiento de Parqueadero de 3Shape <img src="assets/images/3shape-intraoral-logo.png" alt="" width="50" height="50"></h1>
@@ -127,6 +130,7 @@
                 <div class="card" style="margin-bottom: 32px; width: 100%; max-width: 100vw;">
                     <div style="margin-bottom: 18px;">
                         <label style="font-weight:bold; font-size:1.1rem; margin-right: 18px;">Tipo de Vehículo:</label>
+<<<<<<< HEAD
                         <div class="radio-inputs">
                             <label>
                                 <input class="radio-input" type="radio" name="tipo_vehiculo_selector" value="moto">
@@ -149,6 +153,10 @@
                                 </span>
                             </label>
                         </div>
+=======
+                        <label style="margin-right: 12px;"><input type="radio" name="tipo_vehiculo_selector" value="carro" checked> Carro</label>
+                        <label><input type="radio" name="tipo_vehiculo_selector" value="moto"> Moto</label>
+>>>>>>> 9e48f2e7c5ea5190f470d242aab08f9db2d5bf14
                     </div>
                     <div id="mapa-carro" style="display:block;">
                         <div class="mapa-titulo" style="justify-content: flex-start;">

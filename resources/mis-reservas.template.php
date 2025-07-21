@@ -1,5 +1,6 @@
     <?php require __DIR__ . '/partials/header.php'; ?>
 
+<<<<<<< HEAD
 
 
 <!DOCTYPE html>
@@ -281,4 +282,9 @@
     
   <?php require __DIR__ . '/partials/footer.php'; ?>
     <?php require __DIR__ . '/partials/new.footer.php'; ?>
+=======
+    <h1>Sobre mi</h1>
+    
+  <?php require __DIR__ . '/partials/footer.php'; ?>
+>>>>>>> 9e48f2e7c5ea5190f470d242aab08f9db2d5bf14
 
