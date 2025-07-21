@@ -1,5 +1,10 @@
 <?php
 
+use App\Controllers\AboutController;
+use App\Controllers\HomeController;
+use App\Controllers\LinkController;
+use App\Controllers\PostController;
+
 return [
     '/'                     => 'app/Controllers/home.php',
     '/mis-reservas'         => 'app/Controllers/mis-reservas.php',
