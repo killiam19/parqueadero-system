@@ -4,11 +4,7 @@
           <div class="mb-6 md:mb-0">
               <a href="https://flowbite.com/" class="flex items-center">
                   <img src="https://parejalecaros.pe/wp-content/uploads/2022/10/LOGO-3SHAPE-01.png" class="h-8 me-3" alt="FlowBite Logo" />
-<<<<<<< HEAD
                   <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Parking System</span>
-=======
-                  <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Col</span>
->>>>>>> 9e48f2e7c5ea5190f470d242aab08f9db2d5bf14
               </a>
           </div>
           <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
@@ -27,7 +23,6 @@
                   <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Development Team</h2>
                   <ul class="text-gray-500 dark:text-gray-400 font-medium">
                     <li class="mb-4">
-<<<<<<< HEAD
                           <a href="https://github.com/killiam19" class="hover:underline ">Killiam González</a>
                       </li>
                       <li class="mb-4">
@@ -35,15 +30,6 @@
                       </li>
                       <li>
                           <a href="https://www.linkedin.com/in/killiam-gonz%C3%A1lez-cruz-22b708312/" class="hover:underline" target="_blank">LinkedIn</a>
-=======
-                          <a href="https://github.com/themesberg/flowbite" class="hover:underline ">Killiam González</a>
-                      </li>
-                      <li class="mb-4">
-                          <a href="https://github.com/themesberg/flowbite" class="hover:underline ">Github</a>
-                      </li>
-                      <li>
-                          <a href="https://discord.gg/4eeurUVvTy" class="hover:underline">LinkedIn</a>
->>>>>>> 9e48f2e7c5ea5190f470d242aab08f9db2d5bf14
                       </li>
                   </ul>
               </div>
