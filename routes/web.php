@@ -1,12 +1,20 @@
 <?php
 
+use App\Controllers\AboutController;
 use App\Controllers\HomeController;
 use App\Controllers\MisReservasController;
-use App\Controllers\LinkController;
-use App\Controllers\PostController;
+use App\Controllers\AuthController;
+use Framework\Middleware\Authenticated;
+use Framework\Middleware\Guest;
 
-$router->get('/',       [HomeController::class,     'index']);
-$router->get('/mis-reservas',   [MisReservasController::class,   'index']);
+$router->get('/',                      [HomeController::class,     'index']);
+$router->get('/about',  [AboutController::class,    'index']);
+$router->get('/mis-reservas',          [MisReservasController::class,   'index']);
+$router->post('/mis-reservas/store',   [MisReservasController::class, 'store']);
+
+$router->get('/login',  [AuthController::class, 'login'],        Guest::class);
+$router->post('/login', [AuthController::class, 'authenticate'], Guest::class);
+$router->post('/logout', [AuthController::class, 'logout'],      Authenticated::class);
 return [
     '/'                     => 'app/Controllers/home.php',
     '/mis_reservas'         => 'app/Controllers/mis_reservas.php',

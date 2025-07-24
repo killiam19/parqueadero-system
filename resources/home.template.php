@@ -319,19 +319,19 @@
                             </div>
                         <?php endif; ?>
                         <div class="form-group">
-                            <label for="fecha_reserva">Fecha de Reserva:</label>
+                            <label for="fecha_reserva" name="fecha_reserva">Fecha de Reserva:</label>
                             <input type="date" name="fecha_reserva" id="fecha_reserva" min="<?php echo $hoy; ?>" max="<?php echo $manana; ?>" value="<?php echo $hoy; ?>" required>
                         </div>
                         <div class="form-group">
-                            <label for="hora_inicio">Hora de Inicio:</label>
+                            <label for="hora_inicio" name="hora_inicio">Hora de Inicio:</label>
                             <input type="time" name="hora_inicio" id="hora_inicio" required>
                         </div>
                         <div class="form-group">
-                            <label for="hora_fin">Hora de Fin:</label>
+                            <label for="hora_fin" name="hora_fin">Hora de Fin:</label>
                             <input type="time" name="hora_fin" id="hora_fin" required>
                         </div>
                         <div class="form-group">
-                            <label for="placa_vehiculo">Placa del Vehículo:</label>
+                            <label for="placa_vehiculo" name="placa_vehiculo">Placa del Vehículo:</label>
                             <input type="text" name="placa_vehiculo" id="placa_vehiculo" placeholder="ABC123" maxlength="10" required>
                         </div>
                         <button type="submit">Reservar Cupo</button>

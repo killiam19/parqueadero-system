@@ -8,9 +8,14 @@ class Validator
 
     public function __construct(
         protected array $data,
-        protected array $rules = []
+        protected array $rules = [],
+        protected bool $autoRedirect = true,
     ) {
         $this->validate();
+
+        if($autoRedirect && !$this->passes()){
+            $this->redirectIfFailed();
+        }
     }
 
     public function validate(): void
@@ -39,13 +44,30 @@ class Validator
                     'min'       => strlen($value) < $param  ? "$field must be at least $param characters."           : null,
                     'max'       => strlen($value) > $param  ? "$field must not exceed $param characters."            : null,
                     'url'       => filter_var($value, FILTER_VALIDATE_URL) === false ? "$field must be a valid URL." : null,
-                    default => null,
+                    'email'     => filter_var($value, FILTER_VALIDATE_EMAIL) === false ? "$field must be a valid email address." : null,
+                    default => throw new \InvalidArgumentException("Validation rule '$name' is not defined."),
                 };
 
     }
 
     public function validateRequired (string $field, mixed $value) : ?string{
         return  ($value === null || $value === '') ? "$field is required." : null;
+    }
+
+    protected function redirectIfFailed(): void
+    {
+        session()->setFlash('errors', $this->errors);
+
+        foreach ($this->data as $key => $value){
+            session()->setFlash("old_.$key", $value);
+        }
+
+        back();
+    }
+
+    public static function make(array $data, array $rules, bool $autoRedirect = true): self
+    {
+        return new self($data, $rules, $autoRedirect);
     }
 
     public function passes(): bool

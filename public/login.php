@@ -16,7 +16,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'login') {
             $_SESSION['usuario_id'] = $usuario['id'];
             $_SESSION['usuario_nombre'] = $usuario['nombre'];
             $_SESSION['usuario_rol'] = $usuario['rol'];
-            header("Location: /../../resources/home.template.php");
+            header("Location: index.php");
             exit();
         } else {
             $mensaje = "Email o contraseña incorrectos";
@@ -159,7 +159,6 @@ if (isset($_GET['logout'])) {
             
             <button type="submit">Iniciar Sesión</button>
         </form>
-        
 
           <p style="text-align: center; margin-top: 20px;">
             ¿No tienes cuenta aún? <a href="registro.php">Registrate aquí</a>
