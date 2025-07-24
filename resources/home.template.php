@@ -100,9 +100,54 @@
 </style>
  
   <div class="border-b border-gray-200 pb-8 mb-8">
- <h1>🚗 Sistema de Agendamiento de Parqueadero de 3Shape <img src="assets/images/3shape-intraoral-logo.png" alt="" width="50" height="50"></h1>
-                <p>Bienvenido, <?php echo htmlspecialchars($_SESSION['usuario_nombre']); ?></p>
+ <h1> Sistema de Agendamiento de Parqueadero de 3Shape <img src="assets/images/3shape-intraoral-logo.png" alt="" width="50" height="50"></h1>
+<?php if (isset($_SESSION['usuario_nombre']) && $_SESSION['usuario_nombre']): ?>
+<p>Bienvenido, <?php echo htmlspecialchars($_SESSION['usuario_nombre']); ?></p>
+<?php endif; ?>
+
+<!-- Carousel Start -->
+<div id="image-carousel" style="max-width: 600px; margin: 20px auto; position: relative; overflow: hidden; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+    <div class="carousel-images" style="display: flex; transition: transform 0.5s ease;">
+        <img src="assets/images/Parking.png" alt="Image 2" style="width: 100%; flex-shrink: 0;">
+        <img src="assets/images/Mapa Parqueadero Completo.png" alt="Image 1" style="width: 100%; flex-shrink: 0;">
+    </div>
+    <div style="text-align: center; margin-top: 8px; font-weight: bold; color: #444;">Mapa conceptual / Referencia de espacios</div>
+    <!-- Navigation buttons -->
+    <button id="prev-btn" aria-label="Previous" style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); background: rgba(0,0,0,0.3); border: none; color: white; font-size: 24px; padding: 8px 12px; cursor: pointer; border-radius: 50%;">&#10094;</button>
+    <button id="next-btn" aria-label="Next" style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); background: rgba(0,0,0,0.3); border: none; color: white; font-size: 24px; padding: 8px 12px; cursor: pointer; border-radius: 50%;">&#10095;</button>
 </div>
+
+<script>
+    (function() {
+        const carousel = document.getElementById('image-carousel');
+        const imagesContainer = carousel.querySelector('.carousel-images');
+        const images = imagesContainer.querySelectorAll('img');
+        const totalImages = images.length;
+        let currentIndex = 0;
+
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        function updateCarousel() {
+            const offset = -currentIndex * 100;
+            imagesContainer.style.transform = 'translateX(' + offset + '%)';
+        }
+
+        prevBtn.addEventListener('click', () => {
+            currentIndex = (currentIndex - 1 + totalImages) % totalImages;
+            updateCarousel();
+        });
+
+        nextBtn.addEventListener('click', () => {
+            currentIndex = (currentIndex + 1) % totalImages;
+            updateCarousel();
+        });
+
+        // Auto slide removed as per user request
+    })();
+</script>
+</div>
+
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-x-8 gap-y-16">
 
@@ -110,10 +155,6 @@
         
         <div class="nav">
             <a href="mis_reservas.php">📋 Mis Reservas</a>
-            <?php if ($_SESSION['usuario_rol'] == 'admin'): ?>
-                <a href="usuarios.php">👥 Usuarios</a>
-                <a href="admin.php">⚙️ Administración</a>
-            <?php endif; ?>
         </div>
         
         <?php if (isset($mensaje)): ?>
@@ -334,7 +375,7 @@
                             <label for="placa_vehiculo" name="placa_vehiculo">Placa del Vehículo:</label>
                             <input type="text" name="placa_vehiculo" id="placa_vehiculo" placeholder="ABC123" maxlength="10" required>
                         </div>
-                        <button type="submit">Reservar Cupo</button>
+<button type="submit" <?php if (!isset($_SESSION['user'])) echo 'disabled title="Debe iniciar sesión para reservar" style="cursor:not-allowed; opacity:0.6;"'; ?>>Reservar Cupo</button>
                     </form>
                 </div>
             </div>
@@ -442,5 +483,45 @@
 </body>
 
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+<script>
+// Función para inicializar el dropdown de Flowbite
+function initFlowbiteDropdown() {
+    // Configuración del dropdown para el navbar
+    const dropdownNavbarLink = document.getElementById('dropdownNavbarLink');
+    const dropdownNavbar = document.getElementById('dropdownNavbar');
+    
+    if (dropdownNavbarLink && dropdownNavbar) {
+        dropdownNavbarLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            const isExpanded = this.getAttribute('aria-expanded') === 'true';
+            this.setAttribute('aria-expanded', !isExpanded);
+            dropdownNavbar.classList.toggle('hidden');
+        });
+        
+        // Cerrar el dropdown al hacer clic fuera de él
+        document.addEventListener('click', function(e) {
+            if (!dropdownNavbar.contains(e.target) && e.target !== dropdownNavbarLink) {
+                dropdownNavbar.classList.add('hidden');
+                dropdownNavbarLink.setAttribute('aria-expanded', 'false');
+            }
+        });
+    }
+    
+    // Configuración del menú móvil
+    const mobileMenuButton = document.querySelector('[data-collapse-toggle="navbar-dropdown"]');
+    const mobileMenu = document.getElementById('navbar-dropdown');
+    
+    if (mobileMenuButton && mobileMenu) {
+        mobileMenuButton.addEventListener('click', function() {
+            const isExpanded = this.getAttribute('aria-expanded') === 'true';
+            this.setAttribute('aria-expanded', !isExpanded);
+            mobileMenu.classList.toggle('hidden');
+        });
+    }
+}
 
+// Inicializar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', initFlowbiteDropdown);
+</script>
  <?php require __DIR__ . '/../resources/partials/new.footer.php'; ?>
