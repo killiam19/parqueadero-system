@@ -36,4 +36,11 @@ class AuthController
         (new Authenticate())->logout();
         redirect('/login');
     }
+
+     public function registrar()
+    {
+        view('registrar',[
+            'title' => 'Sobre mi',
+        ]);
+    }
 }

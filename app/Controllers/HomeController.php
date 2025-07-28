@@ -2,6 +2,9 @@
 
 namespace App\Controllers;
 
+use Framework\Validator;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 class HomeController
 {
     public function index()
@@ -229,5 +232,155 @@ class HomeController
         ])->firstOrFail();
         
         return $home;
+    }
+
+   public function store()
+    {
+        Validator::make($_POST, [
+            'numero_espacio' => 'required',
+            'fecha_reserva' => 'required',
+            'hora_inicio' => 'required',
+            'hora_fin' => 'required',
+            'placa_vehiculo' => 'required',
+            'tipo_vehiculo' => 'required',
+        ]);
+
+        // Obtener usuario actual
+        $currentUser = session()->get('user');
+        if (!$currentUser) {
+            redirect('login', 'Debes iniciar sesión para hacer reservas');
+        }
+
+        // Obtener datos completos del usuario
+        $usuario = db()->query('SELECT * FROM usuarios WHERE id = :id', [
+            'id' => $currentUser['id']
+        ])->first();
+
+        // Crear la reserva
+        db()->query(
+            'INSERT INTO reservas (usuario_id, numero_espacio, fecha_reserva, hora_inicio, hora_fin, placa_vehiculo, estado, tipo_vehiculo) 
+             VALUES (:usuario_id, :numero_espacio, :fecha_reserva, :hora_inicio, :hora_fin, :placa_vehiculo, "activa", :tipo_vehiculo)',
+            [
+                'usuario_id' => $currentUser['id'],
+                'numero_espacio' => $_POST['numero_espacio'],
+                'fecha_reserva' => $_POST['fecha_reserva'],
+                'hora_inicio' => $_POST['hora_inicio'],
+                'hora_fin' => $_POST['hora_fin'],
+                'placa_vehiculo' => $_POST['placa_vehiculo'],
+                'tipo_vehiculo' => $_POST['tipo_vehiculo']
+            ]
+        );
+
+        // Preparar datos para el correo
+        $datosReserva = [
+            'fecha' => $_POST['fecha_reserva'],
+            'hora_inicio' => $_POST['hora_inicio'],
+            'hora_fin' => $_POST['hora_fin'],
+            'placa' => $_POST['placa_vehiculo'],
+            'tipo_vehiculo' => $_POST['tipo_vehiculo'],
+            'numero_espacio' => $_POST['numero_espacio']
+        ];
+
+        // Enviar correo de confirmación
+        $this->enviarCorreoConfirmacion($usuario['email'], $usuario['nombre'], $datosReserva);
+
+        redirect('/', 'Reserva creada exitosamente. Se ha enviado un correo de confirmación.');
+    }
+
+    private function enviarCorreoConfirmacion($to, $nombre, $datosReserva)
+    {
+        $mail = new PHPMailer(true);
+        
+        try {
+            // Configuración SMTP (usando tus datos)
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'killiam1119@gmail.com';
+            $mail->Password = 'oqon pjgg ekvm yptj';
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
+            $mail->CharSet = 'UTF-8';
+            $mail->Encoding = 'base64';
+            $mail->SMTPOptions = [
+                'ssl' => [
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => true
+                ]
+            ];
+            
+            // Configuración del correo
+            $mail->setFrom('killiam1119@gmail.com', 'Sistema de Parqueadero');
+            $mail->addAddress($to, $nombre);
+            $mail->isHTML(true);
+            $mail->Subject = 'Confirmación de Reserva de Parqueadero';
+
+            // Cuerpo del mensaje (usando tu diseño HTML)
+            $mail->Body = $this->crearCuerpoHTML($nombre, $datosReserva);
+            $mail->AltBody = $this->crearTextoPlano($nombre, $datosReserva);
+
+            $mail->send();
+            return true;
+        } catch (Exception $e) {
+            error_log('Error al enviar correo: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    private function crearCuerpoHTML($nombre, $datosReserva)
+    {
+        return '
+        <div style="max-width: 500px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(44,62,80,0.08); font-family: Arial, sans-serif; overflow: hidden;">
+            <div style="background: #3498db; padding: 24px 0; text-align: center;">
+                <img src="https://img.icons8.com/color/96/000000/car--v1.png" alt="Logo Auto" style="width: 64px; height: 64px; margin-bottom: 10px;">
+                <h1 style="color: #fff; margin: 0; font-size: 2em;">¡Reserva Confirmada!</h1>
+            </div>
+            <div style="padding: 30px 24px 24px 24px; color: #333;">
+                <p style="font-size: 1.1em;">Hola <strong>' . htmlspecialchars($nombre) . '</strong>,</p>
+                <p style="margin-bottom: 18px;">Tu reserva de parqueadero se ha registrado correctamente. Aquí tienes los detalles:</p>
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 18px;">
+                    <tr>
+                        <td style="padding: 8px 0; font-weight: bold;">Fecha:</td>
+                        <td style="padding: 8px 0;">' . htmlspecialchars($datosReserva['fecha']) . '</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; font-weight: bold;">Hora inicio:</td>
+                        <td style="padding: 8px 0;">' . htmlspecialchars($datosReserva['hora_inicio']) . '</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; font-weight: bold;">Hora fin:</td>
+                        <td style="padding: 8px 0;">' . htmlspecialchars($datosReserva['hora_fin']) . '</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; font-weight: bold;">Placa:</td>
+                        <td style="padding: 8px 0;">' . htmlspecialchars($datosReserva['placa']) . '</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; font-weight: bold;">Tipo de vehículo:</td>
+                        <td style="padding: 8px 0;">' . htmlspecialchars($datosReserva['tipo_vehiculo']) . '</td>
+                    </tr>
+                </table>
+                <div style="background: #e8f4f8; border-left: 4px solid #3498db; padding: 12px 18px; border-radius: 6px; margin-bottom: 18px;">
+                    <strong>Recuerda:</strong> Llega puntual y presenta este correo si te lo solicitan en la entrada.
+                </div>
+                <p style="font-size: 0.95em; color: #888; margin-bottom: 0;">Gracias por usar el Sistema de Parqueadero.<br>Este es un correo automático, por favor no respondas a este mensaje.</p>
+            </div>
+        </div>';
+    }
+
+    private function crearTextoPlano($nombre, $datosReserva)
+    {
+        return "Confirmación de Reserva\n\n" .
+               "Hola {$nombre},\n\n" .
+               "Tu reserva ha sido registrada con éxito:\n\n" .
+               "Fecha: {$datosReserva['fecha']}\n" .
+               "Horario: {$datosReserva['hora_inicio']} - {$datosReserva['hora_fin']}\n" .
+               "Espacio: {$datosReserva['numero_espacio']}\n" .
+               "Placa: {$datosReserva['placa']}\n" .
+               "Tipo de vehículo: {$datosReserva['tipo_vehiculo']}\n\n" .
+               "Recuerda: Llega puntual y presenta este correo si te lo solicitan en la entrada.\n\n" .
+               "Gracias por usar el Sistema de Parqueadero.\n" .
+               "Este es un mensaje automático, por favor no respondas a este correo.";
     }
 }

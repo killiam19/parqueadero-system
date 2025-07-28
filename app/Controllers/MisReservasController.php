@@ -2,45 +2,161 @@
 
 namespace App\Controllers;
 
+use Framework\Validator;
+use Exception;
+
 class MisReservasController
 {
     public function index()
     {
-        view('mis-reservas',[
-            'title' => 'Mis reservas',
+        // Verificar autenticación
+        if (!isset($_SESSION['usuario_id'])) {
+            redirect('login');
+        }
+
+        // Manejar cancelación de reservas
+        $mensaje = '';
+        $tipo_mensaje = '';
+        
+        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
+            if ($_POST['action'] == 'cancelar' && isset($_POST['reserva_id'])) {
+                $resultado = $this->cancelarReserva($_POST['reserva_id']);
+                $mensaje = $resultado['mensaje'];
+                $tipo_mensaje = $resultado['tipo'];
+                
+                // Recargar la página para ver los cambios si fue exitoso
+                if ($resultado['tipo'] === 'success') {
+                    redirect('/mis-reservas', $mensaje);
+                }
+            }
+        }
+
+        // Obtener reservas según el rol del usuario
+        if ($_SESSION['usuario_rol'] == 'admin') {
+            // Admin ve todas las reservas
+            $reservas = db()->query('
+                SELECT r.*, u.nombre, u.email 
+                FROM reservas r
+                JOIN usuarios u ON r.usuario_id = u.id
+                ORDER BY r.fecha_reserva DESC, r.hora_inicio DESC
+            ')->get();
+        } else {
+            // Usuario normal solo ve sus reservas
+            $reservas = db()->query('
+                SELECT r.*, u.nombre, u.email 
+                FROM reservas r
+                JOIN usuarios u ON r.usuario_id = u.id
+                WHERE r.usuario_id = :usuario_id
+                ORDER BY r.fecha_reserva DESC, r.hora_inicio DESC
+            ', [
+                'usuario_id' => $_SESSION['usuario_id']
+            ])->get();
+        }
+
+        // Agrupar reservas por fecha
+        $reservas_por_fecha = [];
+        foreach ($reservas as $reserva) {
+            $fecha = $reserva['fecha_reserva'];
+            $reservas_por_fecha[$fecha][] = $reserva;
+        }
+
+        view('mis-reservas', [
+            'title' => $_SESSION['usuario_rol'] == 'admin' ? 'Todas las Reservas' : 'Mis Reservas',
+            'reservas_por_fecha' => $reservas_por_fecha,
+            'mensaje' => $mensaje,
+            'tipo_mensaje' => $tipo_mensaje
         ]);
     }
 
-    public function store()
+    /**
+     * Cancela (elimina) una reserva específica
+     * 
+     * @param int $reserva_id ID de la reserva a cancelar
+     * @return array Resultado de la operación con mensaje y tipo
+     */
+    public function cancelarReserva($reserva_id)
     {
-        $validator = new Validator($_POST, [
-            'title'         => 'required',
-            'url'           => 'required',
-            'description'   => 'required',
-        ]);
+        // Validar que se recibió el ID
+        if (!$reserva_id || !is_numeric($reserva_id)) {
+            return [
+                'mensaje' => 'ID de reserva inválido',
+                'tipo' => 'error'
+            ];
+        }
 
-        if ($validator->passes()) {
-            $db = new Database();
+        try {
+            // Buscar la reserva
+            $reserva = db()->query('SELECT * FROM reservas WHERE id = :id', [
+                'id' => $reserva_id
+            ])->first();
 
-            $db->query(
-                'INSERT INTO links (title, url, description) VALUES (:title, :url, :description)',
-                [
-                    'title'         => $_POST['title'],
-                    'url'           =>  $_POST['url'],
-                    'description'   => $_POST['description'],
-                ]
-            );
+            // Verificar que la reserva existe
+            if (!$reserva) {
+                return [
+                    'mensaje' => 'La reserva no existe',
+                    'tipo' => 'error'
+                ];
+            }
 
-            header('Location: /links');
-            exit;
-        } 
+            // Verificar permisos: admin puede cancelar cualquiera, usuario solo las suyas
+            if ($_SESSION['usuario_rol'] !== 'admin' && $reserva['usuario_id'] != $_SESSION['usuario_id']) {
+                return [
+                    'mensaje' => 'No tienes permiso para cancelar esta reserva',
+                    'tipo' => 'error'
+                ];
+            }
+
+            // Eliminar la reserva
+            $resultado = db()->query('DELETE FROM reservas WHERE id = :id', [
+                'id' => $reserva_id
+            ]);
+
+            if ($resultado) {
+                return [
+                    'mensaje' => 'Reserva cancelada exitosamente',
+                    'tipo' => 'success'
+                ];
+            } else {
+                return [
+                    'mensaje' => 'Error al cancelar la reserva. Inténtalo de nuevo.',
+                    'tipo' => 'error'
+                ];
+            }
+
+        } catch (Exception $e) {
+            error_log("Error al cancelar reserva ID {$reserva_id}: " . $e->getMessage());
+            
+            return [
+                'mensaje' => 'Ocurrió un error inesperado. Inténtalo de nuevo.',
+                'tipo' => 'error'
+            ];
+        }
+    }
+
+    /**
+     * Verifica si un usuario ya tiene una reserva activa para una fecha específica
+     * (Para usar en el controlador de crear reservas)
+     * 
+     * @param int $usuario_id
+     * @param string $fecha
+     * @param int $excluir_reserva_id (opcional, para ediciones)
+     * @return bool
+     */
+    public static function usuarioTieneReservaPorDia($usuario_id, $fecha, $excluir_reserva_id = null)
+    {
+        $query = 'SELECT COUNT(*) as total FROM reservas WHERE usuario_id = :usuario_id AND fecha_reserva = :fecha';
+        $params = [
+            'usuario_id' => $usuario_id,
+            'fecha' => $fecha
+        ];
+
+        if ($excluir_reserva_id) {
+            $query .= ' AND id != :excluir_id';
+            $params['excluir_id'] = $excluir_reserva_id;
+        }
+
+        $resultado = db()->query($query, $params)->first();
         
-             view('links-create',[
-            'title' => 'Registrar proyecto',
-            'errors' => $validator->errors(),
-        ]);
+        return $resultado['total'] > 0;
     }
 }
-
-
-

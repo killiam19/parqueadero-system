@@ -1,281 +1,214 @@
-    <?php require __DIR__ . '/partials/header.php'; ?>
+<?php require __DIR__ . '/partials/header.php'; ?>
 
-
-
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mis Reservas - Sistema de Parqueadero</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            color: #333;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .header {
-            background-color: #2c3e50;
-            color: white;
-            padding: 20px;
-            text-align: center;
-            margin-bottom: 30px;
-            border-radius: 10px;
-        }
-        
-        .nav {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .nav a {
-            color: #3498db;
-            text-decoration: none;
-            margin: 0 15px;
-            padding: 10px 20px;
-            border: 1px solid #3498db;
-            border-radius: 5px;
-            transition: all 0.3s;
-        }
-        
-        .nav a:hover {
-            background-color: #3498db;
-            color: white;
-        }
-        
-        .card {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .mensaje {
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-            text-align: center;
-            font-weight: bold;
-        }
-        
-        .mensaje.success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .mensaje.error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .fecha-grupo {
-            margin-bottom: 30px;
-        }
-        
-        .fecha-titulo {
-            background-color: #3498db;
-            color: white;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            font-size: 18px;
-            font-weight: bold;
-        }
-        
-        .reserva-item {
-            background-color: #f8f9fa;
-            border-left: 4px solid #28a745;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .reserva-item.cancelada {
-            border-left-color: #dc3545;
-            opacity: 0.7;
-        }
-        
-        .reserva-item.completada {
-            border-left-color: #6c757d;
-            opacity: 0.8;
-        }
-        
-        .reserva-info h4 {
-            margin-bottom: 8px;
-            color: #2c3e50;
-        }
-        
-        .reserva-info p {
-            margin-bottom: 5px;
-        }
-        
-        .estado-badge {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-        
-        .estado-activa {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        
-        .estado-cancelada {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-        
-        .estado-completada {
-            background-color: #e2e3e5;
-            color: #383d41;
-        }
-        
-        .btn-cancelar {
-            background-color: #dc3545;
-            color: white;
-            padding: 8px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s;
-        }
-        
-        .btn-cancelar:hover {
-            background-color: #c82333;
-        }
-        
-        .reserva-actions {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .no-reservas {
-            text-align: center;
-            color: #6c757d;
-            font-style: italic;
-            padding: 40px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>📋 Todas las Reservas </h1>
-            <p> Gestiona y visualiza todas las reservas del parqueadero</p>
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8 border border-gray-100">
+            <div class="text-center">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full mb-4">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                    </svg>
+                </div>
+                <h1 class="text-4xl font-bold text-gray-800 mb-2">
+                    <?php echo $_SESSION['usuario_rol'] == 'admin' ? 'Todas las Reservas' : 'Mis Reservas'; ?>
+                </h1>
+                <p class="text-gray-600 text-lg">
+                    <?php echo $_SESSION['usuario_rol'] == 'admin' ? 'Gestiona y visualiza todas las reservas del parqueadero' : 'Gestiona tus reservas de parqueadero'; ?>
+                </p>
+            </div>
         </div>
-        
-        <div class="nav">
-            <?php if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] == 'admin'): ?>
-                <a href="usuarios.php">👥 Usuarios</a>
-                <a href="admin.php">⚙️ Administración</a>
+
+        <!-- Navigation (only for admin) -->
+        <?php if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] == 'admin'): ?>
+        <div class="flex justify-center space-x-4 mb-8">
+            <a href="/usuarios" class="inline-flex items-center px-6 py-3 bg-white rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 text-gray-700 hover:text-blue-600 border border-gray-200">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-2.239"></path>
+                </svg>
+                Usuarios
+            </a>
+            <a href="/admin" class="inline-flex items-center px-6 py-3 bg-white rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 text-gray-700 hover:text-blue-600 border border-gray-200">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+                Administración
+            </a>
+        </div>
+        <?php endif; ?>
+
+        <!-- Messages -->
+        <?php if (isset($mensaje) && !empty($mensaje)): ?>
+        <div class="mb-8">
+            <div class="<?php echo $tipo_mensaje == 'success' ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-800'; ?> border-l-4 <?php echo $tipo_mensaje == 'success' ? 'border-l-green-500' : 'border-l-red-500'; ?> p-4 rounded-lg shadow-sm">
+                <div class="flex items-center">
+                    <?php if ($tipo_mensaje == 'success'): ?>
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                    </svg>
+                    <?php else: ?>
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                    </svg>
+                    <?php endif; ?>
+                    <span class="font-medium"><?php echo htmlspecialchars($mensaje); ?></span>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <!-- Reservations Content -->
+        <?php if (empty($reservas_por_fecha)): ?>
+        <!-- No reservations state -->
+        <div class="bg-white rounded-2xl shadow-xl p-12 text-center border border-gray-100">
+            <div class="inline-flex items-center justify-center w-24 h-24 bg-gray-100 rounded-full mb-6">
+                <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                </svg>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-700 mb-3">No hay reservas registradas</h3>
+            <p class="text-gray-500 text-lg mb-6">
+                <?php echo $_SESSION['usuario_rol'] == 'admin' ? 'Aún no se han realizado reservas en el sistema.' : 'Aún no has realizado ninguna reserva.'; ?>
+            </p>
+            <?php if ($_SESSION['usuario_rol'] != 'admin'): ?>
+            <a href="/reservar" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg hover:from-blue-600 hover:to-indigo-700 transform hover:-translate-y-1 transition-all duration-300 shadow-lg">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                Hacer primera reserva
+            </a>
             <?php endif; ?>
         </div>
-        
-        <?php if (isset($mensaje)): ?>
-            <div class="mensaje <?php echo $tipo_mensaje; ?>">
-                <?php echo $mensaje; ?>
-            </div>
-        <?php endif; ?>
-        
-        <div class="card">
-            <?php if (empty($reservas_por_fecha)): ?>
-                <div class="no-reservas">
-                    <h3>No hay reservas registradas</h3>
-                    <p>Aún no se han realizado reservas en el sistema.</p>
-                </div>
-            <?php else: ?>
-                <?php foreach ($reservas_por_fecha as $fecha => $reservas_fecha): ?>
-                    <div class="fecha-grupo">
-                        <div class="fecha-titulo">
-                            📅 <?php echo date('l, d \d\e F \d\e Y', strtotime($fecha)); ?>
-                            <span style="float: right;">
-                                <?php echo count($reservas_fecha); ?> reserva(s) - 
-                                <?php echo getCuposDisponibles($fecha); ?> cupos disponibles
-                            </span>
+        <?php else: ?>
+        <!-- Reservations by date -->
+        <div class="space-y-8">
+            <?php foreach ($reservas_por_fecha as $fecha => $reservas_fecha): ?>
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+                <!-- Date header -->
+                <div class="bg-gradient-to-r from-blue-500 to-indigo-600 p-6">
+                    <div class="flex items-center justify-between text-white">
+                        <div class="flex items-center">
+                            <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <h2 class="text-xl font-bold">
+                                <?php 
+                                // Función moderna para formatear fechas en español
+                                $fecha_obj = new DateTime($fecha);
+                                $dias = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+                                $meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+                                
+                                $dia_semana = $dias[$fecha_obj->format('w')];
+                                $dia = $fecha_obj->format('d');
+                                $mes = $meses[$fecha_obj->format('n') - 1];
+                                $año = $fecha_obj->format('Y');
+                                
+                                echo ucfirst($dia_semana) . ', ' . $dia . ' de ' . $mes . ' de ' . $año;
+                                ?>
+                            </h2>
                         </div>
-                        <?php foreach ($reservas_fecha as $reserva): ?>
-                            <div class="reserva-item <?php echo $reserva['estado']; ?>">
-                                <div class="reserva-info">
-                                    <h4><?php echo $reserva['nombre']; ?></h4>
-                                    <p><strong>Horario:</strong> <?php echo date('H:i', strtotime($reserva['hora_inicio'])); ?> - <?php echo date('H:i', strtotime($reserva['hora_fin'])); ?></p>
-                                    <p><strong>Placa:</strong> <?php echo $reserva['placa_vehiculo']; ?></p>
-                                    <p><strong>Email:</strong> <?php echo $reserva['email']; ?></p>
-                                    <p><strong>Reservado el:</strong> <?php echo date('d/m/Y H:i', strtotime($reserva['fecha_creacion'])); ?></p>
-                                    <p><strong>Para el día:</strong> <?php echo date('d/m/Y', strtotime($reserva['fecha_reserva'])); ?></p>
-                                </div>
-                                <div class="reserva-actions">
-                                    <span class="estado-badge estado-<?php echo $reserva['estado']; ?>">
-                                        <?php echo $reserva['estado']; ?>
+                        <div class="text-right">
+                            <div class="text-sm opacity-90"><?php echo count($reservas_fecha); ?> reserva(s)</div>
+                            <?php if (function_exists('getCuposDisponibles')): ?>
+                            <div class="text-sm opacity-90"><?php echo getCuposDisponibles($fecha); ?> cupos disponibles</div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reservations list -->
+                <div class="p-6 space-y-4">
+                    <?php foreach ($reservas_fecha as $reserva): ?>
+                    <div class="<?php echo $reserva['estado'] == 'activa' ? 'border-l-green-500 bg-green-50' : ($reserva['estado'] == 'cancelada' ? 'border-l-red-500 bg-red-50' : 'border-l-gray-500 bg-gray-50'); ?> border-l-4 rounded-lg p-4 transition-all duration-300 hover:shadow-md">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center mb-2">
+                                    <h4 class="text-lg font-semibold text-gray-800 mr-3"><?php echo htmlspecialchars($reserva['nombre']); ?></h4>
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium <?php echo $reserva['estado'] == 'activa' ? 'bg-green-100 text-green-800' : ($reserva['estado'] == 'cancelada' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'); ?>">
+                                        <?php echo ucfirst($reserva['estado']); ?>
                                     </span>
-                                    <?php if ($reserva['estado'] == 'activa' && $reserva['fecha_reserva'] >= date('Y-m-d')): ?>
-                                        <?php if (
-                                            (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] == 'admin') ||
-                                            (isset($_SESSION['usuario_id']) && $reserva['usuario_id'] == $_SESSION['usuario_id'])
-                                        ): ?>
-                                            <form method="POST" action="" style="display: inline;">
-                                                <input type="hidden" name="action" value="cancelar">
-                                                <input type="hidden" name="reserva_id" value="<?php echo $reserva['id']; ?>">
-                                                <button type="submit" class="btn-cancelar" onclick="return confirm('¿Estás seguro de que quieres cancelar esta reserva?')">
-                                                    Cancelar
-                                                </button>
-                                            </form>
-                                        <?php endif; ?>
-                                    <?php endif; ?>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-sm text-gray-600">
+                                    <div class="flex items-center">
+                                        <svg class="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <span><strong>Horario:</strong> <?php echo date('H:i', strtotime($reserva['hora_inicio'])); ?> - <?php echo date('H:i', strtotime($reserva['hora_fin'])); ?></span>
+                                    </div>
+                                    
+                                    <div class="flex items-center">
+                                        <svg class="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                        <span><strong>Placa:</strong> <?php echo htmlspecialchars($reserva['placa_vehiculo']); ?></span>
+                                    </div>
+                                    
+                                    <div class="flex items-center">
+                                        <svg class="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path>
+                                        </svg>
+                                        <span><strong>Email:</strong> <?php echo htmlspecialchars($reserva['email']); ?></span>
+                                    </div>
+                                    
+                                    <div class="flex items-center">
+                                        <svg class="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <span><strong>Reservado:</strong> <?php echo date('d/m/Y H:i', strtotime($reserva['fecha_creacion'])); ?></span>
+                                    </div>
+                                    
+                                    <div class="flex items-center">
+                                        <svg class="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <span><strong>Para el día:</strong> <?php echo date('d/m/Y', strtotime($reserva['fecha_reserva'])); ?></span>
+                                    </div>
                                 </div>
                             </div>
-                        <?php endforeach; ?>
-                    </div>
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </div>
-        <?php if (!empty($reservas_canceladas)): ?>
-            <div class="card">
-                <h3 style="margin-bottom: 18px; color: #dc3545;">Reservas Canceladas</h3>
-                <form method="POST" action="" style="margin-bottom: 12px;">
-                    <input type="hidden" name="action" value="limpiar_canceladas">
-                    <button type="submit" class="btn-cancelar" style="background:#888;">Limpiar esta vista</button>
-                </form>
-                <?php foreach ($reservas_canceladas as $reserva): ?>
-                    <div class="reserva-item cancelada">
-                        <div class="reserva-info">
-                            <h4><?php echo $reserva['nombre']; ?></h4>
-                            <p><strong>Horario:</strong> <?php echo date('H:i', strtotime($reserva['hora_inicio'])); ?> - <?php echo date('H:i', strtotime($reserva['hora_fin'])); ?></p>
-                            <p><strong>Placa:</strong> <?php echo $reserva['placa_vehiculo']; ?></p>
-                            <p><strong>Email:</strong> <?php echo $reserva['email']; ?></p>
-                            <p><strong>Reservado el:</strong> <?php echo date('d/m/Y H:i', strtotime($reserva['fecha_creacion'])); ?></p>
-                            <p><strong>Para el día:</strong> <?php echo date('d/m/Y', strtotime($reserva['fecha_reserva'])); ?></p>
+                            
+                            <!-- Cancel button -->
+                            <?php if ($reserva['estado'] == 'activa' && $reserva['fecha_reserva'] >= date('Y-m-d')): ?>
+                                <?php if (
+                                    (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] == 'admin') ||
+                                    (isset($_SESSION['usuario_id']) && $reserva['usuario_id'] == $_SESSION['usuario_id'])
+                                ): ?>
+                                <div class="ml-4">
+                                    <form method="POST" action="/mis-reservas" class="inline-block">
+                                        <input type="hidden" name="action" value="cancelar">
+                                        <input type="hidden" name="reserva_id" value="<?php echo $reserva['id']; ?>">
+                                        <button type="submit" 
+                                                onclick="return confirm('¿Estás seguro de que quieres cancelar esta reserva?')"
+                                                class="inline-flex items-center px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-lg hover:bg-red-600 transform hover:-translate-y-1 transition-all duration-300 shadow-md hover:shadow-lg">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                            Cancelar
+                                        </button>
+                                    </form>
+                                </div>
+                                <?php endif; ?>
+                            <?php endif; ?>
                         </div>
-                        <div class="reserva-actions">
-                            <span class="estado-badge estado-cancelada">Cancelada</span>
-                        </div>
                     </div>
-                <?php endforeach; ?>
+                    <?php endforeach; ?>
+                </div>
             </div>
+            <?php endforeach; ?>
+        </div>
         <?php endif; ?>
-    </div>
-</body>
-    <?php require __DIR__ . '/partials/new.footer.php'; ?>
 
+        <!-- Back to dashboard button -->
+        <div class="text-center mt-8">
+            <a href="/dashboard" class="inline-flex items-center px-6 py-3 bg-white text-gray-700 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 border border-gray-200">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Volver al Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<?php require __DIR__ . '/partials/new.footer.php'; ?>
