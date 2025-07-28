@@ -84,10 +84,10 @@
         <!-- Reservations by date -->
         <div class="space-y-8">
             <?php foreach ($reservas_por_fecha as $fecha => $reservas_fecha): ?>
-            <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+            <div class="bg- rounded-2xl shadow-xl overflow-hidden border border-gray-100">
                 <!-- Date header -->
                 <div class="bg-gradient-to-r from-blue-500 to-indigo-600 p-6">
-                    <div class="flex items-center justify-between text-white">
+                    <div class="flex items-center justify-between text-black">
                         <div class="flex items-center">
                             <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>

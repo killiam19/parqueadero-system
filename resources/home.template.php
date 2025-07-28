@@ -102,7 +102,7 @@
   <div class="border-b border-gray-200 pb-8 mb-8">
      <img src="assets/images/3shape-intraoral-logo.png" alt="" width="50" height="50">
 
-<h1 class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">Sistema de Agendamiento de Parqueadero de 3Shape</h1>
+<h1 class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black">Sistema de Agendamiento de Parqueadero de 3Shape</h1>
 <?php if (isset($_SESSION['usuario_nombre']) && $_SESSION['usuario_nombre']): ?>
 <p class="mb-6 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">Bienvenido, <?php echo htmlspecialchars($_SESSION['usuario_nombre']); ?></p>
 <?php endif; ?>
@@ -162,9 +162,9 @@
 
     <div class="container">
         
-        <div class="nav">
+ <!--        <div class="nav">
             <a href="mis_reservas.php">📋 Mis Reservas</a>
-        </div>
+        </div> -->
         
         <?php if (isset($mensaje)): ?>
             <div class="mensaje <?php echo $tipo_mensaje; ?>">

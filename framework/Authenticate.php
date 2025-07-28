@@ -14,7 +14,7 @@ class Authenticate
             session()->set('user', [
                 'id'    => $user['id'],
                 'email' => $user['email'],
-                'name'  => $user['name']
+                'name'  => $user['nombre']
             ]);
 
             return true;
