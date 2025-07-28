@@ -44,7 +44,7 @@ INSERT INTO configuracion (total_cupos) VALUES (10);
 INSERT INTO usuarios (nombre, email, password, rol)
 VALUES (
     'Administrador',
-    'admin@parquedero',
+    'admin@parqueadero3shape.com',
     '$2y$10$qG4UkmEJSvP82mMPWQ6hb.jQ6t.HUpfs2eAJMXM6hnwTesia3o2YK',
     'admin'
 );
