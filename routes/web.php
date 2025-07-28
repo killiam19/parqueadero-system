@@ -23,6 +23,9 @@ $router->get('/usuarios',              [UsuariosController::class, 'index']);
 
 // Rutas de autenticación
 $router->get('/login',                 [AuthController::class, 'login'],        Guest::class);
-$router->get('/registrar',              [AuthController::class,'registrar']);
 $router->post('/login',                [AuthController::class, 'authenticate'], Guest::class);
 $router->post('/logout',               [AuthController::class, 'logout'],       Authenticated::class);
+
+// Rutas para registro
+$router->get('/register', [AuthController::class, 'register']);
+$router->post('/register', [AuthController::class, 'store']);

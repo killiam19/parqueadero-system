@@ -5,6 +5,7 @@ namespace App\Controllers;
 use Framework\Validator;
 use Exception;
 
+date_default_timezone_set('America/Bogota');
 class MisReservasController
 {
     public function index()
@@ -13,6 +14,13 @@ class MisReservasController
         if (!isset($_SESSION['usuario_id'])) {
             redirect('login');
         }
+
+        // --- NUEVO: Actualizar reservas vencidas a 'completada' ---
+        $ahora = date('Y-m-d H:i:s');
+        db()->query('UPDATE reservas SET estado = "completada" WHERE estado = "activa" AND CONCAT(fecha_reserva, " ", hora_fin) < :ahora', [
+            'ahora' => $ahora
+        ]);
+        // --- FIN NUEVO ---
 
         // Manejar cancelación de reservas
         $mensaje = '';
@@ -126,6 +134,62 @@ class MisReservasController
         } catch (Exception $e) {
             error_log("Error al cancelar reserva ID {$reserva_id}: " . $e->getMessage());
             
+            return [
+                'mensaje' => 'Ocurrió un error inesperado. Inténtalo de nuevo.',
+                'tipo' => 'error'
+            ];
+        }
+    }
+
+    /**
+     * Marca una reserva como completada manualmente
+     * @param int $reserva_id
+     * @return array
+     */
+    public function completarReserva($reserva_id)
+    {
+        // Validar que se recibió el ID
+        if (!$reserva_id || !is_numeric($reserva_id)) {
+            return [
+                'mensaje' => 'ID de reserva inválido',
+                'tipo' => 'error'
+            ];
+        }
+        try {
+            // Buscar la reserva
+            $reserva = db()->query('SELECT * FROM reservas WHERE id = :id', [
+                'id' => $reserva_id
+            ])->first();
+            if (!$reserva) {
+                return [
+                    'mensaje' => 'La reserva no existe',
+                    'tipo' => 'error'
+                ];
+            }
+            // Solo admin o dueño pueden completar
+            if ($_SESSION['usuario_rol'] !== 'admin' && $reserva['usuario_id'] != $_SESSION['usuario_id']) {
+                return [
+                    'mensaje' => 'No tienes permiso para completar esta reserva',
+                    'tipo' => 'error'
+                ];
+            }
+            // Actualizar estado
+            $resultado = db()->query('UPDATE reservas SET estado = "completada" WHERE id = :id', [
+                'id' => $reserva_id
+            ]);
+            if ($resultado) {
+                return [
+                    'mensaje' => 'Reserva marcada como completada',
+                    'tipo' => 'success'
+                ];
+            } else {
+                return [
+                    'mensaje' => 'Error al completar la reserva. Inténtalo de nuevo.',
+                    'tipo' => 'error'
+                ];
+            }
+        } catch (Exception $e) {
+            error_log("Error al completar reserva ID {$reserva_id}: " . $e->getMessage());
             return [
                 'mensaje' => 'Ocurrió un error inesperado. Inténtalo de nuevo.',
                 'tipo' => 'error'

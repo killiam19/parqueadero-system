@@ -188,4 +188,4 @@
     });
 </script>
 
-<?php require __DIR__ . '/partials/footer.php'; ?>
+<?php require __DIR__ . '/partials/new.footer.php'; ?>

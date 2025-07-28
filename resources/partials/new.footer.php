@@ -20,10 +20,10 @@
                   </ul>
               </div>
               <div>
-                  <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Development Team</h2>
+                  <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Developed By</h2>
                   <ul class="text-gray-500 dark:text-gray-400 font-medium">
                     <li class="mb-4">
-                          <a href="https://github.com/killiam19" class="hover:underline ">Killiam González</a>
+                          <a href="https://github.com/killiam19" class="hover:underline" target="_blank">Killiam González</a>
                       </li>
                       <li class="mb-4">
                           <a href="https://github.com/killiam19" class="hover:underline" target="_blank">Github</a>

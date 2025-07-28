@@ -384,7 +384,15 @@
                             <label for="placa_vehiculo" name="placa_vehiculo">Placa del Vehículo:</label>
                             <input type="text" name="placa_vehiculo" id="placa_vehiculo" placeholder="ABC123" maxlength="10" required>
                         </div>
-<button type="submit" <?php if (!isset($_SESSION['user'])) echo 'disabled title="Debe iniciar sesión para reservar" style="cursor:not-allowed; opacity:0.6;"'; ?>>Reservar Cupo</button>
+                            <?php if (!isset($_SESSION['usuario_nombre']) || !$_SESSION['usuario_nombre']): ?>
+                            <button type="button" class="text-white bg-blue-400 dark:bg-blue-500 cursor-not-allowed font-medium rounded-lg text-sm px-5 py-2.5 text-center" disabled>
+                                Debe iniciar sesión para reservar
+                            </button>
+                            <?php else: ?>
+                            <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                Reservar Cupo
+                            </button>
+                            <?php endif; ?>
                     </form>
                 </div>
             </div>
@@ -493,44 +501,5 @@
 
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
-<script>
-// Función para inicializar el dropdown de Flowbite
-function initFlowbiteDropdown() {
-    // Configuración del dropdown para el navbar
-    const dropdownNavbarLink = document.getElementById('dropdownNavbarLink');
-    const dropdownNavbar = document.getElementById('dropdownNavbar');
-    
-    if (dropdownNavbarLink && dropdownNavbar) {
-        dropdownNavbarLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            const isExpanded = this.getAttribute('aria-expanded') === 'true';
-            this.setAttribute('aria-expanded', !isExpanded);
-            dropdownNavbar.classList.toggle('hidden');
-        });
-        
-        // Cerrar el dropdown al hacer clic fuera de él
-        document.addEventListener('click', function(e) {
-            if (!dropdownNavbar.contains(e.target) && e.target !== dropdownNavbarLink) {
-                dropdownNavbar.classList.add('hidden');
-                dropdownNavbarLink.setAttribute('aria-expanded', 'false');
-            }
-        });
-    }
-    
-    // Configuración del menú móvil
-    const mobileMenuButton = document.querySelector('[data-collapse-toggle="navbar-dropdown"]');
-    const mobileMenu = document.getElementById('navbar-dropdown');
-    
-    if (mobileMenuButton && mobileMenu) {
-        mobileMenuButton.addEventListener('click', function() {
-            const isExpanded = this.getAttribute('aria-expanded') === 'true';
-            this.setAttribute('aria-expanded', !isExpanded);
-            mobileMenu.classList.toggle('hidden');
-        });
-    }
-}
-
-// Inicializar cuando el DOM esté listo
-document.addEventListener('DOMContentLoaded', initFlowbiteDropdown);
-</script>
+<script src="js/dropdown.js"></script>
  <?php require __DIR__ . '/../resources/partials/new.footer.php'; ?>
