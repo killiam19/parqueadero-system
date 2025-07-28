@@ -11,7 +11,6 @@ class Database
 
     public function __construct()
     {
-        // $dsn = 'mysql:host=127.0.0.1;dbname=web-php;charset=utf8mb4';
         $dsn = sprintf(
             'mysql:host=%s;dbname=%s;charset=%s',
             config('host', 'localhost'),
