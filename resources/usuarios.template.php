@@ -94,12 +94,6 @@
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-x-8 gap-y-16">
     <div class="container">
-        <div class="nav">
-            <a href="index.php">🏠 Inicio</a>
-            <a href="mis_reservas.php">📋 Reservas</a>
-            <a href="admin.php">⚙️ Administración</a>
-        </div>
-        
         <?php if (isset($mensaje)): ?>
             <div class="mensaje <?php echo $tipo_mensaje; ?>">
                 <?php echo $mensaje; ?>
@@ -187,5 +181,5 @@
         this.textContent = type === 'password' ? '👁️' : '🙈';
     });
 </script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
 <?php require __DIR__ . '/partials/new.footer.php'; ?>
