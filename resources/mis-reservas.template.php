@@ -200,14 +200,14 @@
         <?php endif; ?>
 
         <!-- Back to dashboard button -->
-        <div class="text-center mt-8">
+       <!--  <div class="text-center mt-8">
             <a href="/dashboard" class="inline-flex items-center px-6 py-3 bg-white text-gray-700 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 border border-gray-200">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                 </svg>
                 Volver al Dashboard
             </a>
-        </div>
+        </div> -->
     </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>

@@ -66,4 +66,5 @@
       }
     });
   }
+</script>
 <?php require resource_path('partials/new.footer.php'); ?>

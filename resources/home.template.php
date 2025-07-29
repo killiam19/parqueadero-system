@@ -207,8 +207,8 @@
                         </div>
                         <div class="mapa-leyenda" style="justify-content: flex-start;">
                             <span><span style="display:inline-block;width:18px;height:18px;background:#22c55e;border-radius:4px;"></span> Disponible</span>
-                            <span><span style="display:inline-block;width:18px;height:18px;background:#b0b0b0;border-radius:4px;"></span> Ocupado</span>
-                            <span><span style="display:inline-block;width:18px;height:18px;background:#f6e6ea;border-radius:4px;"></span> Seleccionado</span>
+                            <span><span style="display:inline-block;width:18px;height:18px;background:#f6e6ea;border-radius:4px;"></span> Ocupado</span>
+                            <span><span style="display:inline-block;width:18px;height:18px;background:#2563eb;border-radius:4px;"></span> Seleccionado</span>
                         </div>
                         <div class="mapa-espacios-bg">
                             <div id="mapa-espacios-carro">
@@ -241,8 +241,8 @@
                         </div>
                         <div class="mapa-leyenda" style="justify-content: flex-start;">
                             <span><span style="display:inline-block;width:18px;height:18px;background:#22c55e;border-radius:4px;"></span> Disponible</span>
-                            <span><span style="display:inline-block;width:18px;height:18px;background:#b0b0b0;border-radius:4px;"></span> Ocupado</span>
-                            <span><span style="display:inline-block;width:18px;height:18px;background:#f6e6ea;border-radius:4px;"></span> Seleccionado</span>
+                            <span><span style="display:inline-block;width:18px;height:18px;background:#f6e6ea;border-radius:4px;"></span> Ocupado</span>
+                            <span><span style="display:inline-block;width:18px;height:18px;background:#2563eb;border-radius:4px;"></span> Seleccionado</span>
                         </div>
                         <div class="mapa-espacios-bg" style="display: flex; flex-direction: column; align-items: center;">
                             <div id="mapa-motos-grid">
