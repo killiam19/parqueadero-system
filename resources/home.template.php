@@ -106,7 +106,7 @@
 <?php if (isset($_SESSION['usuario_nombre']) && $_SESSION['usuario_nombre']): ?>
 <p class="mb-6 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">Bienvenido, <?php echo htmlspecialchars($_SESSION['usuario_nombre']); ?></p>
 <?php endif; ?>
-<a href="/about" class="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
+<a href="/about" class="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-white bg-red-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
     Conoce más
     <svg class="w-3.5 h-3.5 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
@@ -203,7 +203,7 @@
                     <div id="mapa-carro" style="display:block;">
                         <div class="mapa-titulo" style="justify-content: flex-start;">
                             <span style="color:#2563eb;font-size:2.2rem;">&#128205;</span>
-                            Mapa de Espacios de Parqueadero (Carros)
+                            Mapa de Espacios de Parqueadero (Carros)-Disponibilidad para el día de hoy
                         </div>
                         <div class="mapa-leyenda" style="justify-content: flex-start;">
                             <span><span style="display:inline-block;width:18px;height:18px;background:#22c55e;border-radius:4px;"></span> Disponible</span>
@@ -237,7 +237,7 @@
                     <div id="mapa-moto" style="display:none;">
                         <div class="mapa-titulo" style="justify-content: flex-start;">
                             <span style="color:#2563eb;font-size:2.2rem;">&#128205;</span>
-                            Mapa de Espacios de Parqueadero (Motos)
+                            Mapa de Espacios de Parqueadero (Motos)-Disponibilidad para el día de hoy
                         </div>
                         <div class="mapa-leyenda" style="justify-content: flex-start;">
                             <span><span style="display:inline-block;width:18px;height:18px;background:#22c55e;border-radius:4px;"></span> Disponible</span>
@@ -250,7 +250,7 @@
                                 <?php
                                     $id = 476;
                                     $ocupados = $moto_ocupados[$id] ?? 0;
-                                    $max = 6;
+                                    $max = 7;
                                     $estado = ($ocupados >= $max) ? 'ocupado' : 'disponible';
                                     $info = "$ocupados/$max cupos reservados";
                                 ?>
@@ -259,23 +259,12 @@
                                     <span>476</span>
                                     <span class="tooltip-cupos"><?php echo $info; ?></span>
                                 </button>
-                                <?php
-                                    $id = '476a';
-                                    $ocupados = $moto_ocupados[$id] ?? 0;
-                                    $max = 1;
-                                    $estado = ($ocupados >= $max) ? 'ocupado' : 'disponible';
-                                    $info = "$ocupados/$max cupos reservados";
-                                ?>
-                                <button type="button" class="espacio-btn moto-btn <?php echo $estado; ?>" data-espacio="476a" data-tipo="moto" data-cupos="<?php echo $info; ?>" <?php echo ($estado=='ocupado'?'disabled':''); ?> style="grid-column:1;grid-row:2;position:relative;">
-                                    <span class="icono-auto"><i class="fa-solid fa-motorcycle"></i></span>
-                                    <span>1</span>
-                                    <span class="tooltip-cupos"><?php echo $info; ?></span>
-                                </button>
+                              
                                 <!-- Columna 2 -->
                                 <?php
                                     $id = 475;
                                     $ocupados = $moto_ocupados[$id] ?? 0;
-                                    $max = 6;
+                                    $max = 7;
                                     $estado = ($ocupados >= $max) ? 'ocupado' : 'disponible';
                                     $info = "$ocupados/$max cupos reservados";
                                 ?>
@@ -284,23 +273,12 @@
                                     <span>475</span>
                                     <span class="tooltip-cupos"><?php echo $info; ?></span>
                                 </button>
-                                <?php
-                                    $id = '475a';
-                                    $ocupados = $moto_ocupados[$id] ?? 0;
-                                    $max = 1;
-                                    $estado = ($ocupados >= $max) ? 'ocupado' : 'disponible';
-                                    $info = "$ocupados/$max cupos reservados";
-                                ?>
-                                <button type="button" class="espacio-btn moto-btn <?php echo $estado; ?>" data-espacio="475a" data-tipo="moto" data-cupos="<?php echo $info; ?>" <?php echo ($estado=='ocupado'?'disabled':''); ?> style="grid-column:2;grid-row:2;position:relative;">
-                                    <span class="icono-auto"><i class="fa-solid fa-motorcycle"></i></span>
-                                    <span>1</span>
-                                    <span class="tooltip-cupos"><?php echo $info; ?></span>
-                                </button>
+            
                                 <!-- Columna 3 -->
                                 <?php
                                     $id = 474;
                                     $ocupados = $moto_ocupados[$id] ?? 0;
-                                    $max = 6;
+                                    $max = 7;
                                     $estado = ($ocupados >= $max) ? 'ocupado' : 'disponible';
                                     $info = "$ocupados/$max cupos reservados";
                                 ?>
@@ -309,42 +287,18 @@
                                     <span>474</span>
                                     <span class="tooltip-cupos"><?php echo $info; ?></span>
                                 </button>
-                                <?php
-                                    $id = '474a';
-                                    $ocupados = $moto_ocupados[$id] ?? 0;
-                                    $max = 1;
-                                    $estado = ($ocupados >= $max) ? 'ocupado' : 'disponible';
-                                    $info = "$ocupados/$max cupos reservados";
-                                ?>
-                                <button type="button" class="espacio-btn moto-btn <?php echo $estado; ?>" data-espacio="474a" data-tipo="moto" data-cupos="<?php echo $info; ?>" <?php echo ($estado=='ocupado'?'disabled':''); ?> style="grid-column:3;grid-row:2;position:relative;">
-                                    <span class="icono-auto"><i class="fa-solid fa-motorcycle"></i></span>
-                                    <span>1</span>
-                                    <span class="tooltip-cupos"><?php echo $info; ?></span>
-                                </button>
-                                <?php
-                                    $id = '474b';
-                                    $ocupados = $moto_ocupados[$id] ?? 0;
-                                    $max = 1;
-                                    $estado = ($ocupados >= $max) ? 'ocupado' : 'disponible';
-                                    $info = "$ocupados/$max cupos reservados";
-                                ?>
-                                <button type="button" class="espacio-btn moto-btn <?php echo $estado; ?>" data-espacio="474b" data-tipo="moto" data-cupos="<?php echo $info; ?>" <?php echo ($estado=='ocupado'?'disabled':''); ?> style="grid-column:3;grid-row:3;position:relative;">
-                                    <span class="icono-auto"><i class="fa-solid fa-motorcycle"></i></span>
-                                    <span>1</span>
-                                    <span class="tooltip-cupos"><?php echo $info; ?></span>
-                                </button>
-                                <?php
+                                 <?php
                                     $id = 441;
                                     $ocupados = $moto_ocupados[$id] ?? 0;
-                                    $max = 4;
+                                    $max = 5;
                                     $estado = ($ocupados >= $max) ? 'ocupado' : 'disponible';
                                     $info = "$ocupados/$max cupos reservados";
                                 ?>
-                                <button type="button" class="espacio-btn moto-btn <?php echo $estado; ?>" data-espacio="441" data-tipo="moto" data-cupos="<?php echo $info; ?>" <?php echo ($estado=='ocupado'?'disabled':''); ?> style="grid-column:3;grid-row:4;position:relative;">
+                                <button type="button" class="espacio-btn moto-btn <?php echo $estado; ?>" data-espacio="441" data-tipo="moto" data-cupos="<?php echo $info; ?>" <?php echo ($estado=='ocupado'?'disabled':''); ?> style="grid-column:3;grid-row:2;position:relative;">
                                     <span class="icono-auto"><i class="fa-solid fa-motorcycle"></i></span>
                                     <span>441</span>
                                     <span class="tooltip-cupos"><?php echo $info; ?></span>
-                                </button>
+                                </button>   
                             </div>
                         </div>
                         <div id="ayuda-espacio-moto" style="font-size: 13px; color: #888; margin-top: 3px; text-align:center;">Selecciona un espacio disponible (verde). Pasa el mouse para ver los cupos ocupados.</div>
