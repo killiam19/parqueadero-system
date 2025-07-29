@@ -27,5 +27,6 @@ $router->post('/login',                [AuthController::class, 'authenticate'], 
 $router->post('/logout',               [AuthController::class, 'logout'],       Authenticated::class);
 
 // Rutas para registro
-$router->get('/register', [AuthController::class, 'register']);
+$router->get('/register',  [AuthController::class, 'register']);
 $router->post('/register', [AuthController::class, 'store']);
+$router->get('/reglamento',  [AuthController::class, 'reglamento']);

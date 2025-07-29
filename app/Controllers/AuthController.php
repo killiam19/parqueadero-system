@@ -43,6 +43,11 @@ public function register()
     view('registrar');
 }
 
+public function reglamento()
+{
+    view('reglamento');
+}
+
 // Procesar el registro de nuevo usuario
 public function store()
 {
