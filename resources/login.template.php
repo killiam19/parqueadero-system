@@ -19,11 +19,14 @@
 
         <div class="mb-4">
             <label class="text-sm font-semibold text-gray-900">Contraseña</label>
-            <div class="mt-2">
+            <div class="mt-2 relative">
                 <input 
                     type="password" 
                     name="password" 
-                    class="w-full outline-1 outline-gray-300 rounded-md px-3 py-2 text-gray-900">
+                    class="w-full outline-1 outline-gray-300 rounded-md px-3 py-2 text-gray-900 pr-12" id="login-password" autocomplete="current-password">
+                <button type="button" id="toggle-login-password" tabindex="-1" class="absolute right-3 top-1/2 -translate-y-1/2 p-0 bg-transparent border-0 text-gray-400 hover:text-blue-600 focus:outline-none">
+                    <i class="fa-solid fa-eye text-lg" id="login-eye-icon"></i>
+                </button>
             </div>
         </div>
 
@@ -46,4 +49,21 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+<script>
+  const loginPasswordInput = document.getElementById('login-password');
+  const loginToggleBtn = document.getElementById('toggle-login-password');
+  const loginEyeIcon = document.getElementById('login-eye-icon');
+  if (loginToggleBtn) {
+    loginToggleBtn.addEventListener('click', function() {
+      if (loginPasswordInput.type === 'password') {
+        loginPasswordInput.type = 'text';
+        loginEyeIcon.classList.remove('fa-eye');
+        loginEyeIcon.classList.add('fa-eye-slash');
+      } else {
+        loginPasswordInput.type = 'password';
+        loginEyeIcon.classList.remove('fa-eye-slash');
+        loginEyeIcon.classList.add('fa-eye');
+      }
+    });
+  }
 <?php require resource_path('partials/new.footer.php'); ?>

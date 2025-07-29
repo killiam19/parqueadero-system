@@ -17,11 +17,21 @@
   </div>
   <div class="mb-5">
     <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Tu contraseña</label>
-    <input type="password" id="password" name="password" class="shadow-xs bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-xs-light" required />
+    <div class="relative">
+      <input type="password" id="password" name="password" class="shadow-xs bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 pr-12 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-xs-light" required autocomplete="new-password" />
+      <button type="button" id="toggle-password" tabindex="-1" class="absolute right-3 top-1/2 -translate-y-1/2 p-0 bg-transparent border-0 text-gray-400 hover:text-blue-600 focus:outline-none">
+        <i class="fa-solid fa-eye text-lg" id="password-eye-icon"></i>
+      </button>
+    </div>
   </div>
   <div class="mb-5">
     <label for="repeat-password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Repetir contraseña</label>
-    <input type="password" id="repeat-password" name="repeat-password" class="shadow-xs bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-xs-light" required />
+    <div class="relative">
+      <input type="password" id="repeat-password" name="repeat-password" class="shadow-xs bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 pr-12 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-xs-light" required autocomplete="new-password" />
+      <button type="button" id="toggle-repeat-password" tabindex="-1" class="absolute right-3 top-1/2 -translate-y-1/2 p-0 bg-transparent border-0 text-gray-400 hover:text-blue-600 focus:outline-none">
+        <i class="fa-solid fa-eye text-lg" id="repeat-password-eye-icon"></i>
+      </button>
+    </div>
   </div>
   <div class="flex items-start mb-5">
     <div class="flex items-center h-5">
@@ -41,4 +51,40 @@
     <?= errors() ?>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+<script>
+  // Toggle para contraseña principal
+  const passwordInput = document.getElementById('password');
+  const passwordToggleBtn = document.getElementById('toggle-password');
+  const passwordEyeIcon = document.getElementById('password-eye-icon');
+  if (passwordToggleBtn) {
+    passwordToggleBtn.addEventListener('click', function() {
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        passwordEyeIcon.classList.remove('fa-eye');
+        passwordEyeIcon.classList.add('fa-eye-slash');
+      } else {
+        passwordInput.type = 'password';
+        passwordEyeIcon.classList.remove('fa-eye-slash');
+        passwordEyeIcon.classList.add('fa-eye');
+      }
+    });
+  }
+  // Toggle para repetir contraseña
+  const repeatPasswordInput = document.getElementById('repeat-password');
+  const repeatPasswordToggleBtn = document.getElementById('toggle-repeat-password');
+  const repeatPasswordEyeIcon = document.getElementById('repeat-password-eye-icon');
+  if (repeatPasswordToggleBtn) {
+    repeatPasswordToggleBtn.addEventListener('click', function() {
+      if (repeatPasswordInput.type === 'password') {
+        repeatPasswordInput.type = 'text';
+        repeatPasswordEyeIcon.classList.remove('fa-eye');
+        repeatPasswordEyeIcon.classList.add('fa-eye-slash');
+      } else {
+        repeatPasswordInput.type = 'password';
+        repeatPasswordEyeIcon.classList.remove('fa-eye-slash');
+        repeatPasswordEyeIcon.classList.add('fa-eye');
+      }
+    });
+  }
+</script>
 <?php require resource_path('partials/new.footer.php'); ?>
