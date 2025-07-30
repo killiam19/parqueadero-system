@@ -271,7 +271,7 @@
                         </div>
                         <div class="mapa-leyenda" style="justify-content: flex-start;">
                             <span><span style="display:inline-block;width:18px;height:18px;background:#22c55e;border-radius:4px;"></span> Disponible</span>
-                            <span><span style="display:inline-block;width:18px;height:18px;background:#f6e6ea;border-radius:4px;"></span> Ocupado</span>
+                            <span><span style="display:inline-block;width:18px;height:18px;background:#f6e6ea;border-radius:4px;"></span> Lleno</span>
                             <span><span style="display:inline-block;width:18px;height:18px;background:#2563eb;border-radius:4px;"></span> Seleccionado</span>
                         </div>
                         <div class="mapa-espacios-bg" style="display: flex; flex-direction: column; align-items: center;">
@@ -391,6 +391,7 @@
                         <?php foreach ($reservas_hoy as $reserva): ?>
                             <div class="reserva-item">
                                 <h4><?php echo htmlspecialchars($reserva['nombre']); ?></h4>
+                                <p><strong>Espacio: </strong><?php echo htmlspecialchars($reserva['numero_espacio']); ?></p>
                                 <p><strong>Horario:</strong> <?php echo date('H:i', strtotime($reserva['hora_inicio'])); ?> - <?php echo date('H:i', strtotime($reserva['hora_fin'])); ?></p>
                                 <p><strong>Placa:</strong> <?php echo htmlspecialchars($reserva['placa_vehiculo']); ?></p>
                                 <p><strong>Email:</strong> <?php echo htmlspecialchars($reserva['email']); ?></p>
@@ -407,6 +408,7 @@
                         <?php foreach ($reservas_manana as $reserva): ?>
                             <div class="reserva-item">
                                 <h4><?php echo htmlspecialchars($reserva['nombre']); ?></h4>
+                                <p><strong>Espacio: </strong><?php echo htmlspecialchars($reserva['numero_espacio']); ?></p>
                                 <p><strong>Horario:</strong> <?php echo date('H:i', strtotime($reserva['hora_inicio'])); ?> - <?php echo date('H:i', strtotime($reserva['hora_fin'])); ?></p>
                                 <p><strong>Placa:</strong> <?php echo htmlspecialchars($reserva['placa_vehiculo']); ?></p>
                                 <p><strong>Email:</strong> <?php echo htmlspecialchars($reserva['email']); ?></p>

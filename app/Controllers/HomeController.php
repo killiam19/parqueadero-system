@@ -371,6 +371,10 @@ class HomeController
                         <td style="padding: 8px 0; font-weight: bold;">Fecha:</td>
                         <td style="padding: 8px 0;">' . htmlspecialchars($datosReserva['fecha']) . '</td>
                     </tr>
+                      <tr>
+                        <td style="padding: 8px 0; font-weight: bold;">Espacio:</td>
+                        <td style="padding: 8px 0;">' . htmlspecialchars($datosReserva['numero_espacio']) . '</td>
+                    </tr>
                     <tr>
                         <td style="padding: 8px 0; font-weight: bold;">Hora inicio:</td>
                         <td style="padding: 8px 0;">' . htmlspecialchars($datosReserva['hora_inicio']) . '</td>
