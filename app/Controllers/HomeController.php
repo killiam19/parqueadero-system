@@ -99,6 +99,32 @@ class HomeController
             $reservas_manana = [];
         }
 
+        //Obtener reservas para hoy
+        if ($_SESSION['usuario_rol'] == 'admin') {
+            // Admin ve todas las reservas
+            $reservas_hoy = db()->query(
+                'SELECT r.*, u.nombre, u.email FROM reservas r
+                JOIN usuarios u ON r.usuario_id = u.id
+                WHERE r.fecha_reserva = :fecha AND r.estado = "activa"
+                ORDER BY r.hora_inicio',
+                ['fecha' => $hoy]
+                )->get();
+                } elseif ($_SESSION['usuario_rol']) {
+            // Usuario normal solo ve sus reservas
+            $reservas_hoy = db()->query(
+                'SELECT r.*, u.nombre, u.email FROM reservas r
+                JOIN usuarios u ON r.usuario_id = u.id
+                WHERE r.fecha_reserva = :fecha AND r.usuario_id = :usuario_id AND r.estado = "activa"
+                ORDER BY r.hora_inicio',
+                [
+                'fecha' => $hoy,
+                'usuario_id' => $currentUser['id']
+                ]
+                )->get();
+                } else {
+                    $reservas_hoy = [];
+                       }
+
         // Obtener lista de usuarios para admin
         $usuarios = [];
         if ($_SESSION['usuario_rol'] == 'admin') {
@@ -213,6 +239,7 @@ class HomeController
             'ocupados_map' => $ocupados_map,
             'moto_ocupados' => $moto_ocupados,
             'reservas_manana' => $reservas_manana,
+            'reservas_hoy' => $reservas_hoy,
             'usuarios' => $usuarios,
             'hoy' => $hoy,
             'manana' => $manana,

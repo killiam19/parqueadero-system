@@ -1,11 +1,33 @@
-<footer class="bg-white dark:bg-gray-900 w-full">
+  </div>
+</body>
+<style>
+    footer{
+           width: 100vw;
+    min-width: 100vw;
+    margin-left: 0;
+    margin-right: 0;
+    color: #fff;
+    margin-top: 40px;
+    padding: 0;
+    display: flex;
+
+    align-items: center;
+    box-sizing: border-box;
+    z-index: 10;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    transform: translateX(-50%);
+    }
+</style>
+<footer class="bg-gray-100 dark:bg-gray-900 w-full">
     <!-- CAMBIO 1: Eliminé max-w-none y cambié px-0 por px-4 -->
     <div class="w-full px-4 py-6 lg:py-8">
         <div class="md:flex md:justify-between">
           <div class="mb-6 md:mb-0">
               <a href="https://flowbite.com/" class="flex items-center">
                   <img src="https://parejalecaros.pe/wp-content/uploads/2022/10/LOGO-3SHAPE-01.png" class="h-8 me-3" alt="FlowBite Logo" />
-                  <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Parking System</span>
+                  <span class="self-center text-2xl font-semibold whitespace-nowrap text-black dark:text-white">Parking System</span>
               </a>
           </div>
           <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">

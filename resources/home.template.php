@@ -114,16 +114,24 @@
 </a>
 
 
-<!-- Carousel Start -->
-<div id="image-carousel" style="max-width: 600px; margin: 20px auto; position: relative; overflow: hidden; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-    <div class="carousel-images" style="display: flex; transition: transform 0.5s ease;">
-        <img src="assets/images/Parking.png" alt="Image 2" style="width: 100%; flex-shrink: 0;">
-        <img src="assets/images/Mapa Parqueadero Completo.png" alt="Image 1" style="width: 100%; flex-shrink: 0;">
+<button id="open-carousel-btn" style="display: block; margin: 20px auto; padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #2260ff; color: white; border: none; border-radius: 5px;">Ver distribución de parqueadero</button>
+
+<!-- Modal Start -->
+<div id="carousel-modal" style="display:none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5);">
+  <div style="background-color: #fff; margin: 10% auto; padding: 20px; border-radius: 8px; max-width: 650px; position: relative;">
+    <button id="close-carousel-btn" aria-label="Cerrar" style="position: absolute; top: 10px; right: 10px; background: #f44336; border: none; color: white; font-size: 20px; padding: 5px 10px; cursor: pointer; border-radius: 5px;">&times;</button>
+    
+    <div id="image-carousel" style="max-width: 600px; margin: 0 auto; position: relative; overflow: hidden; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+        <div class="carousel-images" style="display: flex; transition: transform 0.5s ease;">
+            <img src="assets/images/Parking.png" alt="Image 2" style="width: 100%; flex-shrink: 0;">
+            <img src="assets/images/Mapa Parqueadero Completo.png" alt="Image 1" style="width: 100%; flex-shrink: 0;">
+        </div>
+        <div style="text-align: center; margin-top: 8px; font-weight: bold; color: #444;">Mapa conceptual / Referencia de espacios</div>
+        <!-- Navigation buttons -->
+        <button id="prev-btn" aria-label="Previous" style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); background: rgba(0,0,0,0.3); border: none; color: white; font-size: 24px; padding: 8px 12px; cursor: pointer; border-radius: 50%;">&#10094;</button>
+        <button id="next-btn" aria-label="Next" style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); background: rgba(0,0,0,0.3); border: none; color: white; font-size: 24px; padding: 8px 12px; cursor: pointer; border-radius: 50%;">&#10095;</button>
     </div>
-    <div style="text-align: center; margin-top: 8px; font-weight: bold; color: #444;">Mapa conceptual / Referencia de espacios</div>
-    <!-- Navigation buttons -->
-    <button id="prev-btn" aria-label="Previous" style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); background: rgba(0,0,0,0.3); border: none; color: white; font-size: 24px; padding: 8px 12px; cursor: pointer; border-radius: 50%;">&#10094;</button>
-    <button id="next-btn" aria-label="Next" style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); background: rgba(0,0,0,0.3); border: none; color: white; font-size: 24px; padding: 8px 12px; cursor: pointer; border-radius: 50%;">&#10095;</button>
+  </div>
 </div>
 
 <script>
@@ -153,6 +161,28 @@
         });
 
         // Auto slide removed as per user request
+
+        // Modal open/close logic
+        const openBtn = document.getElementById('open-carousel-btn');
+        const modal = document.getElementById('carousel-modal');
+        const closeBtn = document.getElementById('close-carousel-btn');
+
+        openBtn.addEventListener('click', () => {
+            modal.style.display = 'block';
+            currentIndex = 0; // Reset to first image when opening
+            updateCarousel();
+        });
+
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        // Close modal when clicking outside the modal content
+        window.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
     })();
 </script>
 </div>
@@ -353,6 +383,22 @@
             
             <div>
                 <div class="card">
+                    <h2><i class="far fa-calendar-alt"></i> Reservas para Hoy</h2>
+                    
+                    <?php if (empty($reservas_hoy)): ?>
+                        <p><?php echo ($_SESSION['usuario_rol'] == 'admin') ? 'No hay reservas para mañana.' : 'No tienes reservas para mañana.'; ?></p>
+                    <?php else: ?>
+                        <?php foreach ($reservas_hoy as $reserva): ?>
+                            <div class="reserva-item">
+                                <h4><?php echo htmlspecialchars($reserva['nombre']); ?></h4>
+                                <p><strong>Horario:</strong> <?php echo date('H:i', strtotime($reserva['hora_inicio'])); ?> - <?php echo date('H:i', strtotime($reserva['hora_fin'])); ?></p>
+                                <p><strong>Placa:</strong> <?php echo htmlspecialchars($reserva['placa_vehiculo']); ?></p>
+                                <p><strong>Email:</strong> <?php echo htmlspecialchars($reserva['email']); ?></p>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+                <div class="card">
                     <h2><i class="far fa-calendar-alt"></i> Reservas para Mañana</h2>
                     
                     <?php if (empty($reservas_manana)): ?>
@@ -451,8 +497,6 @@
             });
         }
     </script>
-</body>
-
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
 <script src="js/dropdown.js"></script>

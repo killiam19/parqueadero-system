@@ -130,7 +130,7 @@ class AdminController
         // Obtener todos los usuarios con estadísticas
         $usuarios = $this->getUsuariosConEstadisticas();
 
-        view('admin-usuarios', [
+        view('usuarios', [
             'title' => 'Gestión de Usuarios',
             'usuarios' => $usuarios,
             'mensaje' => $mensaje,
