@@ -386,7 +386,7 @@
                     <h2><i class="far fa-calendar-alt"></i> Reservas para Hoy</h2>
                     
                     <?php if (empty($reservas_hoy)): ?>
-                        <p><?php echo ($_SESSION['usuario_rol'] == 'admin') ? 'No hay reservas para mañana.' : 'No tienes reservas para mañana.'; ?></p>
+                        <p><?php echo ($_SESSION['usuario_rol'] == 'admin') ? 'No hay reservas para mañana.' : 'No tienes reservas para hoy.'; ?></p>
                     <?php else: ?>
                         <?php foreach ($reservas_hoy as $reserva): ?>
                             <div class="reserva-item">

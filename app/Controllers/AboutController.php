@@ -7,7 +7,7 @@ class AboutController
     public function index()
     {
         view('about',[
-            'title' => 'Sobre mi',
+            'title' => 'Sistema de parqueadero',
         ]);
     }
 }
