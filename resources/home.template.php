@@ -104,7 +104,7 @@
 
 <h1 class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black">Sistema de Agendamiento de Parqueadero de 3Shape</h1>
 <?php if (isset($_SESSION['usuario_nombre']) && $_SESSION['usuario_nombre']): ?>
-<p class="mb-6 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">Bienvenid@, <?php echo htmlspecialchars($_SESSION['usuario_nombre']); ?></p>
+<p class="mb-6 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">Te damos la bienvenida, <?php echo htmlspecialchars($_SESSION['usuario_nombre']); ?></p>
 <?php endif; ?>
 <a href="/about" class="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900">
     Conoce más

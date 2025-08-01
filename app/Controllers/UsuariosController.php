@@ -10,5 +10,19 @@ class UsuariosController
             'title' => 'Usuarios',
         ]);
     }
+
+    public function cuenta()
+    {
+        view('cuenta',[
+            'title' => 'Mi Cuenta',
+            ]);
+    }
+
+    public function configuracion()
+    {
+        view('configuracion',[
+            'title' => 'Configuracion',
+            ]);
+    }
 }
 

@@ -1,4 +1,5 @@
   </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
 </body>
 <style>
     footer{
@@ -25,7 +26,7 @@
     <div class="w-full px-4 py-6 lg:py-8">
         <div class="md:flex md:justify-between">
           <div class="mb-6 md:mb-0">
-              <a href="https://flowbite.com/" class="flex items-center">
+              <a href="https://www.3shape.com/" class="flex items-center">
                   <img src="https://parejalecaros.pe/wp-content/uploads/2022/10/LOGO-3SHAPE-01.png" class="h-8 me-3" alt="FlowBite Logo" />
                   <span class="self-center text-2xl font-semibold whitespace-nowrap text-black dark:text-white">Parking System</span>
               </a>
@@ -72,7 +73,7 @@
       <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
       <!-- CAMBIO 2: Eliminé px-4 de esta sección para que ocupe todo el ancho -->
       <div class="sm:flex sm:items-center sm:justify-between px-4">
-          <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2025 <a href="https://flowbite.com/" class="hover:underline">3Shape™</a>. All Rights Reserved.
+          <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2025 <a href="https://www.3shape.com/" class="hover:underline">3Shape™</a>. All Rights Reserved.
           </span>
           <div class="flex mt-4 sm:justify-center sm:mt-0 space-x-5">
               <a href="https://www.facebook.com/3Shape" class="text-gray-500 hover:text-gray-900 dark:hover:text-white">

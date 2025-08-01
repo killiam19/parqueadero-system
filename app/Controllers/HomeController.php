@@ -37,10 +37,12 @@ class HomeController
         if ($usuario) {
             $_SESSION['usuario_id'] = $usuario['id'];
             $_SESSION['usuario_nombre'] = $usuario['nombre'];
+            $_SESSION['usuario_email'] = $usuario['email'];
             $_SESSION['usuario_rol'] = $usuario['rol'];
         } else {
             $_SESSION['usuario_id'] = null;
             $_SESSION['usuario_nombre'] = null;
+            $_SESSION['usuario_email'] = null;
             $_SESSION['usuario_rol'] = null;
         }
 

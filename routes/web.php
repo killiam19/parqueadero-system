@@ -28,13 +28,17 @@ $router->post('/login',                [AuthController::class, 'authenticate'], 
 $router->post('/logout',               [AuthController::class, 'logout'],       Authenticated::class);
 
 // Rutas para registro
-$router->get('/register',  [AuthController::class, 'register']);
-$router->post('/register', [AuthController::class, 'store']);
+$router->get('/register',    [AuthController::class, 'register']);
+$router->post('/register',   [AuthController::class, 'store']);
 $router->get('/reglamento',  [AuthController::class, 'reglamento']);
 
 // Rutas de administración
 $router->get('/admin',                 [AdminController::class, 'index'],       Authenticated::class);
 $router->post('/admin',                [AdminController::class, 'index'],       Authenticated::class);
-$router->get('/admin',                 [AdminController::class, 'usuarios'],       Authenticated::class);
+$router->get('/usuarios',              [AdminController::class, 'usuarios'],    Authenticated::class);
 $router->get('/admin/usuarios',        [AdminController::class, 'usuarios'],    Authenticated::class);
 $router->post('/admin/usuarios',       [AdminController::class, 'usuarios'],    Authenticated::class);
+
+//Rutas para usuario
+$router->get('/configuracion', [UsuariosController::class, 'configuracion']);
+$router->get('/cuenta', [UsuariosController::class, 'cuenta']);

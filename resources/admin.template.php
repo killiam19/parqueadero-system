@@ -348,5 +348,4 @@
         </div>
     </div>
 </div>
-
 <?php require resource_path('partials/new.footer.php'); ?>
