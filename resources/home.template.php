@@ -1,4 +1,3 @@
-
 <?php require __DIR__ . '/partials/header.php'; ?>
 <style>
 .radio-inputs {
@@ -142,9 +141,6 @@
         const totalImages = images.length;
         let currentIndex = 0;
 
-        const prevBtn = document.getElementById('prev-btn');
-        const nextBtn = document.getElementById('next-btn');
-
         function updateCarousel() {
             const offset = -currentIndex * 100;
             imagesContainer.style.transform = 'translateX(' + offset + '%)';
@@ -219,6 +215,31 @@
                                 </span>
                             </label>
                             <label>
+                                <input class="radio-input" type="radio" name="tipo_vehiculo_selector" value="moto_grande">
+                                <span class="radio-tile">
+                                    <span class="radio-icon">
+                                        <!-- Moto Grande SVG - Diferente al de moto normal -->
+                                        <svg stroke="currentColor" xml:space="preserve" viewBox="0 0 512 512" fill="none" width="32" height="32">
+                                            <g>
+                                                <path d="M402.1,234.3c-19.8,0-37.8,7.2-51.8,19.1l-41.2-20.6c5.3-8.9,8.4-19.3,8.4-30.5c0-32.4-26.3-58.7-58.7-58.7
+                                                c-32.4,0-58.7,26.3-58.7,58.7c0,11.2,3.1,21.6,8.4,30.5l-41.2,20.6c-14-11.9-32-19.1-51.8-19.1C51.1,234.3,0,285.4,0,349.9
+                                                s51.1,115.6,115.6,115.6c51.9,0,95.1-34.2,109.6-81.1h61.6c14.5,46.9,57.7,81.1,109.6,81.1c64.5,0,115.6-51.1,115.6-115.6
+                                                S466.6,234.3,402.1,234.3z M115.6,432.8c-45.8,0-82.9-37.1-82.9-82.9s37.1-82.9,82.9-82.9s82.9,37.1,82.9,82.9
+                                                S161.4,432.8,115.6,432.8z M276.1,202.3c0-13.6,11.1-24.7,24.7-24.7s24.7,11.1,24.7,24.7s-11.1,24.7-24.7,24.7
+                                                S276.1,215.9,276.1,202.3z M402.1,432.8c-45.8,0-82.9-37.1-82.9-82.9s37.1-82.9,82.9-82.9s82.9,37.1,82.9,82.9
+                                                S447.9,432.8,402.1,432.8z"/>
+                                                <circle cx="115.6" cy="349.9" r="33"/>
+                                                <circle cx="402.1" cy="349.9" r="33"/>
+                                                <path d="M341.3,98.7h-34.1V64.6c0-9.1-7.4-16.4-16.4-16.4s-16.4,7.4-16.4,16.4v34.1h-34.1c-9.1,0-16.4,7.4-16.4,16.4
+                                                s7.4,16.4,16.4,16.4h34.1v34.1c0,9.1,7.4,16.4,16.4,16.4s16.4-7.4,16.4-16.4v-34.1h34.1c9.1,0,16.4-7.4,16.4-16.4
+                                                S350.4,98.7,341.3,98.7z"/>
+                                            </g>
+                                        </svg>
+                                    </span>
+                                    <span class="radio-label">Moto Grande</span>
+                                </span>
+                            </label>
+                            <label>
                                 <input class="radio-input" type="radio" name="tipo_vehiculo_selector" value="carro" checked>
                                 <span class="radio-tile">
                                     <span class="radio-icon">
@@ -242,7 +263,7 @@
                         </div>
                         <div class="mapa-espacios-bg">
                             <div id="mapa-espacios-carro">
-                                <?php for ($i = 281; $i >= 270; $i--): ?>
+                                <?php for ($i = 281; $i >= 272; $i--): ?>
                                     <?php
                                         $estado = 'disponible';
                                         if (isset($ocupados_map[$i])) {
@@ -254,7 +275,7 @@
                                         }
                                     ?>
                                     <button type="button" class="espacio-btn <?php echo $estado; ?>" data-espacio="<?php echo $i; ?>" data-tipo="carro" <?php echo ($estado=='ocupado'?'disabled':''); ?>
-                                    <?php if($estado=='seleccionado'): ?> style="background:#2563eb;color:#fff;border:2px solid #2563eb;box-shadow:0 0 0 4px #2563eb33;"<?php endif; ?>
+                                    <?php if($estado=='seleccionado'): ?> style="background:#2563eb;color:#fff;border:2px solid #2563eb;box-shadow:0 0 0 44px #2563eb33;"<?php endif; ?>
                                     >
                                         <span class="icono-auto"><i class="fa-solid fa-car-side"></i></span>
                                         <span><?php echo $i; ?></span>
@@ -333,6 +354,40 @@
                         </div>
                         <div id="ayuda-espacio-moto" style="font-size: 13px; color: #888; margin-top: 3px; text-align:center;">Selecciona un espacio disponible (verde). Pasa el mouse para ver los cupos ocupados.</div>
                     </div>
+                    <div id="mapa-moto-grande" style="display:none;">
+                        <div class="mapa-titulo" style="justify-content: flex-start;">
+                            <span style="color:#2563eb;font-size:2.2rem;">&#128205;</span>
+                            Mapa de Espacios de Parqueadero (Motos Grandes)-Disponibilidad para el día de hoy
+                        </div>
+                        <div class="mapa-leyenda" style="justify-content: flex-start;">
+                            <span><span style="display:inline-block;width:18px;height:18px;background:#22c55e;border-radius:4px;"></span> Disponible</span>
+                            <span><span style="display:inline-block;width:18px;height:18px;background:#f6e6ea;border-radius:4px;"></span> Ocupado</span>
+                            <span><span style="display:inline-block;width:18px;height:18px;background:#2563eb;border-radius:4px;"></span> Seleccionado</span>
+                        </div>
+                        <div class="mapa-espacios-bg">
+                            <div id="mapa-espacios-moto-grande" style="display: flex; justify-content: center; gap: 10px;">
+                                <?php for ($i = 270; $i <= 271; $i++): ?>
+                                    <?php
+                                        $estado = 'disponible';
+                                        if (isset($moto_grande_ocupados_map[$i])) {
+                                            if ($moto_grande_ocupados_map[$i] == $_SESSION['usuario_id']) {
+                                                $estado = 'seleccionado';
+                                            } else {
+                                                $estado = 'ocupado';
+                                            }
+                                        }
+                                    ?>
+                                    <button type="button" class="espacio-btn moto-grande-btn <?php echo $estado; ?>" data-espacio="<?php echo $i; ?>" data-tipo="moto_grande" <?php echo ($estado=='ocupado'?'disabled':''); ?>
+                                    <?php if($estado=='seleccionado'): ?> style="background:#2563eb;color:#fff;border:2px solid #2563eb;box-shadow:0 0 0 4px #2563eb33;"<?php endif; ?>
+                                    >
+                                        <span class="icono-auto"><i class="fa-solid fa-motorcycle"></i></span>
+                                        <span><?php echo $i; ?></span>
+                                    </button>
+                                <?php endfor; ?>
+                            </div>
+                        </div>
+                        <div id="ayuda-espacio-moto-grande" style="font-size: 13px; color: #888; margin-top: 3px; text-align:center;">Selecciona un espacio disponible (verde) para motos grandes.</div>
+                    </div>
                 </div>
 
                 <div id="formulario-reserva" class="card form-reserva-oculto">
@@ -355,14 +410,6 @@
                         <div class="form-group">
                             <label for="fecha_reserva" name="fecha_reserva">Fecha de Reserva:</label>
                             <input type="date" name="fecha_reserva" id="fecha_reserva" min="<?php echo $hoy; ?>" max="<?php echo $manana; ?>" value="<?php echo $hoy; ?>" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="hora_inicio" name="hora_inicio">Hora de Inicio:</label>
-                            <input type="time" name="hora_inicio" id="hora_inicio" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="hora_fin" name="hora_fin">Hora de Fin:</label>
-                            <input type="time" name="hora_fin" id="hora_fin" required>
                         </div>
                         <div class="form-group">
                             <label for="placa_vehiculo" name="placa_vehiculo">Placa del Vehículo:</label>
@@ -392,7 +439,6 @@
                             <div class="reserva-item">
                                 <h4><?php echo htmlspecialchars($reserva['nombre']); ?></h4>
                                 <p><strong>Espacio: </strong><?php echo htmlspecialchars($reserva['numero_espacio']); ?></p>
-                                <p><strong>Horario:</strong> <?php echo date('H:i', strtotime($reserva['hora_inicio'])); ?> - <?php echo date('H:i', strtotime($reserva['hora_fin'])); ?></p>
                                 <p><strong>Placa:</strong> <?php echo htmlspecialchars($reserva['placa_vehiculo']); ?></p>
                                 <p><strong>Email:</strong> <?php echo htmlspecialchars($reserva['email']); ?></p>
                             </div>
@@ -409,7 +455,6 @@
                             <div class="reserva-item">
                                 <h4><?php echo htmlspecialchars($reserva['nombre']); ?></h4>
                                 <p><strong>Espacio: </strong><?php echo htmlspecialchars($reserva['numero_espacio']); ?></p>
-                                <p><strong>Horario:</strong> <?php echo date('H:i', strtotime($reserva['hora_inicio'])); ?> - <?php echo date('H:i', strtotime($reserva['hora_fin'])); ?></p>
                                 <p><strong>Placa:</strong> <?php echo htmlspecialchars($reserva['placa_vehiculo']); ?></p>
                                 <p><strong>Email:</strong> <?php echo htmlspecialchars($reserva['email']); ?></p>
                             </div>
@@ -440,20 +485,28 @@
         const tipoVehiculoRadios = document.getElementsByName('tipo_vehiculo_selector');
         const mapaCarro = document.getElementById('mapa-carro');
         const mapaMoto = document.getElementById('mapa-moto');
+        const mapaMotoGrande = document.getElementById('mapa-moto-grande');
         const formTipoVehiculo = document.getElementById('tipo_vehiculo');
 
         // Mostrar el mapa correcto según selección
         Array.from(tipoVehiculoRadios).forEach(radio => {
             radio.addEventListener('change', function() {
+                // Ocultar todos los mapas
+                mapaCarro.style.display = 'none';
+                mapaMoto.style.display = 'none';
+                mapaMotoGrande.style.display = 'none';
+                
                 if (this.value === 'carro') {
                     mapaCarro.style.display = 'block';
-                    mapaMoto.style.display = 'none';
                     if (formTipoVehiculo) formTipoVehiculo.value = 'carro';
-                } else {
-                    mapaCarro.style.display = 'none';
+                } else if (this.value === 'moto') {
                     mapaMoto.style.display = 'block';
                     if (formTipoVehiculo) formTipoVehiculo.value = 'moto';
+                } else if (this.value === 'moto_grande') {
+                    mapaMotoGrande.style.display = 'block';
+                    if (formTipoVehiculo) formTipoVehiculo.value = 'moto_grande';
                 }
+                
                 // Limpiar selección previa
                 document.getElementById('numero_espacio').value = '';
                 document.getElementById('formulario-reserva').classList.add('form-reserva-oculto');
@@ -470,10 +523,9 @@
             botones.forEach(btn => {
                 btn.addEventListener('click', function() {
                     if (btn.hasAttribute('disabled')) return;
-                    // Quitar seleccionado de todos los botones de motos
-                    document.querySelectorAll('.moto-btn').forEach(b => b.classList.remove('seleccionado'));
-                    // Quitar seleccionado de todos los botones de carros
-                    document.querySelectorAll('.espacio-btn:not(.moto-btn)').forEach(b => b.classList.remove('seleccionado'));
+                    // Quitar seleccionado de todos los botones
+                    document.querySelectorAll('.moto-btn, .moto-grande-btn, .espacio-btn:not(.moto-btn):not(.moto-grande-btn)').forEach(b => b.classList.remove('seleccionado'));
+                    
                     btn.classList.add('seleccionado');
                     inputEspacio.value = btn.getAttribute('data-espacio');
                     tituloEspacio.textContent = btn.getAttribute('data-espacio');
@@ -481,15 +533,27 @@
                     formReserva.classList.remove('form-reserva-oculto');
                     formReserva.classList.add('form-reserva-visible');
                     window.scrollTo({ top: formReserva.offsetTop - 40, behavior: 'smooth' });
-                    // Mostrar info de cupos en móviles
-                    mostrarInfoCuposMovil(btn.getAttribute('data-cupos'));
+                    // Mostrar info de cupos en móviles para motos
+                    if (tipo === 'moto') {
+                        mostrarInfoCuposMovil(btn.getAttribute('data-cupos'));
+                    }
                 });
             });
         }
+        
+        // Activar selección para cada tipo de vehículo
         activarSeleccionEspacios('#mapa-espacios-carro .espacio-btn.disponible, #mapa-espacios-carro .espacio-btn.seleccionado', 'carro');
         activarSeleccionEspacios('.moto-btn.disponible, .moto-btn.seleccionado', 'moto');
+        activarSeleccionEspacios('.moto-grande-btn.disponible, .moto-grande-btn.seleccionado', 'moto_grande');
 
-        // Refrescar el mapa de motos tras una reserva exitosa
+        // Función para mostrar info de cupos en móviles (solo para motos normales)
+        function mostrarInfoCuposMovil(info) {
+            if (window.innerWidth <= 768 && info) {
+                alert('Información del espacio: ' + info);
+            }
+        }
+
+        // Refrescar el mapa tras una reserva exitosa
         const formReserva = document.querySelector('#formulario-reserva form');
         if (formReserva) {
             formReserva.addEventListener('submit', function(e) {

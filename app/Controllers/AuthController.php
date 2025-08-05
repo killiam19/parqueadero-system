@@ -57,7 +57,7 @@ public function store()
         'email'           => 'required|email',
         'password'        => 'required|min:6',
         'repeat-password' => 'required|min:6',
-        'terms'          => 'required'
+        'terms'          =>  'required'
     ]);
 
     // Verificar que las contraseñas coincidan

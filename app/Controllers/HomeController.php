@@ -5,6 +5,7 @@ namespace App\Controllers;
 use Framework\Validator;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+
 class HomeController
 {
     public function index()
@@ -38,94 +39,75 @@ class HomeController
             $_SESSION['usuario_id'] = $usuario['id'];
             $_SESSION['usuario_nombre'] = $usuario['nombre'];
             $_SESSION['usuario_email'] = $usuario['email'];
+            $_SESSION['usuario_telefono'] = $usuario['telefono'];
             $_SESSION['usuario_rol'] = $usuario['rol'];
         } else {
             $_SESSION['usuario_id'] = null;
             $_SESSION['usuario_nombre'] = null;
             $_SESSION['usuario_email'] = null;
+            $_SESSION['usuario_telefono'] = null;
             $_SESSION['usuario_rol'] = null;
         }
 
-        // Obtener fechas para las consultas
+        // Generar fechas de la semana laboral (lunes a viernes)
+        $fechas_semana = $this->generarFechasSemanaLaboral();
         $hoy = date('Y-m-d');
-        $manana = date('Y-m-d', strtotime('+1 day'));
 
-        // Obtener espacios ocupados para carros
-        $espacios_ocupados = db()->query(
-            'SELECT numero_espacio, usuario_id FROM reservas 
-             WHERE fecha_reserva = :fecha AND tipo_vehiculo = "carro" AND estado = "activa"',
-            ['fecha' => $hoy]
+        // Obtener todas las reservas de la semana para carros
+        $fechas_str = "'" . implode("','", array_keys($fechas_semana)) . "'";
+        $espacios_ocupados_semana = db()->query(
+            "SELECT numero_espacio, usuario_id, fecha_reserva FROM reservas 
+             WHERE fecha_reserva IN ($fechas_str) AND tipo_vehiculo = 'carro' AND estado = 'activa'"
         )->get();
 
-        $ocupados_map = [];
-        foreach ($espacios_ocupados as $espacio) {
-            $ocupados_map[$espacio['numero_espacio']] = $espacio['usuario_id'];
+        // Organizar espacios ocupados por fecha
+        $ocupados_por_fecha = [];
+        foreach ($espacios_ocupados_semana as $espacio) {
+            $ocupados_por_fecha[$espacio['fecha_reserva']][$espacio['numero_espacio']] = $espacio['usuario_id'];
         }
 
-        // Obtener espacios ocupados para motos (agrupados)
-        $motos_ocupadas = db()->query(
-            'SELECT numero_espacio, COUNT(*) as ocupados FROM reservas 
-             WHERE fecha_reserva = :fecha AND tipo_vehiculo = "moto" AND estado = "activa" 
-             GROUP BY numero_espacio',
-            ['fecha' => $hoy]
+        // Obtener espacios ocupados para motos de toda la semana
+        $motos_ocupadas_semana = db()->query(
+            "SELECT numero_espacio, fecha_reserva, COUNT(*) as ocupados FROM reservas 
+             WHERE fecha_reserva IN ($fechas_str) AND tipo_vehiculo = 'moto' AND estado = 'activa' 
+             GROUP BY numero_espacio, fecha_reserva"
         )->get();
 
-        $moto_ocupados = [];
-        foreach ($motos_ocupadas as $moto) {
-            $moto_ocupados[$moto['numero_espacio']] = $moto['ocupados'];
+        // Organizar motos ocupadas por fecha
+        $moto_ocupados_por_fecha = [];
+        foreach ($motos_ocupadas_semana as $moto) {
+            $moto_ocupados_por_fecha[$moto['fecha_reserva']][$moto['numero_espacio']] = $moto['ocupados'];
         }
 
-        // Obtener reservas para mañana
-        if ($_SESSION['usuario_rol'] == 'admin') {
-            // Admin ve todas las reservas
-            $reservas_manana = db()->query(
-                'SELECT r.*, u.nombre, u.email FROM reservas r 
-                 JOIN usuarios u ON r.usuario_id = u.id 
-                 WHERE r.fecha_reserva = :fecha AND r.estado = "activa" 
-                 ORDER BY r.hora_inicio',
-                ['fecha' => $manana]
-            )->get();
-        } elseif ($_SESSION['usuario_rol']) {
-            // Usuario normal solo ve sus reservas
-            $reservas_manana = db()->query(
-                'SELECT r.*, u.nombre, u.email FROM reservas r 
-                 JOIN usuarios u ON r.usuario_id = u.id 
-                 WHERE r.fecha_reserva = :fecha AND r.usuario_id = :usuario_id AND r.estado = "activa" 
-                 ORDER BY r.hora_inicio',
-                [
-                    'fecha' => $manana,
-                    'usuario_id' => $currentUser['id']
-                ]
-            )->get();
-        } else {
-            $reservas_manana = [];
+        // Obtener reservas de toda la semana
+        $reservas_semana = [];
+        foreach ($fechas_semana as $fecha => $info) {
+            if ($_SESSION['usuario_rol'] == 'admin') {
+                // Admin ve todas las reservas
+                $reservas = db()->query(
+                    'SELECT r.*, u.nombre, u.email FROM reservas r 
+                     JOIN usuarios u ON r.usuario_id = u.id 
+                     WHERE r.fecha_reserva = :fecha AND r.estado = "activa" 
+                     ORDER BY r.numero_espacio',
+                    ['fecha' => $fecha]
+                )->get();
+            } elseif ($_SESSION['usuario_rol']) {
+                // Usuario normal solo ve sus reservas
+                $reservas = db()->query(
+                    'SELECT r.*, u.nombre, u.email FROM reservas r 
+                     JOIN usuarios u ON r.usuario_id = u.id 
+                     WHERE r.fecha_reserva = :fecha AND r.usuario_id = :usuario_id AND r.estado = "activa" 
+                     ORDER BY r.numero_espacio',
+                    [
+                        'fecha' => $fecha,
+                        'usuario_id' => $currentUser['id']
+                    ]
+                )->get();
+            } else {
+                $reservas = [];
+            }
+            $reservas_semana[$fecha] = $reservas;
         }
-
-        //Obtener reservas para hoy
-        if ($_SESSION['usuario_rol'] == 'admin') {
-            // Admin ve todas las reservas
-            $reservas_hoy = db()->query(
-                'SELECT r.*, u.nombre, u.email FROM reservas r
-                JOIN usuarios u ON r.usuario_id = u.id
-                WHERE r.fecha_reserva = :fecha AND r.estado = "activa"
-                ORDER BY r.hora_inicio',
-                ['fecha' => $hoy]
-                )->get();
-                } elseif ($_SESSION['usuario_rol']) {
-            // Usuario normal solo ve sus reservas
-            $reservas_hoy = db()->query(
-                'SELECT r.*, u.nombre, u.email FROM reservas r
-                JOIN usuarios u ON r.usuario_id = u.id
-                WHERE r.fecha_reserva = :fecha AND r.usuario_id = :usuario_id AND r.estado = "activa"
-                ORDER BY r.hora_inicio',
-                [
-                'fecha' => $hoy,
-                'usuario_id' => $currentUser['id']
-                ]
-                )->get();
-                } else {
-                    $reservas_hoy = [];
-                       }
 
         // Obtener lista de usuarios para admin
         $usuarios = [];
@@ -142,88 +124,70 @@ class HomeController
                 $numero_espacio = $_POST['numero_espacio'];
                 $tipo_vehiculo = $_POST['tipo_vehiculo'];
                 $fecha_reserva = $_POST['fecha_reserva'];
-                $hora_inicio = $_POST['hora_inicio'];
-                $hora_fin = $_POST['hora_fin'];
                 $placa_vehiculo = strtoupper(trim($_POST['placa_vehiculo']));
+                
+                // Validar que la fecha sea un día hábil
+                if (!$this->esDiaHabil($fecha_reserva)) {
+                    throw new \Exception("Solo se pueden hacer reservas para días hábiles (lunes a viernes)");
+                }
                 
                 // Determinar el usuario (admin puede reservar para otros)
                 $usuario_reserva = ($_SESSION['usuario_rol'] == 'admin' && isset($_POST['usuario_id'])) 
                     ? $_POST['usuario_id'] 
                     : ($currentUser['id'] ?? null);
 
-                // Validaciones básicas
-                if (strtotime($hora_fin) <= strtotime($hora_inicio)) {
-                    throw new \Exception("La hora de fin debe ser posterior a la hora de inicio");
-                }
-
                 // Verificar disponibilidad del espacio
                 if ($tipo_vehiculo == 'carro') {
                     $conflicto = db()->query(
                         'SELECT id FROM reservas 
-                         WHERE numero_espacio = :espacio AND fecha_reserva = :fecha 
-                         AND estado = "activa" AND (
-                             (hora_inicio <= :hora_inicio AND hora_fin > :hora_inicio) OR
-                             (hora_inicio < :hora_fin AND hora_fin >= :hora_fin) OR
-                             (hora_inicio >= :hora_inicio AND hora_fin <= :hora_fin)
-                         )',
+                         WHERE numero_espacio = :espacio AND fecha_reserva = :fecha AND estado = "activa"',
                         [
                             'espacio' => $numero_espacio,
-                            'fecha' => $fecha_reserva,
-                            'hora_inicio' => $hora_inicio,
-                            'hora_fin' => $hora_fin
+                            'fecha' => $fecha_reserva
                         ]
                     )->first();
 
                     if ($conflicto) {
-                        throw new \Exception("El espacio ya está reservado en ese horario");
+                        throw new \Exception("El espacio ya está reservado para esa fecha");
                     }
                 } else {
                     // Para motos, verificar límite de cupos
                     $cupos_maximos = [
                         '476' => 6, '476a' => 1,
                         '475' => 6, '475a' => 1,
-                        '474' => 6, '474a' => 1, '474b' => 1,
+                        '474' => 6, '474b' => 1, '474a' => 1,
                         '441' => 4
                     ];
 
                     $cupos_ocupados = db()->query(
                         'SELECT COUNT(*) as total FROM reservas 
-                         WHERE numero_espacio = :espacio AND fecha_reserva = :fecha 
-                         AND estado = "activa" AND (
-                             (hora_inicio <= :hora_inicio AND hora_fin > :hora_inicio) OR
-                             (hora_inicio < :hora_fin AND hora_fin >= :hora_fin) OR
-                             (hora_inicio >= :hora_inicio AND hora_fin <= :hora_fin)
-                         )',
+                         WHERE numero_espacio = :espacio AND fecha_reserva = :fecha AND estado = "activa"',
                         [
                             'espacio' => $numero_espacio,
-                            'fecha' => $fecha_reserva,
-                            'hora_inicio' => $hora_inicio,
-                            'hora_fin' => $hora_fin
+                            'fecha' => $fecha_reserva
                         ]
                     )->get();
 
                     $max_cupos = $cupos_maximos[$numero_espacio] ?? 1;
                     if ($cupos_ocupados && $cupos_ocupados[0]['total'] >= $max_cupos) {
-                        throw new \Exception("No hay cupos disponibles en ese espacio para el horario seleccionado");
+                        throw new \Exception("No hay cupos disponibles en ese espacio para la fecha seleccionada");
                     }
                 }
 
                 // Crear la reserva
                 db()->query(
-                    'INSERT INTO reservas (usuario_id, numero_espacio, tipo_vehiculo, fecha_reserva, hora_inicio, hora_fin, placa_vehiculo, estado, fecha_creacion) 
-                     VALUES (:usuario_id, :numero_espacio, :tipo_vehiculo, :fecha_reserva, :hora_inicio, :hora_fin, :placa_vehiculo, "activa", NOW())',
+                    'INSERT INTO reservas (usuario_id, numero_espacio, tipo_vehiculo, fecha_reserva, placa_vehiculo, estado, fecha_creacion) 
+                     VALUES (:usuario_id, :numero_espacio, :tipo_vehiculo, :fecha_reserva,:placa_vehiculo, "activa", NOW())',
                     [
                         'usuario_id' => $usuario_reserva,
                         'numero_espacio' => $numero_espacio,
                         'tipo_vehiculo' => $tipo_vehiculo,
                         'fecha_reserva' => $fecha_reserva,
-                        'hora_inicio' => $hora_inicio,
-                        'hora_fin' => $hora_fin,
                         'placa_vehiculo' => $placa_vehiculo
                     ]
                 );
 
-                $mensaje = "Reserva creada exitosamente para el espacio $numero_espacio";
+                $mensaje = "Reserva creada exitosamente para el espacio $numero_espacio el " . $this->formatearFecha($fecha_reserva);
                 $tipo_mensaje = "success";
 
                 // Recargar datos después de la reserva
@@ -235,19 +199,111 @@ class HomeController
             }
         }
 
+        // Extraer reservas de hoy y mañana
+        $hoy = date('Y-m-d');
+        $manana = date('Y-m-d', strtotime('+1 day'));
+        
+        $reservas_hoy = isset($reservas_semana[$hoy]) ? $reservas_semana[$hoy] : [];
+        $reservas_manana = isset($reservas_semana[$manana]) ? $reservas_semana[$manana] : [];
+
         // Cargar la vista con todos los datos necesarios
         view('home', [
-            'title' => 'Agendar Parqueadero',
-            'ocupados_map' => $ocupados_map,
-            'moto_ocupados' => $moto_ocupados,
-            'reservas_manana' => $reservas_manana,
+            'title' => 'Agendar Parqueadero - Semana Laboral',
+            'fechas_semana' => $fechas_semana,
+            'ocupados_por_fecha' => $ocupados_por_fecha,
+            'moto_ocupados_por_fecha' => $moto_ocupados_por_fecha,
+            'reservas_semana' => $reservas_semana,
             'reservas_hoy' => $reservas_hoy,
+            'reservas_manana' => $reservas_manana,
             'usuarios' => $usuarios,
             'hoy' => $hoy,
-            'manana' => $manana,
             'mensaje' => $mensaje,
             'tipo_mensaje' => $tipo_mensaje
         ]);
+    }
+
+    /**
+     * Genera las fechas de la semana laboral actual (lunes a viernes)
+     */
+    private function generarFechasSemanaLaboral()
+    {
+        $fechas = [];
+        $hoy = new \DateTime();
+        
+        // Encontrar el lunes de esta semana
+        $lunes = clone $hoy;
+        $dia_semana = $lunes->format('N'); // 1 = lunes, 7 = domingo
+        
+        if ($dia_semana > 1) {
+            $lunes->sub(new \DateInterval('P' . ($dia_semana - 1) . 'D'));
+        }
+        
+        // Generar fechas de lunes a viernes
+        $dias_semana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
+        
+        for ($i = 0; $i < 5; $i++) {
+            $fecha = clone $lunes;
+            $fecha->add(new \DateInterval('P' . $i . 'D'));
+            
+            $fecha_str = $fecha->format('Y-m-d');
+            $fechas[$fecha_str] = [
+                'fecha' => $fecha_str,
+                'dia_nombre' => $dias_semana[$i],
+                'dia_mes' => $fecha->format('d'),
+                'mes_nombre' => $this->obtenerNombreMes($fecha->format('n')),
+                'es_hoy' => $fecha_str === date('Y-m-d'),
+                'es_pasado' => $fecha_str < date('Y-m-d')
+            ];
+        }
+        
+        return $fechas;
+    }
+
+    /**
+     * Verifica si una fecha es día hábil (lunes a viernes)
+     */
+    private function esDiaHabil($fecha)
+    {
+        $dia_semana = date('N', strtotime($fecha)); // 1 = lunes, 7 = domingo
+        return $dia_semana >= 1 && $dia_semana <= 5;
+    }
+
+    /**
+     * Obtiene el nombre del mes en español
+     */
+    private function obtenerNombreMes($numero_mes)
+    {
+        $meses = [
+            1 => 'Enero', 2 => 'Febrero', 3 => 'Marzo', 4 => 'Abril',
+            5 => 'Mayo', 6 => 'Junio', 7 => 'Julio', 8 => 'Agosto',
+            9 => 'Septiembre', 10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre'
+        ];
+        return $meses[$numero_mes];
+    }
+
+    /**
+     * Formatea una fecha para mostrar de forma legible
+     */
+    private function formatearFecha($fecha)
+    {
+        $timestamp = strtotime($fecha);
+        $dia_nombre = $this->obtenerNombreDia(date('N', $timestamp));
+        $dia = date('d', $timestamp);
+        $mes = $this->obtenerNombreMes(date('n', $timestamp));
+        
+        return "$dia_nombre $dia de $mes";
+    }
+
+    /**
+     * Obtiene el nombre del día en español
+     */
+    private function obtenerNombreDia($numero_dia)
+    {
+        $dias = [
+            1 => 'Lunes', 2 => 'Martes', 3 => 'Miércoles', 4 => 'Jueves',
+            5 => 'Viernes', 6 => 'Sábado', 7 => 'Domingo'
+        ];
+        return $dias[$numero_dia];
     }
 
     public function show()
@@ -263,16 +319,19 @@ class HomeController
         return $home;
     }
 
-   public function store()
+    public function store()
     {
         Validator::make($_POST, [
             'numero_espacio' => 'required',
             'fecha_reserva' => 'required',
-            'hora_inicio' => 'required',
-            'hora_fin' => 'required',
             'placa_vehiculo' => 'required',
             'tipo_vehiculo' => 'required',
         ]);
+
+        // Validar que la fecha sea un día hábil
+        if (!$this->esDiaHabil($_POST['fecha_reserva'])) {
+            redirect('/', 'Solo se pueden hacer reservas para días hábiles (lunes a viernes)', 'error');
+        }
 
         // Obtener usuario actual
         $currentUser = session()->get('user');
@@ -287,14 +346,12 @@ class HomeController
 
         // Crear la reserva
         db()->query(
-            'INSERT INTO reservas (usuario_id, numero_espacio, fecha_reserva, hora_inicio, hora_fin, placa_vehiculo, estado, tipo_vehiculo) 
-             VALUES (:usuario_id, :numero_espacio, :fecha_reserva, :hora_inicio, :hora_fin, :placa_vehiculo, "activa", :tipo_vehiculo)',
+            'INSERT INTO reservas (usuario_id, numero_espacio, fecha_reserva, placa_vehiculo, estado, tipo_vehiculo) 
+             VALUES (:usuario_id, :numero_espacio, :fecha_reserva, :placa_vehiculo, "activa", :tipo_vehiculo)',
             [
                 'usuario_id' => $currentUser['id'],
                 'numero_espacio' => $_POST['numero_espacio'],
                 'fecha_reserva' => $_POST['fecha_reserva'],
-                'hora_inicio' => $_POST['hora_inicio'],
-                'hora_fin' => $_POST['hora_fin'],
                 'placa_vehiculo' => $_POST['placa_vehiculo'],
                 'tipo_vehiculo' => $_POST['tipo_vehiculo']
             ]
@@ -303,8 +360,6 @@ class HomeController
         // Preparar datos para el correo
         $datosReserva = [
             'fecha' => $_POST['fecha_reserva'],
-            'hora_inicio' => $_POST['hora_inicio'],
-            'hora_fin' => $_POST['hora_fin'],
             'placa' => $_POST['placa_vehiculo'],
             'tipo_vehiculo' => $_POST['tipo_vehiculo'],
             'numero_espacio' => $_POST['numero_espacio']
@@ -359,6 +414,9 @@ class HomeController
 
     private function crearCuerpoHTML($nombre, $datosReserva)
     {
+        // Formatear la fecha para el correo
+        $fechaFormateada = $this->formatearFecha($datosReserva['fecha']);
+        
         return '
         <div style="max-width: 500px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(44,62,80,0.08); font-family: Arial, sans-serif; overflow: hidden;">
             <div style="background: #3498db; padding: 24px 0; text-align: center;">
@@ -371,19 +429,11 @@ class HomeController
                 <table style="width: 100%; border-collapse: collapse; margin-bottom: 18px;">
                     <tr>
                         <td style="padding: 8px 0; font-weight: bold;">Fecha:</td>
-                        <td style="padding: 8px 0;">' . htmlspecialchars($datosReserva['fecha']) . '</td>
+                        <td style="padding: 8px 0;">' . htmlspecialchars($fechaFormateada) . '</td>
                     </tr>
-                      <tr>
+                    <tr>
                         <td style="padding: 8px 0; font-weight: bold;">Espacio:</td>
                         <td style="padding: 8px 0;">' . htmlspecialchars($datosReserva['numero_espacio']) . '</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 8px 0; font-weight: bold;">Hora inicio:</td>
-                        <td style="padding: 8px 0;">' . htmlspecialchars($datosReserva['hora_inicio']) . '</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 8px 0; font-weight: bold;">Hora fin:</td>
-                        <td style="padding: 8px 0;">' . htmlspecialchars($datosReserva['hora_fin']) . '</td>
                     </tr>
                     <tr>
                         <td style="padding: 8px 0; font-weight: bold;">Placa:</td>
@@ -395,7 +445,7 @@ class HomeController
                     </tr>
                 </table>
                 <div style="background: #e8f4f8; border-left: 4px solid #3498db; padding: 12px 18px; border-radius: 6px; margin-bottom: 18px;">
-                    <strong>Recuerda:</strong> Llega puntual y presenta este correo si te lo solicitan en la entrada.
+                    <strong>Recuerda:</strong> Presenta este correo si te lo solicitan en la entrada.
                 </div>
                 <p style="font-size: 0.95em; color: #888; margin-bottom: 0;">Gracias por usar el Sistema de Parqueadero.<br>Este es un correo automático, por favor no respondas a este mensaje.</p>
             </div>
@@ -404,15 +454,16 @@ class HomeController
 
     private function crearTextoPlano($nombre, $datosReserva)
     {
+        $fechaFormateada = $this->formatearFecha($datosReserva['fecha']);
+        
         return "Confirmación de Reserva\n\n" .
                "Hola {$nombre},\n\n" .
                "Tu reserva ha sido registrada con éxito:\n\n" .
-               "Fecha: {$datosReserva['fecha']}\n" .
-               "Horario: {$datosReserva['hora_inicio']} - {$datosReserva['hora_fin']}\n" .
+               "Fecha: {$fechaFormateada}\n" .
                "Espacio: {$datosReserva['numero_espacio']}\n" .
                "Placa: {$datosReserva['placa']}\n" .
                "Tipo de vehículo: {$datosReserva['tipo_vehiculo']}\n\n" .
-               "Recuerda: Llega puntual y presenta este correo si te lo solicitan en la entrada.\n\n" .
+               "Recuerda: Presenta este correo si te lo solicitan en la entrada.\n\n" .
                "Gracias por usar el Sistema de Parqueadero.\n" .
                "Este es un mensaje automático, por favor no respondas a este correo.";
     }

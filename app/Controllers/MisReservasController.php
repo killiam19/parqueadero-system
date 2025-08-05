@@ -15,11 +15,11 @@ class MisReservasController
             redirect('login');
         }
 
-        // --- NUEVO: Actualizar reservas vencidas a 'completada' ---
-        $ahora = date('Y-m-d H:i:s');
-        db()->query('UPDATE reservas SET estado = "completada" WHERE estado = "activa" AND CONCAT(fecha_reserva, " ", hora_fin) < :ahora', [
-            'ahora' => $ahora
-        ]);
+     // Actualizar reservas vencidas a 'completada' (solo por fecha)
+$hoy = date('Y-m-d');
+db()->query('UPDATE reservas SET estado = "completada" WHERE estado = "activa" AND fecha_reserva < :hoy', [
+    'hoy' => $hoy
+]);
         // --- FIN NUEVO ---
 
         // Manejar cancelación de reservas
@@ -46,7 +46,7 @@ class MisReservasController
                 SELECT r.*, u.nombre, u.email 
                 FROM reservas r
                 JOIN usuarios u ON r.usuario_id = u.id
-                ORDER BY r.fecha_reserva DESC, r.hora_inicio DESC
+                ORDER BY r.fecha_reserva DESC
             ')->get();
         } else {
             // Usuario normal solo ve sus reservas
@@ -55,7 +55,7 @@ class MisReservasController
                 FROM reservas r
                 JOIN usuarios u ON r.usuario_id = u.id
                 WHERE r.usuario_id = :usuario_id
-                ORDER BY r.fecha_reserva DESC, r.hora_inicio DESC
+                ORDER BY r.fecha_reserva DESC
             ', [
                 'usuario_id' => $_SESSION['usuario_id']
             ])->get();
