@@ -6,7 +6,7 @@
   align-items: center;
   max-width: 350px;
   -webkit-user-select: none;
-  -moz-user-select: none;
+  -moz-user-user-select: none;
   -ms-user-select: none;
   user-select: none;
 }
@@ -96,105 +96,154 @@
   white-space: nowrap;
   width: 1px;
 }
+
+/* Estilos para mensajes de validación */
+.mensaje {
+  padding: 12px 16px;
+  margin: 16px 0;
+  border-radius: 8px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mensaje.success {
+  background-color: #d1fae5;
+  border: 1px solid #10b981;
+  color: #065f46;
+}
+
+.mensaje.error {
+  background-color: #fee2e2;
+  border: 1px solid #ef4444;
+  color: #991b1b;
+}
+
+.mensaje.warning {
+  background-color: #fef3c7;
+  border: 1px solid #f59e0b;
+  color: #92400e;
+}
+
+.mensaje::before {
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  font-size: 16px;
+}
+
+.mensaje.success::before {
+  content: "\f00c"; /* check icon */
+}
+
+.mensaje.error::before {
+  content: "\f071"; /* exclamation triangle */
+}
+
+.mensaje.warning::before {
+  content: "\f06a"; /* exclamation circle */
+}
 </style>
  
-  <div class="border-b border-gray-200 pb-8 mb-8">
-     <img src="assets/images/3shape-intraoral-logo.png" alt="" width="50" height="50">
+<div class="border-b border-gray-200 pb-8 mb-8">
+    <img src="assets/images/3shape-intraoral-logo.png" alt="" width="50" height="50">
 
-<h1 class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black">Sistema de Agendamiento de Parqueadero de 3Shape</h1>
-<?php if (isset($_SESSION['usuario_nombre']) && $_SESSION['usuario_nombre']): ?>
-<p class="mb-6 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">Te damos la bienvenida, <?php echo htmlspecialchars($_SESSION['usuario_nombre']); ?></p>
-<?php endif; ?>
-<a href="/about" class="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900">
-    Conoce más
-    <svg class="w-3.5 h-3.5 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
-  </svg>
-</a>
+    <h1 class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black">Sistema de Agendamiento de Parqueadero de 3Shape</h1>
+    <?php if (isset($_SESSION['usuario_nombre']) && $_SESSION['usuario_nombre']): ?>
+    <p class="mb-6 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">Te damos la bienvenida, <?php echo htmlspecialchars($_SESSION['usuario_nombre']); ?></p>
+    <?php endif; ?>
+    <a href="/about" class="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900">
+        Conoce más
+        <svg class="w-3.5 h-3.5 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+      </svg>
+    </a>
 
+    <button id="open-carousel-btn" style="display: block; margin: 20px auto; padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #2260ff; color: white; border: none; border-radius: 5px;">Ver distribución de parqueadero</button>
 
-<button id="open-carousel-btn" style="display: block; margin: 20px auto; padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #2260ff; color: white; border: none; border-radius: 5px;">Ver distribución de parqueadero</button>
-
-<!-- Modal Start -->
-<div id="carousel-modal" style="display:none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5);">
-  <div style="background-color: #fff; margin: 10% auto; padding: 20px; border-radius: 8px; max-width: 650px; position: relative;">
-    <button id="close-carousel-btn" aria-label="Cerrar" style="position: absolute; top: 10px; right: 10px; background: #f44336; border: none; color: white; font-size: 20px; padding: 5px 10px; cursor: pointer; border-radius: 5px;">&times;</button>
-    
-    <div id="image-carousel" style="max-width: 600px; margin: 0 auto; position: relative; overflow: hidden; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-        <div class="carousel-images" style="display: flex; transition: transform 0.5s ease;">
-            <img src="assets/images/Parking.png" alt="Image 2" style="width: 100%; flex-shrink: 0;">
-            <img src="assets/images/Mapa Parqueadero Completo.png" alt="Image 1" style="width: 100%; flex-shrink: 0;">
+    <!-- Modal Start -->
+    <div id="carousel-modal" style="display:none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5);">
+      <div style="background-color: #fff; margin: 10% auto; padding: 20px; border-radius: 8px; max-width: 650px; position: relative;">
+        <button id="close-carousel-btn" aria-label="Cerrar" style="position: absolute; top: 10px; right: 10px; background: #f44336; border: none; color: white; font-size: 20px; padding: 5px 10px; cursor: pointer; border-radius: 5px;">&times;</button>
+        
+        <div id="image-carousel" style="max-width: 600px; margin: 0 auto; position: relative; overflow: hidden; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+            <div class="carousel-images" style="display: flex; transition: transform 0.5s ease;">
+                <img src="assets/images/Parking.png" alt="Image 2" style="width: 100%; flex-shrink: 0;">
+                <img src="assets/images/Mapa Parqueadero Completo.png" alt="Image 1" style="width: 100%; flex-shrink: 0;">
+            </div>
+            <div style="text-align: center; margin-top: 8px; font-weight: bold; color: #444;">Mapa conceptual / Referencia de espacios</div>
+            <!-- Navigation buttons -->
+            <button id="prev-btn" aria-label="Previous" style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); background: rgba(0,0,0,0.3); border: none; color: white; font-size: 24px; padding: 8px 12px; cursor: pointer; border-radius: 50%;">&#10094;</button>
+            <button id="next-btn" aria-label="Next" style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); background: rgba(0,0,0,0.3); border: none; color: white; font-size: 24px; padding: 8px 12px; cursor: pointer; border-radius: 50%;">&#10095;</button>
         </div>
-        <div style="text-align: center; margin-top: 8px; font-weight: bold; color: #444;">Mapa conceptual / Referencia de espacios</div>
-        <!-- Navigation buttons -->
-        <button id="prev-btn" aria-label="Previous" style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); background: rgba(0,0,0,0.3); border: none; color: white; font-size: 24px; padding: 8px 12px; cursor: pointer; border-radius: 50%;">&#10094;</button>
-        <button id="next-btn" aria-label="Next" style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); background: rgba(0,0,0,0.3); border: none; color: white; font-size: 24px; padding: 8px 12px; cursor: pointer; border-radius: 50%;">&#10095;</button>
+      </div>
     </div>
-  </div>
-</div>
 
-<script>
-    (function() {
-        const carousel = document.getElementById('image-carousel');
-        const imagesContainer = carousel.querySelector('.carousel-images');
-        const images = imagesContainer.querySelectorAll('img');
-        const totalImages = images.length;
-        let currentIndex = 0;
+    <script>
+        (function() {
+            const carousel = document.getElementById('image-carousel');
+            const imagesContainer = carousel.querySelector('.carousel-images');
+            const images = imagesContainer.querySelectorAll('img');
+            const totalImages = images.length;
+            let currentIndex = 0;
 
-        function updateCarousel() {
-            const offset = -currentIndex * 100;
-            imagesContainer.style.transform = 'translateX(' + offset + '%)';
-        }
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
 
-        prevBtn.addEventListener('click', () => {
-            currentIndex = (currentIndex - 1 + totalImages) % totalImages;
-            updateCarousel();
-        });
-
-        nextBtn.addEventListener('click', () => {
-            currentIndex = (currentIndex + 1) % totalImages;
-            updateCarousel();
-        });
-
-        // Auto slide removed as per user request
-
-        // Modal open/close logic
-        const openBtn = document.getElementById('open-carousel-btn');
-        const modal = document.getElementById('carousel-modal');
-        const closeBtn = document.getElementById('close-carousel-btn');
-
-        openBtn.addEventListener('click', () => {
-            modal.style.display = 'block';
-            currentIndex = 0; // Reset to first image when opening
-            updateCarousel();
-        });
-
-        closeBtn.addEventListener('click', () => {
-            modal.style.display = 'none';
-        });
-
-        // Close modal when clicking outside the modal content
-        window.addEventListener('click', (event) => {
-            if (event.target === modal) {
-                modal.style.display = 'none';
+            function updateCarousel() {
+                const offset = -currentIndex * 100;
+                imagesContainer.style.transform = 'translateX(' + offset + '%)';
             }
-        });
-    })();
-</script>
-</div>
 
+            prevBtn.addEventListener('click', () => {
+                currentIndex = (currentIndex - 1 + totalImages) % totalImages;
+                updateCarousel();
+            });
+
+            nextBtn.addEventListener('click', () => {
+                currentIndex = (currentIndex + 1) % totalImages;
+                updateCarousel();
+            });
+
+            // Modal open/close logic
+            const openBtn = document.getElementById('open-carousel-btn');
+            const modal = document.getElementById('carousel-modal');
+            const closeBtn = document.getElementById('close-carousel-btn');
+
+            openBtn.addEventListener('click', () => {
+                modal.style.display = 'block';
+                currentIndex = 0; // Reset to first image when opening
+                updateCarousel();
+            });
+
+            closeBtn.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+
+            // Close modal when clicking outside the modal content
+            window.addEventListener('click', (event) => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        })();
+    </script>
+</div>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-x-8 gap-y-16">
-
     <div class="container">
         
- <!--        <div class="nav">
-            <a href="mis_reservas.php">📋 Mis Reservas</a>
-        </div> -->
+        <!-- Mostrar mensajes de validación y confirmación -->
+        <?php if (isset($mensaje) && !empty($mensaje)): ?>
+            <div class="mensaje <?php echo isset($tipo_mensaje) ? $tipo_mensaje : 'error'; ?>">
+                <?php echo htmlspecialchars($mensaje); ?>
+            </div>
+        <?php endif; ?>
         
-        <?php if (isset($mensaje)): ?>
-            <div class="mensaje <?php echo $tipo_mensaje; ?>">
-                <?php echo $mensaje; ?>
+        <!-- Mostrar mensaje adicional si hay parámetros en la URL (para redirects) -->
+        <?php if (isset($_GET['message'])): ?>
+            <div class="mensaje <?php echo isset($_GET['type']) ? $_GET['type'] : 'error'; ?>">
+                <?php echo htmlspecialchars($_GET['message']); ?>
             </div>
         <?php endif; ?>
         
@@ -218,7 +267,7 @@
                                 <input class="radio-input" type="radio" name="tipo_vehiculo_selector" value="moto_grande">
                                 <span class="radio-tile">
                                     <span class="radio-icon">
-                                        <!-- Moto Grande SVG - Diferente al de moto normal -->
+                                        <!-- Moto Grande SVG -->
                                         <svg stroke="currentColor" xml:space="preserve" viewBox="0 0 512 512" fill="none" width="32" height="32">
                                             <g>
                                                 <path d="M402.1,234.3c-19.8,0-37.8,7.2-51.8,19.1l-41.2-20.6c5.3-8.9,8.4-19.3,8.4-30.5c0-32.4-26.3-58.7-58.7-58.7
@@ -251,6 +300,15 @@
                             </label>
                         </div>
                     </div>
+                    
+                    <!-- Información sobre restricción de una reserva por día -->
+                    <?php if (isset($_SESSION['usuario_nombre']) && $_SESSION['usuario_nombre']): ?>
+                    <div style="background: #e0f2fe; border: 1px solid #0288d1; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 14px; color: #01579b;">
+                        <i class="fas fa-info-circle" style="margin-right: 5px;"></i>
+                        <strong>Recordatorio:</strong> Solo se permite una reserva por día por usuario. Si ya tienes una reserva activa para una fecha, no podrás crear otra para el mismo día.
+                    </div>
+                    <?php endif; ?>
+                    
                     <div id="mapa-carro" style="display:block;">
                         <div class="mapa-titulo" style="justify-content: flex-start;">
                             <span style="color:#2563eb;font-size:2.2rem;">&#128205;</span>
@@ -275,7 +333,7 @@
                                         }
                                     ?>
                                     <button type="button" class="espacio-btn <?php echo $estado; ?>" data-espacio="<?php echo $i; ?>" data-tipo="carro" <?php echo ($estado=='ocupado'?'disabled':''); ?>
-                                    <?php if($estado=='seleccionado'): ?> style="background:#2563eb;color:#fff;border:2px solid #2563eb;box-shadow:0 0 0 44px #2563eb33;"<?php endif; ?>
+                                    <?php if($estado=='seleccionado'): ?> style="background:#2563eb;color:#fff;border:2px solid #2563eb;box-shadow:0 0 0 4px #2563eb33;"<?php endif; ?>
                                     >
                                         <span class="icono-auto"><i class="fa-solid fa-car-side"></i></span>
                                         <span><?php echo $i; ?></span>
@@ -285,6 +343,7 @@
                         </div>
                         <div id="ayuda-espacio-carro" style="font-size: 13px; color: #888; margin-top: 3px; text-align:center;">Selecciona un espacio disponible (verde).</div>
                     </div>
+                    
                     <div id="mapa-moto" style="display:none;">
                         <div class="mapa-titulo" style="justify-content: flex-start;">
                             <span style="color:#2563eb;font-size:2.2rem;">&#128205;</span>
@@ -354,6 +413,7 @@
                         </div>
                         <div id="ayuda-espacio-moto" style="font-size: 13px; color: #888; margin-top: 3px; text-align:center;">Selecciona un espacio disponible (verde). Pasa el mouse para ver los cupos ocupados.</div>
                     </div>
+                    
                     <div id="mapa-moto-grande" style="display:none;">
                         <div class="mapa-titulo" style="justify-content: flex-start;">
                             <span style="color:#2563eb;font-size:2.2rem;">&#128205;</span>
@@ -392,10 +452,18 @@
 
                 <div id="formulario-reserva" class="card form-reserva-oculto">
                     <h2 style="margin-bottom: 18px;"><i class="fas fa-lock"></i> Reservar Espacio <span id="espacio-seleccionado-titulo"></span></h2>
-                    <form method="POST" action="">
+                    
+                    <!-- Validación del lado del cliente para mostrar advertencia -->
+                    <div id="advertencia-reserva-existente" style="display: none; background: #fff3cd; border: 1px solid #ffc107; padding: 10px; border-radius: 6px; margin-bottom: 15px; color: #856404;">
+                        <i class="fas fa-exclamation-triangle" style="margin-right: 5px;"></i>
+                        <strong>Atención:</strong> Solo puedes tener una reserva activa por día. Si ya tienes una reserva para la fecha seleccionada, esta acción será rechazada.
+                    </div>
+                    
+                    <form method="POST" action="" id="form-reserva">
                         <input type="hidden" name="action" value="reservar">
                         <input type="hidden" name="numero_espacio" id="numero_espacio" required>
                         <input type="hidden" name="tipo_vehiculo" id="tipo_vehiculo" value="carro">
+                        
                         <?php if ($_SESSION['usuario_rol'] == 'admin'): ?>
                             <div class="form-group">
                                 <label for="usuario_id">Usuario:</label>
@@ -407,23 +475,34 @@
                                 </select>
                             </div>
                         <?php endif; ?>
+                        
                         <div class="form-group">
-                            <label for="fecha_reserva" name="fecha_reserva">Fecha de Reserva:</label>
+                            <label for="fecha_reserva">Fecha de Reserva:</label>
                             <input type="date" name="fecha_reserva" id="fecha_reserva" min="<?php echo $hoy; ?>" max="<?php echo $manana; ?>" value="<?php echo $hoy; ?>" required>
+                            <small style="color: #666; font-size: 12px; display: block; margin-top: 4px;">
+                                Solo puedes reservar para hoy o mañana (días hábiles únicamente)
+                            </small>
                         </div>
+                        
                         <div class="form-group">
-                            <label for="placa_vehiculo" name="placa_vehiculo">Placa del Vehículo:</label>
-                            <input type="text" name="placa_vehiculo" id="placa_vehiculo" placeholder="ABC123" maxlength="10" required>
+                            <label for="placa_vehiculo">Placa del Vehículo:</label>
+                            <input type="text" name="placa_vehiculo" id="placa_vehiculo" placeholder="ABC123" maxlength="10" required style="text-transform: uppercase;">
+                            <small style="color: #666; font-size: 12px; display: block; margin-top: 4px;">
+                                Ingresa la placa sin espacios ni guiones
+                            </small>
                         </div>
-                            <?php if (!isset($_SESSION['usuario_nombre']) || !$_SESSION['usuario_nombre']): ?>
+                        
+                        <?php if (!isset($_SESSION['usuario_nombre']) || !$_SESSION['usuario_nombre']): ?>
                             <button type="button" class="text-white bg-blue-400 dark:bg-blue-500 cursor-not-allowed font-medium rounded-lg text-sm px-5 py-2.5 text-center" disabled>
+                                <i class="fas fa-sign-in-alt" style="margin-right: 5px;"></i>
                                 Debe iniciar sesión para reservar
                             </button>
-                            <?php else: ?>
-                            <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        <?php else: ?>
+                            <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" id="btn-reservar">
+                                <i class="fas fa-calendar-plus" style="margin-right: 5px;"></i>
                                 Reservar Cupo
                             </button>
-                            <?php endif; ?>
+                        <?php endif; ?>
                     </form>
                 </div>
             </div>
@@ -433,7 +512,7 @@
                     <h2><i class="far fa-calendar-alt"></i> Reservas para Hoy</h2>
                     
                     <?php if (empty($reservas_hoy)): ?>
-                        <p><?php echo ($_SESSION['usuario_rol'] == 'admin') ? 'No hay reservas para mañana.' : 'No tienes reservas para hoy.'; ?></p>
+                        <p><?php echo ($_SESSION['usuario_rol'] == 'admin') ? 'No hay reservas para hoy.' : 'No tienes reservas para hoy.'; ?></p>
                     <?php else: ?>
                         <?php foreach ($reservas_hoy as $reserva): ?>
                             <div class="reserva-item">
@@ -441,10 +520,12 @@
                                 <p><strong>Espacio: </strong><?php echo htmlspecialchars($reserva['numero_espacio']); ?></p>
                                 <p><strong>Placa:</strong> <?php echo htmlspecialchars($reserva['placa_vehiculo']); ?></p>
                                 <p><strong>Email:</strong> <?php echo htmlspecialchars($reserva['email']); ?></p>
+                                <p><strong>Tipo:</strong> <?php echo ucfirst(str_replace('_', ' ', htmlspecialchars($reserva['tipo_vehiculo']))); ?></p>
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>
                 </div>
+                
                 <div class="card">
                     <h2><i class="far fa-calendar-alt"></i> Reservas para Mañana</h2>
                     
@@ -457,6 +538,7 @@
                                 <p><strong>Espacio: </strong><?php echo htmlspecialchars($reserva['numero_espacio']); ?></p>
                                 <p><strong>Placa:</strong> <?php echo htmlspecialchars($reserva['placa_vehiculo']); ?></p>
                                 <p><strong>Email:</strong> <?php echo htmlspecialchars($reserva['email']); ?></p>
+                                <p><strong>Tipo:</strong> <?php echo ucfirst(str_replace('_', ' ', htmlspecialchars($reserva['tipo_vehiculo']))); ?></p>
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -466,20 +548,44 @@
     </div>
     
     <script>
-        // Actualizar cupos disponibles cuando cambie la fecha
+        // Convertir placa a mayúsculas automáticamente
+        document.getElementById('placa_vehiculo').addEventListener('input', function() {
+            this.value = this.value.toUpperCase();
+        });
+
+        // Validación del lado del cliente para advertir sobre reservas duplicadas
         document.getElementById('fecha_reserva').addEventListener('change', function() {
             const fecha = this.value;
+            const advertencia = document.getElementById('advertencia-reserva-existente');
+            
+            // Mostrar advertencia para usuarios normales (no admin)
+            <?php if ($_SESSION['usuario_rol'] != 'admin'): ?>
             if (fecha) {
-                fetch('get-cupos.php?fecha=' + fecha)
+                // Verificar si ya existe una reserva para esta fecha
+                fetch('check-reservation.php?fecha=' + fecha + '&usuario_id=<?php echo $_SESSION['usuario_id']; ?>')
                     .then(response => response.json())
                     .then(data => {
-                        document.querySelector('.cupos-info').innerHTML = 
-                            '<strong>Cupos disponibles para ' + fecha + ': ' + data.disponibles + '/10</strong>';
+                        if (data.exists) {
+                            advertencia.style.display = 'block';
+                            document.getElementById('btn-reservar').disabled = true;
+                            document.getElementById('btn-reservar').textContent = 'Ya tienes una reserva para esta fecha';
+                            document.getElementById('btn-reservar').classList.add('bg-gray-400', 'cursor-not-allowed');
+                            document.getElementById('btn-reservar').classList.remove('bg-blue-700', 'hover:bg-blue-800');
+                        } else {
+                            advertencia.style.display = 'none';
+                            document.getElementById('btn-reservar').disabled = false;
+                            document.getElementById('btn-reservar').innerHTML = '<i class="fas fa-calendar-plus" style="margin-right: 5px;"></i>Reservar Cupo';
+                            document.getElementById('btn-reservar').classList.remove('bg-gray-400', 'cursor-not-allowed');
+                            document.getElementById('btn-reservar').classList.add('bg-blue-700', 'hover:bg-blue-800');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error verificando reserva:', error);
+                        advertencia.style.display = 'none';
                     });
             }
+            <?php endif; ?>
         });
-        // Habilitar el input de fecha para que el usuario pueda elegir entre hoy y mañana
-        document.getElementById('fecha_reserva').readOnly = false;
 
         // Selector de tipo de vehículo y mapas
         const tipoVehiculoRadios = document.getElementsByName('tipo_vehiculo_selector');
@@ -520,9 +626,11 @@
             const formReserva = document.getElementById('formulario-reserva');
             const tituloEspacio = document.getElementById('espacio-seleccionado-titulo');
             const tipoVehiculoInput = document.getElementById('tipo_vehiculo');
+            
             botones.forEach(btn => {
                 btn.addEventListener('click', function() {
                     if (btn.hasAttribute('disabled')) return;
+                    
                     // Quitar seleccionado de todos los botones
                     document.querySelectorAll('.moto-btn, .moto-grande-btn, .espacio-btn:not(.moto-btn):not(.moto-grande-btn)').forEach(b => b.classList.remove('seleccionado'));
                     
@@ -532,10 +640,19 @@
                     if (tipoVehiculoInput) tipoVehiculoInput.value = tipo;
                     formReserva.classList.remove('form-reserva-oculto');
                     formReserva.classList.add('form-reserva-visible');
+                    
+                    // Scroll suave al formulario
                     window.scrollTo({ top: formReserva.offsetTop - 40, behavior: 'smooth' });
+                    
                     // Mostrar info de cupos en móviles para motos
                     if (tipo === 'moto') {
                         mostrarInfoCuposMovil(btn.getAttribute('data-cupos'));
+                    }
+                    
+                    // Trigger validación de fecha si ya hay una fecha seleccionada
+                    const fechaInput = document.getElementById('fecha_reserva');
+                    if (fechaInput.value) {
+                        fechaInput.dispatchEvent(new Event('change'));
                     }
                 });
             });
@@ -553,17 +670,58 @@
             }
         }
 
-        // Refrescar el mapa tras una reserva exitosa
-        const formReserva = document.querySelector('#formulario-reserva form');
+        // Manejo del formulario con validación adicional
+        const formReserva = document.getElementById('form-reserva');
         if (formReserva) {
             formReserva.addEventListener('submit', function(e) {
-                setTimeout(() => {
-                    location.reload();
-                }, 500);
+                const fecha = document.getElementById('fecha_reserva').value;
+                const espacio = document.getElementById('numero_espacio').value;
+                const placa = document.getElementById('placa_vehiculo').value;
+                
+                // Validaciones básicas
+                if (!fecha || !espacio || !placa) {
+                    e.preventDefault();
+                    alert('Por favor completa todos los campos requeridos.');
+                    return;
+                }
+                
+                // Validar formato de placa (básico)
+                if (placa.length < 5 || placa.length > 10) {
+                    e.preventDefault();
+                    alert('La placa debe tener entre 5 y 10 caracteres.');
+                    return;
+                }
+                
+                // Confirmar reserva
+                const confirmacion = confirm(`¿Confirmas que deseas reservar el espacio ${espacio} para el ${fecha} con la placa ${placa}?`);
+                if (!confirmacion) {
+                    e.preventDefault();
+                    return;
+                }
+                
+                // Mostrar indicador de carga
+                const btnReservar = document.getElementById('btn-reservar');
+                if (btnReservar) {
+                    btnReservar.disabled = true;
+                    btnReservar.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 5px;"></i>Procesando...';
+                }
             });
         }
+
+        // Auto-ocultar mensajes después de unos segundos
+        const mensajes = document.querySelectorAll('.mensaje');
+        mensajes.forEach(mensaje => {
+            setTimeout(() => {
+                mensaje.style.opacity = '0';
+                mensaje.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => {
+                    mensaje.style.display = 'none';
+                }, 500);
+            }, 5000); // 5 segundos
+        });
     </script>
 </div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
 <script src="js/dropdown.js"></script>
- <?php require __DIR__ . '/../resources/partials/new.footer.php'; ?>
+<?php require __DIR__ . '/../resources/partials/new.footer.php'; ?>

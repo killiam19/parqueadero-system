@@ -79,6 +79,23 @@ class HomeController
             $moto_ocupados_por_fecha[$moto['fecha_reserva']][$moto['numero_espacio']] = $moto['ocupados'];
         }
 
+        // Obtener espacios ocupados para motos grandes de toda la semana
+        $motos_grandes_ocupadas_semana = db()->query(
+            "SELECT numero_espacio, usuario_id, fecha_reserva FROM reservas 
+             WHERE fecha_reserva IN ($fechas_str) AND tipo_vehiculo = 'moto_grande' AND estado = 'activa'"
+        )->get();
+
+        // Organizar motos grandes ocupadas por fecha
+        $moto_grande_ocupados_por_fecha = [];
+        foreach ($motos_grandes_ocupadas_semana as $moto_grande) {
+            $moto_grande_ocupados_por_fecha[$moto_grande['fecha_reserva']][$moto_grande['numero_espacio']] = $moto_grande['usuario_id'];
+        }
+
+        // Crear mapas de ocupación para hoy (para mostrar en la vista)
+        $ocupados_map = $ocupados_por_fecha[$hoy] ?? [];
+        $moto_ocupados = $moto_ocupados_por_fecha[$hoy] ?? [];
+        $moto_grande_ocupados_map = $moto_grande_ocupados_por_fecha[$hoy] ?? [];
+
         // Obtener reservas de toda la semana
         $reservas_semana = [];
         foreach ($fechas_semana as $fecha => $info) {
@@ -136,8 +153,40 @@ class HomeController
                     ? $_POST['usuario_id'] 
                     : ($currentUser['id'] ?? null);
 
+                if (!$usuario_reserva) {
+                    throw new \Exception("Debe iniciar sesión para hacer reservas");
+                }
+
+                // NUEVA VALIDACIÓN: Verificar que el usuario no tenga ya una reserva para esa fecha
+                $reserva_existente = db()->query(
+                    'SELECT id FROM reservas 
+                     WHERE usuario_id = :usuario_id AND fecha_reserva = :fecha AND estado = "activa"',
+                    [
+                        'usuario_id' => $usuario_reserva,
+                        'fecha' => $fecha_reserva
+                    ]
+                )->first();
+
+                if ($reserva_existente) {
+                    throw new \Exception("Ya tienes una reserva para esta fecha. Solo se permite una reserva por día por usuario.");
+                }
+
                 // Verificar disponibilidad del espacio
                 if ($tipo_vehiculo == 'carro') {
+                    $conflicto = db()->query(
+                        'SELECT id FROM reservas 
+                         WHERE numero_espacio = :espacio AND fecha_reserva = :fecha AND estado = "activa"',
+                        [
+                            'espacio' => $numero_espacio,
+                            'fecha' => $fecha_reserva
+                        ]
+                    )->first();
+
+                    if ($conflicto) {
+                        throw new \Exception("El espacio ya está reservado para esa fecha");
+                    }
+                } elseif ($tipo_vehiculo == 'moto_grande') {
+                    // Para motos grandes, verificar que el espacio no esté ocupado
                     $conflicto = db()->query(
                         'SELECT id FROM reservas 
                          WHERE numero_espacio = :espacio AND fecha_reserva = :fecha AND estado = "activa"',
@@ -212,13 +261,18 @@ class HomeController
             'fechas_semana' => $fechas_semana,
             'ocupados_por_fecha' => $ocupados_por_fecha,
             'moto_ocupados_por_fecha' => $moto_ocupados_por_fecha,
+            'moto_grande_ocupados_por_fecha' => $moto_grande_ocupados_por_fecha,
             'reservas_semana' => $reservas_semana,
             'reservas_hoy' => $reservas_hoy,
             'reservas_manana' => $reservas_manana,
             'usuarios' => $usuarios,
             'hoy' => $hoy,
             'mensaje' => $mensaje,
-            'tipo_mensaje' => $tipo_mensaje
+            'tipo_mensaje' => $tipo_mensaje,
+            // Agregar estos mapas para la vista
+            'ocupados_map' => $ocupados_map,
+            'moto_ocupados' => $moto_ocupados,
+            'moto_grande_ocupados_map' => $moto_grande_ocupados_map
         ]);
     }
 
@@ -337,6 +391,20 @@ class HomeController
         $currentUser = session()->get('user');
         if (!$currentUser) {
             redirect('login', 'Debes iniciar sesión para hacer reservas');
+        }
+
+        // NUEVA VALIDACIÓN: Verificar que el usuario no tenga ya una reserva para esa fecha
+        $reserva_existente = db()->query(
+            'SELECT id FROM reservas 
+             WHERE usuario_id = :usuario_id AND fecha_reserva = :fecha AND estado = "activa"',
+            [
+                'usuario_id' => $currentUser['id'],
+                'fecha' => $_POST['fecha_reserva']
+            ]
+        )->first();
+
+        if ($reserva_existente) {
+           redirect('/', 'Ya tienes una reserva activa', 400); // código 400 para errores del cliente
         }
 
         // Obtener datos completos del usuario
