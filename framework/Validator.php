@@ -45,6 +45,7 @@ class Validator
                     'max'       => strlen($value) > $param  ? "$field must not exceed $param characters."            : null,
                     'url'       => filter_var($value, FILTER_VALIDATE_URL) === false ? "$field must be a valid URL." : null,
                     'email'     => filter_var($value, FILTER_VALIDATE_EMAIL) === false ? "$field must be a valid email address." : null,
+                    'domain'    => $this->validateDomain($field, $value, $param),
                     default => throw new \InvalidArgumentException("Validation rule '$name' is not defined."),
                 };
 
@@ -52,6 +53,33 @@ class Validator
 
     public function validateRequired (string $field, mixed $value) : ?string{
         return  ($value === null || $value === '') ? "$field is required." : null;
+    }
+
+    public function validateDomain(string $field, mixed $value, ?string $allowedDomain): ?string
+    {
+        if (empty($value)) {
+            return null; // Si el valor está vacío, la validación 'required' se encargará
+        }
+
+        // Validar que sea un email válido primero
+        if (filter_var($value, FILTER_VALIDATE_EMAIL) === false) {
+            return null; // Si no es un email válido, la validación 'email' se encargará
+        }
+
+        // Extraer el dominio del email
+        $emailParts = explode('@', $value);
+        if (count($emailParts) !== 2) {
+            return "$field debe tener un dominio válido.";
+        }
+
+        $domain = strtolower($emailParts[1]);
+        $allowedDomain = strtolower($allowedDomain);
+
+        if ($domain !== $allowedDomain) {
+            return "Solo se permiten cuentas con el dominio @$allowedDomain.";
+        }
+
+        return null;
     }
 
     protected function redirectIfFailed(): void

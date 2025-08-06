@@ -305,7 +305,7 @@
                     <?php if (isset($_SESSION['usuario_nombre']) && $_SESSION['usuario_nombre']): ?>
                     <div style="background: #e0f2fe; border: 1px solid #0288d1; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 14px; color: #01579b;">
                         <i class="fas fa-info-circle" style="margin-right: 5px;"></i>
-                        <strong>Recordatorio:</strong> Solo se permite una reserva por día por usuario. Si ya tienes una reserva activa para una fecha, no podrás crear otra para el mismo día.
+                        <strong>Recordatorio:</strong> Solo se permite una reserva por día por usuario. Si ya tienes una reserva activa para una fecha, no podrás crear otra para el mismo día, a menos que canceles tu reserva actual.
                     </div>
                     <?php endif; ?>
                     

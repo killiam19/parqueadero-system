@@ -15,7 +15,7 @@ class AuthController
     public function authenticate()
     {
          Validator::make($_POST, [
-            'email'    => 'required|email',
+            'email'    => 'required|email|domain:3shape.com',
             'password' => 'required|min:6',
         ]);
 
@@ -54,7 +54,7 @@ public function store()
     // Validar los datos del formulario
     Validator::make($_POST, [
         'name'            => 'required|min:2',
-        'email'           => 'required|email',
+        'email'           => 'required|email|domain:3shape.com',
         'password'        => 'required|min:6',
         'repeat-password' => 'required|min:6',
         'terms'          =>  'required'

@@ -95,8 +95,8 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
         </div>
-        <h3 class="text-lg font-medium text-gray-900 mb-2">Curso Activo</h3>
-        <p class="text-sm text-gray-600">Connectivity 2 vigente hasta 2027</p>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">Cuenta Activa</h3>
+        <p class="text-sm text-gray-600">Vigente hasta decisión administrativa</p>
       </div>
 
       <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-center">
@@ -107,7 +107,7 @@
           </svg>
         </div>
         <h3 class="text-lg font-medium text-gray-900 mb-2">Sede Asignada</h3>
-        <p class="text-sm text-gray-600">TUNAL - Sede original</p>
+        <p class="text-sm text-gray-600">3Shape - Sede original</p>
       </div>
 
     </div>
