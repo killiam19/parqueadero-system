@@ -40,5 +40,8 @@ $router->get('/admin/usuarios',   [AdminController::class, 'usuarios'],    Authe
 $router->post('/admin/usuarios',  [AdminController::class, 'usuarios'],    Authenticated::class);
 
 //Rutas para usuario
-$router->get('/configuracion', [UsuariosController::class, 'configuracion']);
-$router->get('/cuenta',        [UsuariosController::class, 'cuenta']);
+$router->get('/configuracion',                     [UsuariosController::class, 'configuracion']);
+$router->get('/configuracion/cambiar-password',    [UsuariosController::class, 'password']);
+$router->put('/configuracion/cambiar-password',    [UsuariosController::class, 'passwordUpdate']);
+$router->get('/cuenta',                            [UsuariosController::class, 'cuenta']);
+$router->put('/cuenta',                            [UsuariosController::class, 'cuenta']);

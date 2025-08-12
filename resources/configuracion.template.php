@@ -34,7 +34,7 @@
         <div class="flex items-center justify-between">
           <div class="flex-1">
             <h3 class="text-lg font-semibold text-blue-600 group-hover:text-blue-700 mb-2">
-              Cambiar contraseña
+               <a href="/configuracion/cambiar-password"> Cambiar contraseña</a>        
             </h3>
             <p class="text-sm text-gray-600 leading-relaxed">
               Cambia tu contraseña
