@@ -10,12 +10,8 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                     </svg>
                 </div>
-                <h1 class="text-4xl font-bold text-gray-800 mb-2">
-                    <?php echo $_SESSION['usuario_rol'] == 'admin' ? 'Todas las Reservas' : 'Mis Reservas'; ?>
-                </h1>
-                <p class="text-gray-600 text-lg">
-                    <?php echo $_SESSION['usuario_rol'] == 'admin' ? 'Gestiona y visualiza todas las reservas del parqueadero' : 'Gestiona tus reservas de parqueadero'; ?>
-                </p>
+                <h1 class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black"><?php echo $_SESSION['usuario_rol'] == 'admin' ? 'Todas las Reservas' : 'Mis Reservas'; ?></h1>
+<p class="mb-6 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400"><?php echo $_SESSION['usuario_rol'] == 'admin' ? 'Gestiona y visualiza todas las reservas del parqueadero' : 'Gestiona tus reservas de parqueadero'; ?></p>
             </div>
         </div>
 

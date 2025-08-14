@@ -143,6 +143,8 @@ class HomeController
                 $fecha_reserva = $_POST['fecha_reserva'];
                 $placa_vehiculo = strtoupper(trim($_POST['placa_vehiculo']));
                 
+                $fecha_reserva = $this->convertirFormatoFecha($fecha_reserva);
+                
                 // Validar que la fecha sea un día hábil
                 if (!$this->esDiaHabil($fecha_reserva)) {
                     throw new \Exception("Solo se pueden hacer reservas para días hábiles (lunes a viernes)");
@@ -382,8 +384,10 @@ class HomeController
             'tipo_vehiculo' => 'required',
         ]);
 
+        $fecha_reserva = $this->convertirFormatoFecha($_POST['fecha_reserva']);
+
         // Validar que la fecha sea un día hábil
-        if (!$this->esDiaHabil($_POST['fecha_reserva'])) {
+        if (!$this->esDiaHabil($fecha_reserva)) {
             redirect('/', 'Solo se pueden hacer reservas para días hábiles (lunes a viernes)', 'error');
         }
 
@@ -399,7 +403,7 @@ class HomeController
              WHERE usuario_id = :usuario_id AND fecha_reserva = :fecha AND estado = "activa"',
             [
                 'usuario_id' => $currentUser['id'],
-                'fecha' => $_POST['fecha_reserva']
+                'fecha' => $fecha_reserva // Usar fecha convertida
             ]
         )->first();
 
@@ -419,7 +423,7 @@ class HomeController
             [
                 'usuario_id' => $currentUser['id'],
                 'numero_espacio' => $_POST['numero_espacio'],
-                'fecha_reserva' => $_POST['fecha_reserva'],
+                'fecha_reserva' => $fecha_reserva, // Usar fecha convertida
                 'placa_vehiculo' => $_POST['placa_vehiculo'],
                 'tipo_vehiculo' => $_POST['tipo_vehiculo']
             ]
@@ -427,7 +431,7 @@ class HomeController
 
         // Preparar datos para el correo
         $datosReserva = [
-            'fecha' => $_POST['fecha_reserva'],
+            'fecha' => $fecha_reserva, // Usar fecha convertida
             'placa' => $_POST['placa_vehiculo'],
             'tipo_vehiculo' => $_POST['tipo_vehiculo'],
             'numero_espacio' => $_POST['numero_espacio']
@@ -534,5 +538,33 @@ class HomeController
                "Recuerda: Presenta este correo si te lo solicitan en la entrada.\n\n" .
                "Gracias por usar el Sistema de Parqueadero.\n" .
                "Este es un mensaje automático, por favor no respondas a este correo.";
+    }
+
+    /**
+     * Convierte fecha de formato MM/DD/YYYY a YYYY-MM-DD
+     */
+    private function convertirFormatoFecha($fecha)
+    {
+        // Si la fecha ya está en formato YYYY-MM-DD, devolverla tal como está
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha)) {
+            return $fecha;
+        }
+        
+        // Si está en formato MM/DD/YYYY, convertirla
+        if (preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/', $fecha, $matches)) {
+            $mes = str_pad($matches[1], 2, '0', STR_PAD_LEFT);
+            $dia = str_pad($matches[2], 2, '0', STR_PAD_LEFT);
+            $año = $matches[3];
+            return "$año-$mes-$dia";
+        }
+        
+        // Si no coincide con ningún formato esperado, intentar con strtotime
+        $timestamp = strtotime($fecha);
+        if ($timestamp !== false) {
+            return date('Y-m-d', $timestamp);
+        }
+        
+        // Si todo falla, devolver la fecha original
+        return $fecha;
     }
 }
