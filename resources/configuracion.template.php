@@ -15,7 +15,7 @@
         <div class="flex items-center justify-between">
           <div class="flex-1">
             <h3 class="text-lg font-semibold text-blue-600 group-hover:text-blue-700 mb-2">
-              Editar información personal
+              <a href="/configuracion/editar-cuenta"> Editar información personal</a>
             </h3>
             <p class="text-sm text-gray-600 leading-relaxed">
               Cambia tus datos personales, solo serán usados para el registro y permanecerán privados

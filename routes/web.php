@@ -45,3 +45,4 @@ $router->get('/configuracion/cambiar-password',    [UsuariosController::class, '
 $router->put('/configuracion/cambiar-password',    [UsuariosController::class, 'passwordUpdate']);
 $router->get('/cuenta',                            [UsuariosController::class, 'cuenta']);
 $router->put('/cuenta',                            [UsuariosController::class, 'cuenta']);
+$router->get('/configuracion/editar-cuenta',                     [UsuariosController::class, 'editarCuenta']);

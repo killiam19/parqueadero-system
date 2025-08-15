@@ -42,7 +42,7 @@
               <label class="text-lg font-medium text-gray-800">Número:</label>
             </div>
             <div class="flex-1">
-              <span class="text-lg text-gray-700"><?php echo htmlspecialchars($_SESSION['usuario_telefono']); ?></span>
+              <span class="text-lg text-gray-700"><?php echo htmlspecialchars($_SESSION['usuario_telefono'] ?? '', ENT_QUOTES, 'UTF-8'); ?></span>
             </div>
           </div>
 

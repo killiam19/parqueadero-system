@@ -5,12 +5,16 @@
     
     <!-- Título principal -->
     <div class="text-center mb-8">
-      <h1 class="text-4xl font-normal text-gray-600 mb-4">Mi Cuenta</h1>
+      <h1 class="text-4xl font-normal text-gray-600 mb-4">Editar Mi Cuenta</h1>
       <div class="w-full h-1 bg-gradient-to-r from-red-400 via-red-400 to-red-500 rounded-full"></div>
     </div>
 
-    <!-- Contenedor principal -->
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+    <?php echo alert(); ?>
+    <?php echo errors(); ?>
+
+    <!-- Formulario de edición -->
+    <form action="/cuenta" method="POST" class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+      <input type="hidden" name="_method" value="PUT">
       
       <!-- Información Personal -->
       <div class="p-8">
@@ -19,41 +23,44 @@
           <!-- Nombres -->
           <div class="flex flex-col sm:flex-row sm:items-center border-b border-gray-100 pb-4">
             <div class="w-full sm:w-32 mb-2 sm:mb-0">
-              <label class="text-lg font-medium text-gray-800">Nombre:</label>
+              <label for="nombre" class="text-lg font-medium text-gray-800">Nombre:</label>
             </div>
             <div class="flex-1">
-              <span class="text-lg text-gray-700"><?php echo htmlspecialchars($_SESSION['usuario_nombre']); ?></span>
+              <input type="text" id="nombre" name="nombre" 
+                     value="<?php echo htmlspecialchars($_SESSION['usuario_nombre']); ?>"
+                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
           </div>
 
           <!-- Correo -->
           <div class="flex flex-col sm:flex-row sm:items-center border-b border-gray-100 pb-4">
             <div class="w-full sm:w-32 mb-2 sm:mb-0">
-              <label class="text-lg font-medium text-gray-800">Correo:</label>
+              <label for="email" class="text-lg font-medium text-gray-800">Correo:</label>
             </div>
             <div class="flex-1">
-              <span class="text-lg text-blue-600"><?php echo htmlspecialchars($_SESSION['usuario_email']); ?></span>
+              <input type="email" id="email" name="email" 
+                     value="<?php echo htmlspecialchars($_SESSION['usuario_email']); ?>"
+                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
           </div>
 
           <!-- Número -->
           <div class="flex flex-col sm:flex-row sm:items-center pb-4">
             <div class="w-full sm:w-32 mb-2 sm:mb-0">
-              <label class="text-lg font-medium text-gray-800">Número:</label>
+              <label for="telefono" class="text-lg font-medium text-gray-800">Número:</label>
             </div>
             <div class="flex-1">
-              <span class="text-lg text-gray-700"><?php echo htmlspecialchars($_SESSION['usuario_telefono']); ?></span>
+              <input type="tel" id="telefono" name="telefono" 
+                     value="<?php echo htmlspecialchars($_SESSION['usuario_telefono'] ?? ''); ?>"
+                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
           </div>
 
         </div>
       </div>
 
-      <!-- Otra línea separadora -->
-      <hr class="w-48 h-1 mx-auto my-4 bg-gray-100 border-0 rounded-sm md:my-10 dark:bg-gray-700">
-
       <!-- Información de Sede -->
-      <div class="p-8">
+      <div class="p-8 border-t border-gray-200">
         <div class="flex flex-col sm:flex-row sm:items-center">
           <div class="w-full sm:w-32 mb-2 sm:mb-0">
             <label class="text-lg font-medium text-blue-700">Sede:</label>
@@ -64,19 +71,19 @@
         </div>
       </div>
 
-      <!-- Línea final -->
-      <div class="w-full h-1 bg-gradient-to-r from-red-400 via-orange-400 to-red-500"></div>
-
-      <!-- Botón de Notificaciones -->
-      <div class="p-8">
-        <button class="bg-green-500 hover:bg-green-600 text-white font-medium px-6 py-3 rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md">
-          Mostrar Notificaciones
+      <!-- Botones de acción -->
+      <div class="p-8 bg-gray-50 flex justify-between">
+        <a href="/cuenta" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium px-6 py-3 rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md">
+          Cancelar
+        </a>
+        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-6 py-3 rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md">
+          Guardar Cambios
         </button>
       </div>
 
-    </div>
+    </form>
 
-    <!-- Información adicional o acciones rápidas (opcional) -->
+    <!-- Información adicional o acciones rápidas -->
     <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
       
       <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-center">

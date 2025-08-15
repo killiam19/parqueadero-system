@@ -24,5 +24,12 @@ class UsuariosController
             'title' => 'Configuracion',
             ]);
     }
+
+    public function editarCuenta()
+    {
+        view('editar-cuenta',[
+            'title' => 'Editar Cuenta',
+            ]);
+    }
 }
 
