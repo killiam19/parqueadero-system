@@ -279,6 +279,107 @@ class HomeController
     }
 
     /**
+     * Endpoint JSON para consultar disponibilidad por fecha
+     * GET /api/disponibilidad?fecha=YYYY-MM-DD
+     */
+    public function availability()
+    {
+        // Asegurar cabeceras JSON siempre
+        header('Content-Type: application/json; charset=utf-8');
+
+        try {
+            $fecha_param = $_GET['fecha'] ?? '';
+            if (!$fecha_param) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Parámetro fecha es requerido']);
+                return;
+            }
+
+            $fecha = $this->convertirFormatoFecha($fecha_param);
+
+            // Permitir cualquier fecha válida; si quieres restringir a hábiles, descomenta:
+            // if (!$this->esDiaHabil($fecha)) {
+            //     http_response_code(400);
+            //     echo json_encode(['error' => 'Solo se permiten días hábiles (lunes a viernes)']);
+            //     return;
+            // }
+
+            $currentUser = session()->get('user');
+            $currentUserId = $currentUser['id'] ?? ($_SESSION['usuario_id'] ?? null);
+
+            // Carros: espacios ocupados por usuario
+            $carros = db()->query(
+                "SELECT numero_espacio, usuario_id FROM reservas \n                 WHERE fecha_reserva = :fecha AND tipo_vehiculo = 'carro' AND estado = 'activa'",
+                ['fecha' => $fecha]
+            )->get();
+
+            $carro_ocupados = [];
+            $carro_seleccionados_usuario = [];
+            foreach ($carros as $c) {
+                $num = (int) $c['numero_espacio'];
+                $carro_ocupados[] = $num;
+                if ($currentUserId && (int) $c['usuario_id'] === (int) $currentUserId) {
+                    $carro_seleccionados_usuario[] = $num;
+                }
+            }
+
+            // Motos: conteo por espacio
+            $motos = db()->query(
+                "SELECT numero_espacio, COUNT(*) as ocupados FROM reservas \n                 WHERE fecha_reserva = :fecha AND tipo_vehiculo = 'moto' AND estado = 'activa'\n                 GROUP BY numero_espacio",
+                ['fecha' => $fecha]
+            )->get();
+
+            $moto_cupos = [];
+            foreach ($motos as $m) {
+                $moto_cupos[(string) $m['numero_espacio']] = (int) $m['ocupados'];
+            }
+
+            // Definición de cupos máximos (alineado con el template actual)
+            $moto_maximos = [
+                '476' => 7,
+                '475' => 7,
+                '474' => 7,
+                '441' => 5,
+            ];
+
+            // Motos grandes: ocupación por usuario
+            $motos_grandes = db()->query(
+                "SELECT numero_espacio, usuario_id FROM reservas \n                 WHERE fecha_reserva = :fecha AND tipo_vehiculo = 'moto_grande' AND estado = 'activa'",
+                ['fecha' => $fecha]
+            )->get();
+
+            $moto_grande_ocupados = [];
+            $moto_grande_seleccionados_usuario = [];
+            foreach ($motos_grandes as $mg) {
+                $num = (int) $mg['numero_espacio'];
+                $moto_grande_ocupados[] = $num;
+                if ($currentUserId && (int) $mg['usuario_id'] === (int) $currentUserId) {
+                    $moto_grande_seleccionados_usuario[] = $num;
+                }
+            }
+
+            echo json_encode([
+                'fecha' => $fecha,
+                'carro' => [
+                    'ocupados' => $carro_ocupados,
+                    'seleccionados_usuario' => $carro_seleccionados_usuario,
+                ],
+                'moto' => [
+                    'ocupados' => $moto_cupos,
+                    'maximos' => $moto_maximos,
+                ],
+                'moto_grande' => [
+                    'ocupados' => $moto_grande_ocupados,
+                    'seleccionados_usuario' => $moto_grande_seleccionados_usuario,
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Error interno', 'detail' => $e->getMessage()]);
+        }
+    }
+
+    /**
      * Genera las fechas de la semana laboral actual (lunes a viernes)
      */
     private function generarFechasSemanaLaboral()

@@ -12,6 +12,7 @@ use Framework\Middleware\Guest;
 // Rutas principales
 $router->get('/',                      [HomeController::class,     'index']);
 $router->post('/',                     [HomeController::class,     'store']);
+$router->get('/api/disponibilidad',    [HomeController::class,     'availability']);
 $router->get('/about',                 [AboutController::class,    'index']);
 
 // Rutas de reservas - 

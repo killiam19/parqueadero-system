@@ -624,6 +624,9 @@
         const fechaMostrar = document.getElementById('fecha-mostrar');
         const fechaReserva = document.getElementById('fecha_reserva');
         const mensajeSeleccionar = document.getElementById('mensaje-seleccionar-fecha');
+        const contenedorCarro = document.getElementById('mapa-espacios-carro');
+        const contenedorMoto = document.getElementById('mapa-motos-grid');
+        const contenedorMotoGrande = document.getElementById('mapa-espacios-moto-grande');
         
         // Función para mostrar los mapas cuando se selecciona una fecha
         function mostrarMapasConFecha(fechaSeleccionada) {
@@ -656,7 +659,105 @@
                         block: 'start' 
                     });
                 }, 300);
+
+                // Cargar disponibilidad dinámica
+                cargarDisponibilidad(fechaSeleccionada);
             }
+        }
+
+        async function cargarDisponibilidad(fecha) {
+            try {
+                const res = await fetch(`/api/disponibilidad?fecha=${encodeURIComponent(fecha)}`);
+                if (!res.ok) throw new Error('No se pudo obtener disponibilidad');
+                const data = await res.json();
+                actualizarMapas(data);
+            } catch (err) {
+                console.error('Error cargando disponibilidad:', err);
+            }
+        }
+
+        function actualizarMapas(data) {
+            // Actualizar CARROS 281..272
+            if (contenedorCarro) {
+                const ocupados = new Set((data.carro && data.carro.ocupados) || []);
+                const seleccionadosUsuario = new Set((data.carro && data.carro.seleccionados_usuario) || []);
+                const botonesCarro = contenedorCarro.querySelectorAll('button.espacio-btn');
+                botonesCarro.forEach(btn => {
+                    const num = parseInt(btn.getAttribute('data-espacio'), 10);
+                    btn.classList.remove('disponible', 'ocupado', 'seleccionado');
+                    btn.removeAttribute('style');
+                    if (seleccionadosUsuario.has(num)) {
+                        btn.classList.add('seleccionado');
+                        btn.disabled = false;
+                        btn.style.background = '#2563eb';
+                        btn.style.color = '#fff';
+                        btn.style.border = '2px solid #2563eb';
+                        btn.style.boxShadow = '0 0 0 4px #2563eb33';
+                    } else if (ocupados.has(num)) {
+                        btn.classList.add('ocupado');
+                        btn.disabled = true;
+                    } else {
+                        btn.classList.add('disponible');
+                        btn.disabled = false;
+                    }
+                });
+            }
+
+            // Actualizar MOTOS 476, 475, 474, 441
+            if (contenedorMoto && data.moto) {
+                const ocupadosPorEspacio = data.moto.ocupados || {};
+                const maximos = data.moto.maximos || {};
+                const botonesMoto = contenedorMoto.querySelectorAll('button.moto-btn');
+                botonesMoto.forEach(btn => {
+                    const id = btn.getAttribute('data-espacio');
+                    const ocupados = Number(ocupadosPorEspacio[id] || 0);
+                    const max = Number(maximos[id] || 0);
+                    const lleno = max > 0 && ocupados >= max;
+                    btn.classList.remove('disponible', 'ocupado', 'seleccionado');
+                    if (lleno) {
+                        btn.classList.add('ocupado');
+                        btn.disabled = true;
+                    } else {
+                        btn.classList.add('disponible');
+                        btn.disabled = false;
+                    }
+                    const tooltip = btn.querySelector('.tooltip-cupos');
+                    const info = `${ocupados}/${max || '?'} cupos reservados`;
+                    btn.setAttribute('data-cupos', info);
+                    if (tooltip) tooltip.textContent = info;
+                });
+            }
+
+            // Actualizar MOTOS GRANDES 270, 271
+            if (contenedorMotoGrande && data.moto_grande) {
+                const ocupados = new Set(data.moto_grande.ocupados || []);
+                const seleccionadosUsuario = new Set(data.moto_grande.seleccionados_usuario || []);
+                const botonesMG = contenedorMotoGrande.querySelectorAll('button.moto-grande-btn');
+                botonesMG.forEach(btn => {
+                    const num = parseInt(btn.getAttribute('data-espacio'), 10);
+                    btn.classList.remove('disponible', 'ocupado', 'seleccionado');
+                    btn.removeAttribute('style');
+                    if (seleccionadosUsuario.has(num)) {
+                        btn.classList.add('seleccionado');
+                        btn.disabled = false;
+                        btn.style.background = '#2563eb';
+                        btn.style.color = '#fff';
+                        btn.style.border = '2px solid #2563eb';
+                        btn.style.boxShadow = '0 0 0 4px #2563eb33';
+                    } else if (ocupados.has(num)) {
+                        btn.classList.add('ocupado');
+                        btn.disabled = true;
+                    } else {
+                        btn.classList.add('disponible');
+                        btn.disabled = false;
+                    }
+                });
+            }
+
+            // Reenganchar listeners de selección para los botones disponibles
+            activarSeleccionEspacios('#mapa-espacios-carro .espacio-btn.disponible, #mapa-espacios-carro .espacio-btn.seleccionado', 'carro');
+            activarSeleccionEspacios('.moto-btn.disponible, .moto-btn.seleccionado', 'moto');
+            activarSeleccionEspacios('.moto-grande-btn.disponible, .moto-grande-btn.seleccionado', 'moto_grande');
         }
         
         // Escuchar cambios en el datepicker
@@ -758,6 +859,8 @@
         const tipoVehiculoInput = document.getElementById('tipo_vehiculo');
         
         botones.forEach(btn => {
+            if (btn.dataset.bound === '1') return; // evitar listeners duplicados
+            btn.dataset.bound = '1';
             btn.addEventListener('click', function() {
                 if (btn.hasAttribute('disabled')) return;
                 
