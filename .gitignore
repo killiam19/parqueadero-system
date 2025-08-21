@@ -1,1 +1,5 @@
-.vercel
+# Dependencias de Node.js
+node_modules/
+
+# Dependencias de Composer
+vendor/

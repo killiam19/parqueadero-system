@@ -1,10 +1,20 @@
 <nav class="bg-gray-100 border-gray-200 dark:bg-gray-900">
   <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
     <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
-        <img src="assets/images/3shape-logo.png" class="h-8" alt="3Shape Logo" />
-         <p class="text-sm text-gray-600">Let's change dentistry together</p>
-        <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"></span>
-    </a>
+    <!-- Logo claro -->
+    <img src="assets/images/3shape-logo.png" 
+         class="h-8 block dark:hidden" 
+         alt="3Shape Logo" />
+    <!-- Logo oscuro -->
+    <img src="assets/images/3shape-logo-dark.png" 
+         class="h-8 hidden dark:block" 
+         alt="3Shape Logo Dark" />
+         
+    <p class="text-sm text-gray-600 dark:text-gray-300">
+        Let's change dentistry together
+    </p>
+</a>
+
   <div class="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
       <button type="button" class="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
       <?php if (isAuthenticated() ): ?>  
@@ -46,7 +56,6 @@
         <li>
           <a href="/mis-reservas" class="block py-2 px-3 <?= requestIs('/mis-reservas') ? 'text-white bg-red-700 rounded-sm md:bg-transparent md:text-red-700 md:p-0 md:dark:text-red-500 dark:bg-red-600 md:dark:bg-transparent' : 'text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-red-700 md:p-0 dark:text-white md:dark:hover:text-red-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent' ?>">Mis reservas <i class="fas fa-calendar-alt"></i></a>
         </li>
-        
         <?php if (isAuthenticated() && isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin'): ?>
         <li>
             <button id="dropdownNavbarLink" data-dropdown-toggle="dropdownNavbar" class="flex items-center justify-between w-full py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-red-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:border-gray-700 dark:hover:bg-gray-700 md:dark:hover:bg-transparent">

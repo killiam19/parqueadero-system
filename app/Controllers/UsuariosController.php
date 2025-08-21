@@ -31,5 +31,12 @@ class UsuariosController
             'title' => 'Editar Cuenta',
             ]);
     }
+
+    public function cambiarContraseña()
+    {
+        view('cambiar-password',[
+            'title' => 'Editar Contraseña',
+            ]);
+    }
 }
 

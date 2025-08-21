@@ -259,7 +259,7 @@ class HomeController
 
         // Cargar la vista con todos los datos necesarios
         view('home', [
-            'title' => 'Agendar Parqueadero - Semana Laboral',
+            'title' => 'Agendar Parqueadero',
             'fechas_semana' => $fechas_semana,
             'ocupados_por_fecha' => $ocupados_por_fecha,
             'moto_ocupados_por_fecha' => $moto_ocupados_por_fecha,

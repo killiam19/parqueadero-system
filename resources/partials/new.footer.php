@@ -22,18 +22,16 @@
     }
 </style>
 <footer class="bg-gray-100 dark:bg-gray-900 w-full">
-    <!-- CAMBIO 1: Eliminé max-w-none y cambié px-0 por px-4 -->
     <div class="w-full px-4 py-6 lg:py-8">
         <div class="md:flex md:justify-between">
           <div class="mb-6 md:mb-0">
               <a href="https://www.3shape.com/" class="flex items-center">
-                  <img src="https://parejalecaros.pe/wp-content/uploads/2022/10/LOGO-3SHAPE-01.png" class="h-8 me-3" alt="FlowBite Logo" />
-                  <span class="self-center text-2xl font-semibold whitespace-nowrap text-black dark:text-white">Parking System</span>
+                  <img src="https://parejalecaros.pe/wp-content/uploads/2022/10/LOGO-3SHAPE-01.png" class="h-9 me-3" alt="FlowBite Logo" />
               </a>
           </div>
           <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
               <div>
-                  <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Resources</h2>
+                  <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Recursos</h2>
                   <ul class="text-gray-500 dark:text-gray-400 font-medium">
                       <li class="mb-4">
                           <a href="https://flowbite.com/" class="hover:underline">Flowbite</a>
@@ -44,7 +42,7 @@
                   </ul>
               </div>
               <div>
-                  <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Developed By</h2>
+                  <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Desarrollado por</h2>
                   <ul class="text-gray-500 dark:text-gray-400 font-medium">
                     <li class="mb-4">
                           <a href="https://github.com/killiam19" class="hover:underline" target="_blank">Killiam González</a>
@@ -71,7 +69,6 @@
           </div>
       </div>
       <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
-      <!-- CAMBIO 2: Eliminé px-4 de esta sección para que ocupe todo el ancho -->
       <div class="sm:flex sm:items-center sm:justify-between px-4">
           <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2025 <a href="https://www.3shape.com/" class="hover:underline">3Shape™</a>. All Rights Reserved.
           </span>

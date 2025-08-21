@@ -195,7 +195,7 @@
       </svg>
     </a>
 
-    <button id="open-carousel-btn" style="display: block; margin: 20px auto; padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #2260ff; color: white; border: none; border-radius: 5px;">Ver distribución de parqueadero</button>
+    <button id="open-carousel-btn" style="display: block; margin: 20px auto; padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: green; color: white; border: none; border-radius: 5px;">Ver distribución de parqueadero</button>
 
     <!-- Modal Start -->
     <div id="carousel-modal" style="display:none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5);">
@@ -277,7 +277,7 @@
                 <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
             </svg>
         </div>
-        <input datepicker id="default-datepicker" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Selecciona la fecha en la que deseas reservar">
+        <input datepicker id="default-datepicker" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Elige la fecha en la que deseas reservar">
     </div>
     
     <div id="mensaje-seleccionar-fecha" class="mt-4 text-sm text-gray-500">
