@@ -188,18 +188,19 @@ class HomeController
                         throw new \Exception("El espacio ya está reservado para esa fecha");
                     }
                 } elseif ($tipo_vehiculo == 'moto_grande') {
-                    // Para motos grandes, verificar que el espacio no esté ocupado
-                    $conflicto = db()->query(
-                        'SELECT id FROM reservas 
-                         WHERE numero_espacio = :espacio AND fecha_reserva = :fecha AND estado = "activa"',
+                    // Para motos grandes, permitir hasta 2 cupos por espacio
+                    $ocupados = db()->query(
+                        'SELECT COUNT(*) as total FROM reservas 
+                         WHERE numero_espacio = :espacio AND fecha_reserva = :fecha AND estado = "activa" AND tipo_vehiculo = "moto_grande"',
                         [
                             'espacio' => $numero_espacio,
                             'fecha' => $fecha_reserva
                         ]
                     )->first();
 
-                    if ($conflicto) {
-                        throw new \Exception("El espacio ya está reservado para esa fecha");
+                    $totalOcupados = (int)($ocupados['total'] ?? 0);
+                    if ($totalOcupados >= 2) {
+                        throw new \Exception("No hay cupos disponibles en ese espacio para motos grandes (máximo 2)");
                     }
                 } else {
                     // Para motos, verificar límite de cupos
@@ -342,21 +343,35 @@ class HomeController
                 '441' => 5,
             ];
 
-            // Motos grandes: ocupación por usuario
-            $motos_grandes = db()->query(
-                "SELECT numero_espacio, usuario_id FROM reservas \n                 WHERE fecha_reserva = :fecha AND tipo_vehiculo = 'moto_grande' AND estado = 'activa'",
+            // Motos grandes: conteo por espacio (máximo 2 por espacio)
+            $motos_grandes_conteo = db()->query(
+                "SELECT numero_espacio, COUNT(*) as ocupados FROM reservas \n                 WHERE fecha_reserva = :fecha AND tipo_vehiculo = 'moto_grande' AND estado = 'activa'\n                 GROUP BY numero_espacio",
                 ['fecha' => $fecha]
             )->get();
 
-            $moto_grande_ocupados = [];
+            $moto_grande_cupos = [];
+            foreach ($motos_grandes_conteo as $mgc) {
+                $moto_grande_cupos[(string) $mgc["numero_espacio"]] = (int) $mgc["ocupados"];
+            }
+
+            // Motos grandes: espacios seleccionados por el usuario actual
             $moto_grande_seleccionados_usuario = [];
-            foreach ($motos_grandes as $mg) {
-                $num = (int) $mg['numero_espacio'];
-                $moto_grande_ocupados[] = $num;
-                if ($currentUserId && (int) $mg['usuario_id'] === (int) $currentUserId) {
-                    $moto_grande_seleccionados_usuario[] = $num;
+            if ($currentUserId) {
+                $motos_grandes_usuario = db()->query(
+                    "SELECT numero_espacio FROM reservas \n                     WHERE fecha_reserva = :fecha AND tipo_vehiculo = 'moto_grande' AND estado = 'activa' AND usuario_id = :uid",
+                    ['fecha' => $fecha, 'uid' => $currentUserId]
+                )->get();
+                foreach ($motos_grandes_usuario as $mgu) {
+                    $moto_grande_seleccionados_usuario[] = (int) $mgu['numero_espacio'];
                 }
             }
+
+            // Definición de cupos máximos para motos grandes
+            $moto_grande_maximos = [
+                '270' => 2,
+                '271' => 2,
+                '272' => 2,
+            ];
 
             echo json_encode([
                 'fecha' => $fecha,
@@ -369,7 +384,8 @@ class HomeController
                     'maximos' => $moto_maximos,
                 ],
                 'moto_grande' => [
-                    'ocupados' => $moto_grande_ocupados,
+                    'ocupados' => $moto_grande_cupos,
+                    'maximos' => $moto_grande_maximos,
                     'seleccionados_usuario' => $moto_grande_seleccionados_usuario,
                 ],
             ]);

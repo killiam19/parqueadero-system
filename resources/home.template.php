@@ -386,7 +386,7 @@
                             </div>
                             <div class="mapa-espacios-bg">
                                 <div id="mapa-espacios-carro">
-                                    <?php for ($i = 281; $i >= 272; $i--): ?>
+                                    <?php for ($i = 281; $i >= 273; $i--): ?>
                                         <?php
                                             $estado = 'disponible';
                                             if (isset($ocupados_map[$i])) {
@@ -491,7 +491,7 @@
                             </div>
                             <div class="mapa-espacios-bg">
                                 <div id="mapa-espacios-moto-grande" style="display: flex; justify-content: center; gap: 10px;">
-                                    <?php for ($i = 270; $i <= 271; $i++): ?>
+                                    <?php for ($i = 270; $i <= 272; $i++): ?>
                                         <?php
                                             $estado = 'disponible';
                                             if (isset($moto_grande_ocupados_map[$i])) {
@@ -501,12 +501,15 @@
                                                     $estado = 'ocupado';
                                                 }
                                             }
+                                            // Tooltip inicial por defecto, se actualizará vía JS con la API
+                                            $info_mg = "0/2 cupos reservados";
                                         ?>
-                                        <button type="button" class="espacio-btn moto-grande-btn <?php echo $estado; ?>" data-espacio="<?php echo $i; ?>" data-tipo="moto_grande" <?php echo ($estado=='ocupado'?'disabled':''); ?>
-                                        <?php if($estado=='seleccionado'): ?> style="background:#2563eb;color:#fff;border:2px solid #2563eb;box-shadow:0 0 0 4px #2563eb33;"<?php endif; ?>
+                                        <button type="button" class="espacio-btn moto-grande-btn <?php echo $estado; ?>" data-espacio="<?php echo $i; ?>" data-tipo="moto_grande" data-cupos="<?php echo $info_mg; ?>" <?php echo ($estado=='ocupado'?'disabled':''); ?>
+                                        <?php if($estado=='seleccionado'): ?> style="position:relative;background:#2563eb;color:#fff;border:2px solid #2563eb;box-shadow:0 0 0 4px #2563eb33;"<?php else: ?> style="position:relative;"<?php endif; ?>
                                         >
                                             <span class="icono-auto"><i class="fa-solid fa-motorcycle"></i></span>
                                             <span><?php echo $i; ?></span>
+                                            <span class="tooltip-cupos"><?php echo $info_mg; ?></span>
                                         </button>
                                     <?php endfor; ?>
                                 </div>
@@ -728,15 +731,20 @@
                 });
             }
 
-            // Actualizar MOTOS GRANDES 270, 271
+            // Actualizar MOTOS GRANDES 270..272 (máximo 2 por espacio)
             if (contenedorMotoGrande && data.moto_grande) {
-                const ocupados = new Set(data.moto_grande.ocupados || []);
+                const ocupadosPorEspacioMG = data.moto_grande.ocupados || {};
+                const maximosMG = data.moto_grande.maximos || {};
                 const seleccionadosUsuario = new Set(data.moto_grande.seleccionados_usuario || []);
                 const botonesMG = contenedorMotoGrande.querySelectorAll('button.moto-grande-btn');
                 botonesMG.forEach(btn => {
-                    const num = parseInt(btn.getAttribute('data-espacio'), 10);
+                    const id = btn.getAttribute('data-espacio');
+                    const num = parseInt(id, 10);
+                    const ocupados = Number(ocupadosPorEspacioMG[id] || 0);
+                    const max = Number(maximosMG[id] || 2);
+                    const lleno = max > 0 && ocupados >= max;
                     btn.classList.remove('disponible', 'ocupado', 'seleccionado');
-                    btn.removeAttribute('style');
+                    // mantener estilos inline (position:relative) necesarios para tooltip
                     if (seleccionadosUsuario.has(num)) {
                         btn.classList.add('seleccionado');
                         btn.disabled = false;
@@ -744,13 +752,17 @@
                         btn.style.color = '#fff';
                         btn.style.border = '2px solid #2563eb';
                         btn.style.boxShadow = '0 0 0 4px #2563eb33';
-                    } else if (ocupados.has(num)) {
+                    } else if (lleno) {
                         btn.classList.add('ocupado');
                         btn.disabled = true;
                     } else {
                         btn.classList.add('disponible');
                         btn.disabled = false;
                     }
+                    const tooltip = btn.querySelector('.tooltip-cupos');
+                    const info = `${ocupados}/${max || '?'} cupos reservados`;
+                    btn.setAttribute('data-cupos', info);
+                    if (tooltip) tooltip.textContent = info;
                 });
             }
 
