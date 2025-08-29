@@ -35,7 +35,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div class="flex justify-between items-center">
                 <div>
-                    <h1 class="text-3xl font-bold text-3shape-blue">Reglamento de Uso de Parqueaderos</h1>
+                    <h1 class="text-3xl font-bold text-3shape-blue">Politica de Uso de Parqueaderos 3Shape</h1>
                     <p class="text-gray-600 mt-2">Política oficial de 3Shape Colombia</p>
                 </div>
                 <div class="bg-3shape-blue text-white px-4 py-2 rounded-lg">
