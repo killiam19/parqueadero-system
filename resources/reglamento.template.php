@@ -84,7 +84,7 @@
                 <div class="bg-blue-50 rounded-lg p-6 space-y-4 ml-11">
                     <div class="flex items-start">
                         <div class="w-2 h-2 bg-3shape-blue rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                        <p class="text-gray-700">Para acceder a los parqueaderos de uso exclusivo de 3Shape de vehículos, previamente deberán ser <strong>registrados y autorizados</strong> por administración de 3Shape. Si no lo está puede incurrir en multas o pagos tarifarios al edificio. Todas las placas deben estar registradas y autorizadas (tenga esto en cuenta cuando cambie de vehículo).</p>
+                        <p class="text-gray-700">Para acceder a los parqueaderos de uso exclusivo de 3Shape los vehículos, previamente deberán ser <strong>registrados y autorizados</strong> por administración de 3Shape. Si no lo está puede incurrir en multas o pagos tarifarios al edificio. Todas las placas deben estar registradas y autorizadas (tenga esto en cuenta cuando cambie de vehículo).</p>
                     </div>
                     <div class="flex items-start">
                         <div class="w-2 h-2 bg-3shape-blue rounded-full mt-2 mr-3 flex-shrink-0"></div>

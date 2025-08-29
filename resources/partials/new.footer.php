@@ -43,16 +43,10 @@
                   </ul>
               </div>
               <div>
-                  <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Desarrollado por</h2>
+                  <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Este aplicativo es propiedad de</h2>
                   <ul class="text-gray-500 dark:text-gray-400 font-medium">
                     <li class="mb-4">
-                          <a href="https://github.com/killiam19" class="hover:underline" target="_blank">Killiam González</a>
-                      </li>
-                      <li class="mb-4">
-                          <a href="https://github.com/killiam19" class="hover:underline" target="_blank">Github</a>
-                      </li>
-                      <li>
-                          <a href="https://www.linkedin.com/in/killiam-gonz%C3%A1lez-cruz-22b708312/" class="hover:underline" target="_blank">LinkedIn</a>
+                          <a href="https://www.3shape.com/" class="hover:underline" target="_blank">3Shape</a>
                       </li>
                   </ul>
               </div>
@@ -60,10 +54,7 @@
                   <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Legal</h2>
                   <ul class="text-gray-500 dark:text-gray-400 font-medium">
                       <li class="mb-4">
-                          <a href="#" class="hover:underline">Privacy Policy</a>
-                      </li>
-                      <li>
-                          <a href="#" class="hover:underline">Terms &amp; Conditions</a>
+                          <a href="/reglamento" class="hover:underline">Politica de uso de parqueadero</a>
                       </li>
                   </ul>
               </div>
