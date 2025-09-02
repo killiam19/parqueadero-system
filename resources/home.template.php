@@ -465,7 +465,7 @@
                             <div id="ayuda-espacio-moto" style="font-size: 13px; color: #888; margin-top: 3px; text-align:center;">Selecciona un espacio disponible (verde). Pasa el mouse para ver los cupos ocupados.</div>
                         </div>
                         
-                        <div id="mapa-moto-grande" style="display:none;">
+                       <div id="mapa-moto-grande" style="display:none;">
                             <div class="mapa-titulo" style="justify-content: flex-start;">
                                 <span style="color:#2563eb;font-size:2.2rem;">&#128205;</span>
                                 Mapa de Espacios de Parqueadero (Motos de Alto Cilindraje)-Disponibilidad para la fecha seleccionada
@@ -477,7 +477,7 @@
                             </div>
                             <div class="mapa-espacios-bg">
                                 <div id="mapa-espacios-moto-grande" style="display: flex; justify-content: center; gap: 10px;">
-                                    <?php for ($i = 270; $i <= 272; $i++): ?>
+                                    <?php for ($i = 272; $i >= 270; $i--): ?>
                                         <?php
                                             $estado = 'disponible';
                                             if (isset($moto_grande_ocupados_map[$i])) {
