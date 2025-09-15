@@ -41,12 +41,14 @@ class HomeController
             $_SESSION['usuario_email'] = $usuario['email'];
             $_SESSION['usuario_telefono'] = $usuario['telefono'];
             $_SESSION['usuario_rol'] = $usuario['rol'];
+            $_SESSION['usuario_bloqueado'] = (int)($usuario['bloqueado'] ?? 0);
         } else {
             $_SESSION['usuario_id'] = null;
             $_SESSION['usuario_nombre'] = null;
             $_SESSION['usuario_email'] = null;
             $_SESSION['usuario_telefono'] = null;
             $_SESSION['usuario_rol'] = null;
+            $_SESSION['usuario_bloqueado'] = null;
         }
 
         // Generar fechas de la semana laboral (lunes a viernes)
@@ -152,11 +154,17 @@ class HomeController
                 
                 // Determinar el usuario (admin puede reservar para otros)
                 $usuario_reserva = ($_SESSION['usuario_rol'] == 'admin' && isset($_POST['usuario_id'])) 
-                    ? $_POST['usuario_id'] 
-                    : ($currentUser['id'] ?? null);
+                    ? (int)$_POST['usuario_id'] 
+                    : (int)($currentUser['id'] ?? 0);
 
                 if (!$usuario_reserva) {
                     throw new \Exception("Debe iniciar sesión para hacer reservas");
+                }
+
+                // Validar bloqueo del usuario destino de la reserva (aplica tanto para usuario normal como para admin creando para otro)
+                $usuarioDestino = db()->query('SELECT bloqueado FROM usuarios WHERE id = :id', ['id' => $usuario_reserva])->first();
+                if ($usuarioDestino && (int)($usuarioDestino['bloqueado'] ?? 0) === 1) {
+                    throw new \Exception("El usuario está bloqueado y no puede realizar reservas");
                 }
 
                 // NUEVA VALIDACIÓN: Verificar que el usuario no tenga ya una reserva para esa fecha
@@ -275,7 +283,8 @@ class HomeController
             // Agregar estos mapas para la vista
             'ocupados_map' => $ocupados_map,
             'moto_ocupados' => $moto_ocupados,
-            'moto_grande_ocupados_map' => $moto_grande_ocupados_map
+            'moto_grande_ocupados_map' => $moto_grande_ocupados_map,
+            'usuario_bloqueado' => (int)($_SESSION['usuario_bloqueado'] ?? 0)
         ]);
     }
 
@@ -512,6 +521,14 @@ class HomeController
         $currentUser = session()->get('user');
         if (!$currentUser) {
             redirect('login', 'Debes iniciar sesión para hacer reservas');
+        }
+
+        // Impedir reservas si el usuario está bloqueado
+        $usuario = db()->query('SELECT bloqueado FROM usuarios WHERE id = :id', [
+            'id' => $currentUser['id']
+        ])->first();
+        if ($usuario && (int)($usuario['bloqueado'] ?? 0) === 1) {
+            redirect('/', 'Tu cuenta está bloqueada. Contacta al administrador.', 'error');
         }
 
         // NUEVA VALIDACIÓN: Verificar que el usuario no tenga ya una reserva para esa fecha

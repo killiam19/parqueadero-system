@@ -37,6 +37,7 @@ $router->get('/reglamento',  [AuthController::class, 'reglamento']);
 $router->get('/admin',            [AdminController::class, 'index'],       Authenticated::class);
 $router->post('/admin',           [AdminController::class, 'index'],       Authenticated::class);
 $router->get('/usuarios',         [AdminController::class, 'usuarios'],    Authenticated::class);
+$router->post('/usuarios',        [AdminController::class, 'usuarios'],    Authenticated::class);
 $router->get('/admin/usuarios',   [AdminController::class, 'usuarios'],    Authenticated::class);
 $router->post('/admin/usuarios',  [AdminController::class, 'usuarios'],    Authenticated::class);
 

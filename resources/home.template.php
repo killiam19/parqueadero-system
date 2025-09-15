@@ -359,6 +359,13 @@
                             <strong>Recordatorio:</strong> Solo se permite una reserva por día por usuario. Si ya tienes una reserva activa para una fecha, no podrás crear otra para el mismo día, a menos que canceles tu reserva actual.
                         </div>
                         <?php endif; ?>
+
+                        <?php if (!empty($usuario_bloqueado) && $_SESSION['usuario_rol'] !== 'admin'): ?>
+                        <div class="mensaje warning" style="background:#fff7ed;border:1px solid #f59e0b;color:#92400e;margin-bottom:15px;">
+                            <i class="fas fa-ban" style="margin-right:6px;"></i>
+                            Tu cuenta está actualmente bloqueada por el administrador. No puedes crear nuevas reservas hasta ser desbloqueado.
+                        </div>
+                        <?php endif; ?>
                         
                         <div id="mapa-carro" style="display:block;">
                             <div class="mapa-titulo" style="justify-content: flex-start;">
@@ -544,6 +551,11 @@
                                 <button type="button" class="text-white bg-blue-400 dark:bg-blue-500 cursor-not-allowed font-medium rounded-lg text-sm px-5 py-2.5 text-center" disabled>
                                     <i class="fas fa-sign-in-alt" style="margin-right: 5px;"></i>
                                     Debe iniciar sesión para reservar
+                                </button>
+                            <?php elseif (!empty($usuario_bloqueado) && $_SESSION['usuario_rol'] !== 'admin'): ?>
+                                <button type="button" class="text-white bg-gray-400 cursor-not-allowed font-medium rounded-lg text-sm px-5 py-2.5 text-center" disabled>
+                                    <i class="fas fa-ban" style="margin-right: 5px;"></i>
+                                    Tu cuenta está bloqueada
                                 </button>
                             <?php else: ?>
                                 <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" id="btn-reservar">

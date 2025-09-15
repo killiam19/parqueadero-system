@@ -254,6 +254,14 @@
                                 <p><strong>Teléfono:</strong> <?php echo htmlspecialchars($usuario['telefono'] ?: 'No especificado'); ?></p>
                                 <p><strong>Registrado:</strong> <?php echo date('d/m/Y', strtotime($usuario['fecha_registro'])); ?></p>
                                 <p><strong>Rol:</strong> <?php echo htmlspecialchars($usuario['rol'] ?: 'usuario'); ?></p>
+                                <p>
+                                    <strong>Estado:</strong>
+                                    <?php if (!empty($usuario['bloqueado'])): ?>
+                                        <span class="stat-item stat-cancelada" title="Este usuario no puede reservar hasta ser desbloqueado">Bloqueado</span>
+                                    <?php else: ?>
+                                        <span class="stat-item stat-activa">Activo</span>
+                                    <?php endif; ?>
+                                </p>
                                 
                                 <div class="usuario-stats">
                                     <span class="stat-item">
@@ -272,6 +280,20 @@
                             </div>
                             
                             <div>
+                                <form method="POST" action="" style="display: inline; margin-right: 8px;">
+                                    <input type="hidden" name="usuario_id" value="<?php echo $usuario['id']; ?>">
+                                    <?php if (empty($usuario['bloqueado'])): ?>
+                                        <input type="hidden" name="action" value="bloquear">
+                                        <button type="submit" class="btn btn-danger" onclick="return confirm('¿Bloquear a este usuario? No podrá agendar hasta ser desbloqueado.')">
+                                            Bloquear
+                                        </button>
+                                    <?php else: ?>
+                                        <input type="hidden" name="action" value="desbloquear">
+                                        <button type="submit" class="btn btn-primary" onclick="return confirm('¿Desbloquear a este usuario? Podrá volver a agendar.')">
+                                            Desbloquear
+                                        </button>
+                                    <?php endif; ?>
+                                </form>
                                 <form method="POST" action="" style="display: inline;">
                                     <input type="hidden" name="action" value="eliminar">
                                     <input type="hidden" name="usuario_id" value="<?php echo $usuario['id']; ?>">

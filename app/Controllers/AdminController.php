@@ -127,6 +127,34 @@ class AdminController
             }
         }
 
+        // Procesar bloqueo de usuario
+        if (isset($_POST['action']) && $_POST['action'] == 'bloquear') {
+            $usuario_id = $_POST['usuario_id'];
+            try {
+                $this->db->query("UPDATE usuarios SET bloqueado = 1 WHERE id = ?", [$usuario_id]);
+                // Opcional: cancelar reservas activas futuras del usuario bloqueado
+                // $this->db->query("UPDATE reservas SET estado = 'cancelada' WHERE usuario_id = ? AND fecha_reserva >= CURDATE() AND estado = 'activa'", [$usuario_id]);
+                $mensaje = 'Usuario bloqueado correctamente';
+                $tipo_mensaje = 'success';
+            } catch (Exception $e) {
+                $mensaje = 'Error al bloquear usuario: ' . $e->getMessage();
+                $tipo_mensaje = 'error';
+            }
+        }
+
+        // Procesar desbloqueo de usuario
+        if (isset($_POST['action']) && $_POST['action'] == 'desbloquear') {
+            $usuario_id = $_POST['usuario_id'];
+            try {
+                $this->db->query("UPDATE usuarios SET bloqueado = 0 WHERE id = ?", [$usuario_id]);
+                $mensaje = 'Usuario desbloqueado correctamente';
+                $tipo_mensaje = 'success';
+            } catch (Exception $e) {
+                $mensaje = 'Error al desbloquear usuario: ' . $e->getMessage();
+                $tipo_mensaje = 'error';
+            }
+        }
+
         // Obtener todos los usuarios con estadísticas
         $usuarios = $this->getUsuariosConEstadisticas();
 
@@ -201,7 +229,7 @@ class AdminController
                 COUNT(CASE WHEN r.estado = 'cancelada' THEN 1 END) as reservas_canceladas
             FROM usuarios u
             LEFT JOIN reservas r ON u.id = r.usuario_id
-            GROUP BY u.id, u.nombre, u.email, u.telefono, u.fecha_registro, u.rol
+            GROUP BY u.id, u.nombre, u.email, u.telefono, u.fecha_registro, u.rol, u.bloqueado
             ORDER BY u.nombre
         ")->get();
     }

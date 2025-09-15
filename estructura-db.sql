@@ -12,6 +12,7 @@ CREATE TABLE usuarios (
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     rol ENUM('admin', 'usuario') DEFAULT 'usuario',
+    bloqueado TINYINT(1) NOT NULL DEFAULT 0,
     telefono VARCHAR(20),
     fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
