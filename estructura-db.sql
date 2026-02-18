@@ -33,8 +33,6 @@ CREATE TABLE reservas (
     usuario_id INT NOT NULL,
     numero_espacio INT NOT NULL,
     fecha_reserva DATE NOT NULL,
-    hora_inicio TIME NOT NULL,
-    hora_fin TIME NOT NULL,
     placa_vehiculo VARCHAR(10) NOT NULL,
     estado ENUM('activa', 'completada', 'cancelada') DEFAULT 'activa',
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -48,7 +46,7 @@ INSERT INTO configuracion (total_cupos) VALUES (10);
 INSERT INTO usuarios (p_nombre, email, password, rol)
 VALUES (
     'Administrador',
-    'admin@parqueadero3shape.com',
+    'admin@3shape.com',
     'Ta10120620!',
     'admin'
 );

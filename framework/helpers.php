@@ -3,6 +3,11 @@
 use Framework\Database;
 use Framework\SessionManager;
 
+function flash($mensaje, $tipo = 'success') {
+    $_SESSION['flash_mensaje'] = $mensaje;
+    $_SESSION['flash_tipo'] = $tipo;
+}
+
 if (!function_exists('root_path')) {
     function root_path(string $path): string
     {
@@ -55,10 +60,16 @@ if (!function_exists('config')) {
 }
 
 if (!function_exists('redirect')) {
-    function redirect(string $uri, string|null $message = null, int $status= 302): void
+    function redirect(
+        string $uri,
+        string|null $message = null,
+        string $type = 'success',
+        int $status= 302
+    ): void
     {
         if($message){
             session ()->setFlash('message',$message);
+            session()->setFlash('type', $type);
         }
 
         http_response_code($status);

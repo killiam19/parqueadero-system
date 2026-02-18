@@ -139,7 +139,7 @@ db()->query('UPDATE reservas SET estado = "completada" WHERE estado = "activa" A
             }
 
             // Eliminar la reserva
-            $resultado = db()->query('DELETE FROM reservas WHERE id = :id', [
+            $resultado = db()->query('UPDATE reservas SET estado = "cancelada" WHERE id = :id', [
                 'id' => $reserva_id
             ]);
 

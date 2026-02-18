@@ -1,10 +1,12 @@
 <?php require resource_path('partials/header.php'); ?>
-
-<div class="bg-white rounded-2xl shadow-xl p-10 border border-gray-100 text-center">
-      <h1 class="mb-4 text-4xl font-extrabold tracking-tight text-gray-900 md:text-5xl lg:text-6xl">
-        Iniciar sesion
-      </h1>
-</div>
+      <!-- Header Section -->
+      <div class="border-b border-gray-200 pb-8 mb-8">
+        <div class="flex items-center justify-center mb-4">
+            <img src="assets/images/3shape-intraoral-logo.png" alt="3Shape Logo" width="50" height="50" class="mr-4">
+            <h1 class="text-4xl font-bold text-gray-900">Iniciar sesión</h1>
+        </div>
+        <p class="text-center text-gray-600">Ingresa tus credenciales</p>
+    </div>
 <br>
 <br>
 <div class="w-full max-w-5xl mx-auto">

@@ -1,10 +1,13 @@
 <?php require resource_path('partials/header.php'); ?>
 
-<div class="bg-white rounded-2xl shadow-xl p-10 border border-gray-100 text-center">
-      <h1 class="mb-4 text-4xl font-extrabold tracking-tight text-gray-900 md:text-5xl lg:text-6xl">
-        Registrate aquí
-      </h1>
-</div>
+      <!-- Header Section -->
+      <div class="border-b border-gray-200 pb-8 mb-8">
+        <div class="flex items-center justify-center mb-4">
+            <img src="assets/images/3shape-intraoral-logo.png" alt="3Shape Logo" width="50" height="50" class="mr-4">
+            <h1 class="text-4xl font-bold text-gray-900">Registrate aqui</h1>
+        </div>
+        <p class="text-center text-gray-600">Crea un perfil</p>
+    </div>
 <br>
 <br>
 <div class="w-full max-w-5xl mx-auto">
@@ -21,7 +24,8 @@
           <div>
             <label class="block mb-2 text-sm font-medium text-gray-900">Segundo nombre</label>
             <input type="text" name="segundo_nombre"
-              class="w-full p-2.5 rounded-lg border border-gray-300 text-sm">
+              class="w-full p-2.5 rounded-lg border border-gray-300 text-sm"
+              placeholder="Opcional">
           </div>
         </div>
 
@@ -36,7 +40,8 @@
           <div>
             <label class="block mb-2 text-sm font-medium text-gray-900">Segundo apellido</label>
             <input type="text" name="segundo_apellido"
-              class="w-full p-2.5 rounded-lg border border-gray-300 text-sm">
+              class="w-full p-2.5 rounded-lg border border-gray-300 text-sm"
+              placeholder="Opcional">
           </div>
         </div>
 
@@ -76,7 +81,7 @@
           <input type="checkbox" name="terms" value="1" required class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-gray-300">
           <label class="ml-2 text-sm text-gray-700">
             He leído y acepto el
-            <a href="/reglamento" class="text-blue-600 hover:underline">Reglamento del parqueadero</a>
+            <a href="/about" class="text-blue-600 hover:underline">Reglamento del parqueadero</a>
           </label>
         </div>
 

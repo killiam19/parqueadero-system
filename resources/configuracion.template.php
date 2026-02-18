@@ -39,22 +39,6 @@
           <h3 class="text-lg font-medium text-gray-900 mb-2">Cambiar contraseña</h3>
           <p class="text-sm text-gray-600">Cambia tu contraseña</p>
         </a>
-
-       <!-- Espacio para futuras configuraciones --> 
-      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-center cursor-pointer" data action="perfil">
-        <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.983 13.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"></path>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M19.5 12a7.5 7.5 0 01-.06.944l1.756 1.365-1.5 2.598-2.09-.84a7.507 7.507 0 01-1.635.944l-.315 2.232h-3l-.315-2.232a7.507 7.507 0 01-1.635-.944l-2.09.84-1.5-2.598 1.756-1.365A7.5 7.5 0 014.5 12c0-.32.02-.636.06-.944L2.804 9.691l1.5-2.598 2.09.84c.5-.38 1.05-.7 1.635-.944l.315-2.232h3l.315 2.232c.585.244 1.135.564 1.635.944l2.09-.84 1.5 2.598-1.756 1.365c.04.308.06.624.06.944z" />
-          </svg>
-        </div>
-        <h3 class="text-lg font-medium text-gray-900 mb-2">Proximamente</h3>
-        <p class="text-sm text-gray-600">Proximamente</p>
-      </div>   
-
-     
-
     </div>
   </div>
 </div>

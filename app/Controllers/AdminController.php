@@ -282,7 +282,7 @@ class AdminController
 
         $sql = "
             SELECT
-                r.fecha_reserva AS fecha_reserva, r.hora_inicio, r.hora_fin, r.estado, 
+                r.fecha_reserva AS fecha_reserva, r.estado, 
                 CONCAT(
                     u.p_nombre, ' ',
                     u.s_nombre, ' ',
@@ -296,7 +296,7 @@ class AdminController
 
             FROM reservas r
             INNER JOIN usuarios u ON r.usuario_id = u.id
-            ORDER BY r.fecha_reserva DESC, r.hora_inicio DESC
+            ORDER BY r.fecha_reserva DESC
         
         ";
         
@@ -308,24 +308,20 @@ class AdminController
 
         //encebezados
         $hoja->setCellValue('A1', 'Fecha');
-        $hoja->setCellValue('B1', 'Hora inicio');
-        $hoja->setCellValue('C1', 'Hora fin');
-        $hoja->setCellValue('D1', 'Estado');
-        $hoja->setCellValue('E1', 'Usuario');
-        $hoja->setCellValue('F1', 'Email');
-        $hoja->setCellValue('G1', 'Espacio');
+        $hoja->setCellValue('B1', 'Estado');
+        $hoja->setCellValue('C1', 'Usuario');
+        $hoja->setCellValue('D1', 'Email');
+        $hoja->setCellValue('E1', 'Espacio');
 
         //llenar filas
         $fila = 2;
 
         foreach ($reservas as $r) {
-            $hoja->setCellValue('A'.$fila, $r->fecha_reserva);
-            $hoja->setCellValue('B'.$fila, $r->hora_inicio);
-            $hoja->setCellValue('C'.$fila, $r->hora_fin);
-            $hoja->setCellValue('D'.$fila, $r->estado);
-            $hoja->setCellValue('E'.$fila, $r->usuario);
-            $hoja->setCellValue('F'.$fila, $r->email);
-            $hoja->setCellValue('G'.$fila, $r->numero_espacio);
+            $hoja->setCellValue('A'.$fila, $r['fecha_reserva']);
+            $hoja->setCellValue('B'.$fila, $r['estado']);
+            $hoja->setCellValue('C'.$fila, $r['usuario']);
+            $hoja->setCellValue('D'.$fila, $r['email']);
+            $hoja->setCellValue('E'.$fila, $r['numero_espacio']);
             $fila++;
         }
 
@@ -341,13 +337,72 @@ class AdminController
 
     }
 
-    public function testExcel()
-    {
-        require base_path('vendor/autoload.php');
-
-        var_dump(class_exists(Spreadsheet::class));
+    public function datosGraficoReservas() {
+        $tipo = $_GET['tipo'] ?? 'dia';
+    
+        switch ($tipo) {
+    
+            case 'semana':
+                $sql = "
+                    SELECT 
+                        CONCAT(YEAR(fecha_reserva), '-S', WEEK(fecha_reserva)) as periodo,
+                        COUNT(*) as total,
+                        SUM(estado = 'activa') as activas,
+                        SUM(estado = 'completada') as completadas,
+                        SUM(estado = 'cancelada') as canceladas
+                    FROM reservas
+                    GROUP BY YEAR(fecha_reserva), WEEK(fecha_reserva)
+                    ORDER BY YEAR(fecha_reserva), WEEK(fecha_reserva)
+                ";
+                break;
+            
+            case 'mes':
+                $sql = "
+                    SELECT 
+                        DATE_FORMAT(fecha_reserva, '%Y-%m') as periodo,
+                        COUNT(*) as total,
+                        SUM(estado = 'activa') as activas,
+                        SUM(estado = 'completada') as completadas,
+                        SUM(estado = 'cancelada') as canceladas
+                    FROM reservas
+                    GROUP BY DATE_FORMAT(fecha_reserva, '%Y-%m')
+                    ORDER BY periodo
+                ";
+                break;
+            
+            case 'anio':
+                $sql = "
+                    SELECT 
+                        YEAR(fecha_reserva) as periodo,
+                        COUNT(*) as total,
+                        SUM(estado = 'activa') as activas,
+                        SUM(estado = 'completada') as completadas,
+                        SUM(estado = 'cancelada') as canceladas
+                    FROM reservas
+                    GROUP BY YEAR(fecha_reserva)
+                    ORDER BY periodo
+                ";
+                break;
+            
+            default: // DIA
+                $sql = "
+                    SELECT 
+                        DATE(fecha_reserva) as periodo,
+                        COUNT(*) as total,
+                        SUM(estado = 'activa') as activas,
+                        SUM(estado = 'completada') as completadas,
+                        SUM(estado = 'cancelada') as canceladas
+                    FROM reservas
+                    GROUP BY DATE(fecha_reserva)
+                    ORDER BY periodo
+                ";
+        }
+            
+        $datos = $this->db->query($sql)->get();
+            
+        header('Content-Type: application/json');
+        echo json_encode($datos);
         exit;
-    }
-
+}   
 }
 ?>

@@ -15,17 +15,10 @@
         <!-- Navigation (only for admin) -->
         <?php if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] == 'admin'): ?>
         <div class="flex justify-center space-x-4 mb-8">
-            <a href="/usuarios" class="inline-flex items-center px-6 py-3 bg-white rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 text-gray-700 hover:text-blue-600 border border-gray-200">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-2.239"></path>
-                </svg>
+            <a href="/usuarios" class="inline-block px-4 py-2 mx-2 text-red-700 border border-red-700 rounded hover:bg-red-700 hover:text-white transition">
                 Usuarios
             </a>
-            <a href="/admin" class="inline-flex items-center px-6 py-3 bg-white rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 text-gray-700 hover:text-blue-600 border border-gray-200">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                </svg>
+            <a href="/admin" class="inline-block px-4 py-2 mx-2 text-red-700 border border-red-700 rounded hover:bg-red-700 hover:text-white transition">
                 Administración
             </a>
         </div>
@@ -120,7 +113,7 @@
                             <div class="flex-1">
                                 <div class="flex items-center mb-2">
                                     <h4 class="text-lg font-semibold text-gray-800 mr-3"><?php echo htmlspecialchars($reserva['nombre']); ?></h4>
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium <?php echo $reserva['estado'] == 'activa' ? 'bg-blue-100 text-blue-800' : ($reserva['estado'] == 'cancelada' ? 'bg--100 text-red-800' : 'bg-gray-100 text-gray-800'); ?>">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium <?php echo $reserva['estado'] == 'activa' ? 'bg-blue-100 text-blue-800' : ($reserva['estado'] == 'cancelada' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'); ?>">
                                         <?php echo ucfirst($reserva['estado']); ?>
                                     </span>
                                 </div>

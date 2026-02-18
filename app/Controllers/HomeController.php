@@ -5,6 +5,7 @@ namespace App\Controllers;
 use Framework\Validator;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+use DateTime;
 
 class HomeController
 {
@@ -107,6 +108,7 @@ class HomeController
         $reservas_semana = [];
         foreach ($fechas_semana as $fecha => $info) {
             if ($_SESSION['usuario_rol'] == 'admin') {
+
                 // Admin ve todas las reservas
                 $reservas = db()->query(
                     'SELECT 
@@ -158,9 +160,9 @@ class HomeController
             $usuarios = db()->query('SELECT id,
                                             CONCAT(
                                                 p_nombre, " ",
-                                                IFNULL(s_nombre, ""),
+                                                IFNULL(CONCAT(s_nombre, " "), ""),
                                                 p_apellido, " ",
-                                                IFNULL(s_apellido, "")
+                                                IFNULL(CONCAT(s_apellido, " "), "")
                                             ) AS nombres
                                             FROM usuarios
                                             ORDER BY p_nombre, p_apellido')->get();
@@ -179,15 +181,18 @@ class HomeController
                 
                 $fecha_reserva = $this->convertirFormatoFecha($fecha_reserva);
                 
-                // Validar que la fecha sea un día hábil
-                if (!$this->esDiaHabil($fecha_reserva)) {
-                    throw new \Exception("Solo se pueden hacer reservas para días hábiles (lunes a viernes)");
-                }
-                
                 // Determinar el usuario (admin puede reservar para otros)
-                $usuario_reserva = ($_SESSION['usuario_rol'] == 'admin' && isset($_POST['usuario_id'])) 
-                    ? (int)$_POST['usuario_id'] 
-                    : (int)($currentUser['id'] ?? 0);
+                //$usuario_reserva = ($_SESSION['usuario_rol'] == 'admin' && !empty($_POST['usuario_id'])) 
+                    //? (int)$_POST['usuario_id'] 
+                    //: (int)($currentUser['id'] ?? 0);
+                if ($_SESSION['usuario_rol'] === 'admin') {
+                    if (empty($_POST['usuario_id'])) {
+                        throw new Exception("Debe seleccionar un usuario para la reserva");
+                    }
+                    $usuario_reserva = (int) $_POST['usuario_id'];
+                } else {
+                    $usuario_reserva = (int) ($currentUser['id'] ?? 0);
+                }
 
                 if (!$usuario_reserva) {
                     throw new \Exception("Debe iniciar sesión para hacer reservas");
@@ -199,110 +204,105 @@ class HomeController
                     throw new \Exception("El usuario está bloqueado y no puede realizar reservas");
                 }
 
-                // NUEVA VALIDACIÓN: Verificar que el usuario no tenga ya una reserva para esa fecha
-                $reserva_existente = db()->query(
-                    'SELECT id FROM reservas 
-                     WHERE usuario_id = :usuario_id AND (fecha_reserva) = :fecha AND estado = "activa"',
+                // Verificar que el usuario no tenga ya una reserva para esa fecha
+                //Solo aplica para usuarios normales, no para admin
+                if ($_SESSION['usuario_rol'] !== 'admin') {
+                    $reserva_existente = db()->query(
+                        'SELECT id FROM reservas 
+                        WHERE usuario_id = :usuario_id AND (fecha_reserva) = :fecha AND estado = "activa"',
+                        [
+                            'usuario_id' => $usuario_reserva,
+                            'fecha' => $fecha_reserva
+                        ]
+
+                    )->first();
+
+                    if ($reserva_existente) {
+                        throw new \Exception("Ya tienes una reserva para esta fecha. Solo se permite una reserva por día.");
+                    }
+                }
+
+                //VALIDACION PREVIA de cupos antes de la transaccion
+                $maxCupos = $this->obtenerMaxCupos($tipo_vehiculo, $numero_espacio);
+        
+                $ocupados_previo = db()->query(
+                    'SELECT COUNT(*) as total FROM reservas
+                    WHERE numero_espacio = :espacio
+                    AND fecha_reserva = :fecha
+                    AND estado = "activa"
+                    AND tipo_vehiculo = :tipo',
                     [
-                        'usuario_id' => $usuario_reserva,
-                        'fecha' => $fecha_reserva
+                        'espacio' => $numero_espacio,
+                        'fecha' => $fecha_reserva,
+                        'tipo' => $tipo_vehiculo
                     ]
 
                 )->first();
 
-                if ($reserva_existente) {
-                    throw new \Exception("Ya tienes una reserva para esta fecha. Solo se permite una reserva por día por usuario.");
+                if ((int)($ocupados_previo ['total'] ?? 0) >= $maxCupos) {
+                    throw new \Exception("No hay cupos disponibles en el espacio $numero_espacio.");
                 }
 
-                // Verificar disponibilidad del espacio
-                if ($tipo_vehiculo == 'carro') {
-                    $conflicto = db()->query(
-                        'SELECT id FROM reservas 
-                         WHERE numero_espacio = :espacio AND fecha_reserva = :fecha AND estado = "activa"',
-                        [
-                            'espacio' => $numero_espacio,
-                            'fecha' => $fecha_reserva
-                        ]
-                    )->first();
 
-                    if ($conflicto) {
-                        throw new \Exception("El espacio ya está reservado para esa fecha");
-                    }
-                } elseif ($tipo_vehiculo == 'moto_grande') {
-                    // Para motos grandes, permitir hasta 2 cupos por espacio
+                // Verificar disponibilidad del espacio
+                db()->beginTransaction();
+                try {
+                    //Lock de registros del espacio en esa fecha
                     $ocupados = db()->query(
-                        'SELECT COUNT(*) as total FROM reservas 
-                         WHERE numero_espacio = :espacio AND fecha_reserva = :fecha AND estado = "activa" AND tipo_vehiculo = "moto_grande"',
+                        'SELECT COUNT(*) as total FROM reservas
+                        WHERE numero_espacio = :espacio
+                        AND fecha_reserva = :fecha
+                        AND estado = "activa"
+                        AND tipo_vehiculo = :tipo
+                        FOR UPDATE',
                         [
                             'espacio' => $numero_espacio,
-                            'fecha' => $fecha_reserva
+                            'fecha' => $fecha_reserva,
+                            'tipo' => $tipo_vehiculo
                         ]
                     )->first();
 
                     $totalOcupados = (int)($ocupados['total'] ?? 0);
-                    if ($totalOcupados >= 2) {
-                        throw new \Exception("No hay cupos disponibles en ese espacio para motos grandes (máximo 2)");
-                    }
-                } else {
-                    // Para motos, verificar límite de cupos
-                    $cupos_maximos = [
-                        '476' => 6, '476a' => 1,
-                        '475' => 6, '475a' => 1,
-                        '474' => 6, '474b' => 1, '474a' => 1,
-                        '441' => 4
-                    ];
 
-                    $cupos_ocupados = db()->query(
-                        'SELECT COUNT(*) as total FROM reservas 
-                         WHERE numero_espacio = :espacio AND fecha_reserva = :fecha AND estado = "activa"',
+                    if ($totalOcupados >= $maxCupos) {
+                        db()->rollBack();
+                        throw new \Exception("No hay cupos disponibles en el espacio $numero_espacio. ($totalOcupados/$maxCupos ocupados)");
+                    }
+                    
+                    // Insert protegido
+                    db()->query(
+                        'INSERT INTO reservas
+                        (usuario_id, numero_espacio, tipo_vehiculo, fecha_reserva, placa_vehiculo, estado, fecha_creacion)
+                        VALUES (:usuario_id, :numero_espacio, :tipo_vehiculo, :fecha_reserva, :placa_vehiculo, "activa", NOW())',
                         [
-                            'espacio' => $numero_espacio,
-                            'fecha' => $fecha_reserva
+                            'usuario_id' => $usuario_reserva,
+                            'numero_espacio' => $numero_espacio,
+                            'tipo_vehiculo' => $tipo_vehiculo,
+                            'fecha_reserva' => $fecha_reserva,
+                            'placa_vehiculo' => $placa_vehiculo
                         ]
-                    )->get();
+                    );
 
-                    $max_cupos = $cupos_maximos[$numero_espacio] ?? 1;
-                    if ($cupos_ocupados && $cupos_ocupados[0]['total'] >= $max_cupos) {
-                        throw new \Exception("No hay cupos disponibles en ese espacio para la fecha seleccionada");
-                    }
+                    db()->commit();
+
+                } catch (\Exception $e) {
+                    db()->rollBack();
+                    throw $e;
                 }
 
-                // Crear la reserva
-                db()->query(
-                    'INSERT INTO reservas (usuario_id, numero_espacio, tipo_vehiculo, fecha_reserva, placa_vehiculo, estado, fecha_creacion) 
-                     VALUES (:usuario_id, :numero_espacio, :tipo_vehiculo, :fecha_reserva,:placa_vehiculo, "activa", NOW())',
-                    [
-                        'usuario_id' => $usuario_reserva,
-                        'numero_espacio' => $numero_espacio,
-                        'tipo_vehiculo' => $tipo_vehiculo,
-                        'fecha_reserva' => $fecha_reserva,
-                        'placa_vehiculo' => $placa_vehiculo
-                    ]
-                );
-
-                $mensaje = "Reserva creada exitosamente para el espacio $numero_espacio el " . $this->formatearFecha($fecha_reserva);
-                $tipo_mensaje = "success";
-
+                redirect('/', "Reserva creada exitosamente para el espacio $numero_espacio.", 'success');
+                
             } catch (\PDOException $e) {
 
-                if ($e -> getCode() === 23000) {
-                    $_SESSION['flash_mensaje'] = "Ya tienes una reserva para este día. No puedes hacer más de una.";
-                } else {
-                    $_SESSION['flash_mensaje'] = "Error al crear la reserva: ";
-                }
-
-                $_SESSION['flash_tipo'] = "error";
-
-                header('Location: /');
-                exit;
+                $mensaje = ($e->getCode() === 23000)
+                    ? "Ya tienes una reserva para este día. No puedes crear más de una."
+                    : "Error al crear la reserva: " . $e->getMessage();
+                redirect('/', $mensaje, 'error');
 
             } catch (\Exception $e) {
 
-                $_SESSION['flash_mensaje'] = $e->getMessage();
-                $_SESSION['flash_tipo'] = "error";
+                redirect('/', $e->getMessage(), 'error');
 
-                header('Location: /');
-                exit;
             }
         }
 
@@ -313,10 +313,8 @@ class HomeController
         $reservas_hoy = isset($reservas_semana[$hoy]) ? $reservas_semana[$hoy] : [];
         $reservas_manana = isset($reservas_semana[$manana]) ? $reservas_semana[$manana] : [];
 
-        $mensaje = $_SESSION['flash_mensaje'] ?? null;
-        $tipo_mensaje = $_SESSION['flash_tipo'] ?? null;
-
-        unset($_SESSION['flash_mensaje'], $_SESSION['flash_tipo']);
+        $mensaje = session()->getFlash('message');
+        $tipo_mensaje = session()->getFlash('type');
 
         // Cargar la vista con todos los datos necesarios
         view('home', [
@@ -351,20 +349,14 @@ class HomeController
 
         try {
             $fecha_param = $_GET['fecha'] ?? '';
+
             if (!$fecha_param) {
                 http_response_code(400);
                 echo json_encode(['error' => 'Parámetro fecha es requerido']);
                 return;
-            }
+            };
 
             $fecha = $this->convertirFormatoFecha($fecha_param);
-
-            // Permitir cualquier fecha válida; si quieres restringir a hábiles, descomenta:
-            // if (!$this->esDiaHabil($fecha)) {
-            //     http_response_code(400);
-            //     echo json_encode(['error' => 'Solo se permiten días hábiles (lunes a viernes)']);
-            //     return;
-            // }
 
             $currentUser = session()->get('user');
             $currentUserId = $currentUser['id'] ?? ($_SESSION['usuario_id'] ?? null);
@@ -396,12 +388,26 @@ class HomeController
                 $moto_cupos[(string) $m['numero_espacio']] = (int) $m['ocupados'];
             }
 
+            $moto_seleccionados_usuario = [];
+            if ($currentUserId) {
+                $motos_usuario = db()->query(
+                    "SELECT numero_espacio FROM reservas 
+                    WHERE fecha_reserva = :fecha AND tipo_vehiculo = 'moto' AND estado = 'activa' AND usuario_id = :uid",
+                    ['fecha' => $fecha, 'uid' => $currentUserId]
+                )->get();
+                foreach ($motos_usuario as $mu) {
+                    $moto_seleccionados_usuario[] = (string) $mu['numero_espacio'];
+                }
+            }
+
             // Definición de cupos máximos (alineado con el template actual)
             $moto_maximos = [
                 '476' => 7,
                 '475' => 7,
                 '474' => 7,
                 '441' => 5,
+                '001' => 4,
+                '002' => 3
             ];
 
             // Motos grandes: conteo por espacio (máximo 2 por espacio)
@@ -443,6 +449,7 @@ class HomeController
                 'moto' => [
                     'ocupados' => $moto_cupos,
                     'maximos' => $moto_maximos,
+                    'seleccionados_usuario' => $moto_seleccionados_usuario,
                 ],
                 'moto_grande' => [
                     'ocupados' => $moto_grande_cupos,
@@ -454,6 +461,15 @@ class HomeController
             http_response_code(500);
             echo json_encode(['error' => 'Error interno', 'detail' => $e->getMessage()]);
         }
+    }
+
+    /**
+     * Verifica si una fecha es día hábil (lunes a viernes)
+     */
+    private function esDiaHabil($fecha)
+    {
+        $dia_semana = date('N', strtotime($fecha)); // 1 = lunes, 7 = domingo
+        return $dia_semana >= 1 && $dia_semana <= 5;
     }
 
     /**
@@ -491,15 +507,6 @@ class HomeController
         }
         
         return $fechas;
-    }
-
-    /**
-     * Verifica si una fecha es día hábil (lunes a viernes)
-     */
-    private function esDiaHabil($fecha)
-    {
-        $dia_semana = date('N', strtotime($fecha)); // 1 = lunes, 7 = domingo
-        return $dia_semana >= 1 && $dia_semana <= 5;
     }
 
     /**
@@ -553,82 +560,34 @@ class HomeController
         return $home;
     }
 
-    public function store()
+    private function obtenerMaxCupos(string $tipo, string $espacio): int
     {
-        Validator::make($_POST, [
-            'numero_espacio' => 'required',
-            'fecha_reserva' => 'required',
-            'placa_vehiculo' => 'required',
-            'tipo_vehiculo' => 'required',
-        ]);
-
-        $fecha_reserva = $this->convertirFormatoFecha($_POST['fecha_reserva']);
-
-        // Validar que la fecha sea un día hábil
-        if (!$this->esDiaHabil($fecha_reserva)) {
-            redirect('/', 'Solo se pueden hacer reservas para días hábiles (lunes a viernes)');
+        if ($tipo === 'carro') {
+            return 1;
         }
 
-        // Obtener usuario actual
-        $currentUser = session()->get('user');
-        if (!$currentUser) {
-            redirect('login', 'Debes iniciar sesión para hacer reservas');
+        if ($tipo === 'moto_grande') {
+            return 2;
         }
 
-        // Impedir reservas si el usuario está bloqueado
-        $usuario = db()->query('SELECT bloqueado FROM usuarios WHERE id = :id', [
-            'id' => $currentUser['id']
-        ])->first();
-        if ($usuario && (int)($usuario['bloqueado'] ?? 0) === 1) {
-            redirect('/', 'Tu cuenta está bloqueada. Contacta al administrador.', 'error');
-        }
-
-        // NUEVA VALIDACIÓN: Verificar que el usuario no tenga ya una reserva para esa fecha
-        $reserva_existente = db()->query(
-            'SELECT id FROM reservas 
-             WHERE usuario_id = :usuario_id AND fecha_reserva = :fecha AND estado = "activa"',
-            [
-                'usuario_id' => $currentUser['id'],
-                'fecha' => $fecha_reserva // Usar fecha convertida
-            ]
-        )->first();
-
-        if ($reserva_existente) {
-           redirect('/', 'Ya tienes una reserva activa', 400); // código 400 para errores del cliente
-        }
-
-        // Obtener datos completos del usuario
-        $usuario = db()->query('SELECT * FROM usuarios WHERE id = :id', [
-            'id' => $currentUser['id']
-        ])->first();
-
-        // Crear la reserva
-        db()->query(
-            'INSERT INTO reservas (usuario_id, numero_espacio, fecha_reserva, placa_vehiculo, estado, tipo_vehiculo) 
-             VALUES (:usuario_id, :numero_espacio, :fecha_reserva, :placa_vehiculo, "activa", :tipo_vehiculo)',
-            [
-                'usuario_id' => $currentUser['id'],
-                'numero_espacio' => $_POST['numero_espacio'],
-                'fecha_reserva' => $fecha_reserva, // Usar fecha convertida
-                'placa_vehiculo' => $_POST['placa_vehiculo'],
-                'tipo_vehiculo' => $_POST['tipo_vehiculo']
-            ]
-        );
-
-        // Preparar datos para el correo
-        $datosReserva = [
-            'fecha' => $fecha_reserva, // Usar fecha convertida
-            'placa' => $_POST['placa_vehiculo'],
-            'tipo_vehiculo' => $_POST['tipo_vehiculo'],
-            'numero_espacio' => $_POST['numero_espacio']
+        // Moto normal
+        $cupos = [
+            '476' => 7,
+            '476a' => 1,
+            '475' => 7,
+            '475a' => 1,
+            '474' => 7,
+            '474b' => 1,
+            '474a' => 1,
+            '441' => 5,
+            '001' => 5,
+            '002' => 5
         ];
 
-        // Enviar correo de confirmación
-        $this->enviarCorreoConfirmacion($usuario['email'], $usuario['nombre'], $datosReserva);
-
-        redirect('/', 'Reserva creada exitosamente. Se ha enviado un correo de confirmación.');
+        return $cupos[$espacio] ?? 1;
     }
 
+    
     private function enviarCorreoConfirmacion($to, $nombre, $datosReserva)
     {
         $mail = new PHPMailer(true);
@@ -658,7 +617,7 @@ class HomeController
             $mail->isHTML(true);
             $mail->Subject = 'Confirmación de Reserva de Parqueadero';
 
-            // Cuerpo del mensaje (usando tu diseño HTML)
+            // Cuerpo del mensaje
             $mail->Body = $this->crearCuerpoHTML($nombre, $datosReserva);
             $mail->AltBody = $this->crearTextoPlano($nombre, $datosReserva);
 
