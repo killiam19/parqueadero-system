@@ -69,7 +69,6 @@
     card.addEventListener('click', function() {
       // Aquí puedes agregar la lógica de navegación
       const action = this.dataset.action;
-      console.log('Navegando a:', title);
       
       // Ejemplo de navegación (personaliza según tu estructura de rutas)
       switch(action) {

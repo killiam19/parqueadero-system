@@ -1,4 +1,5 @@
 <?php
+/*
 // Configuración local comentada
 return[
     'host' => '127.0.0.1',
@@ -11,7 +12,7 @@ return[
     ]
 ]; 
 
-/*
+*/
 // Configuración de Railway (sincronizada con config.php)
 return[
     'host' => 'interchange.proxy.rlwy.net:18270', // Incluye el puerto
@@ -25,4 +26,3 @@ return[
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
     ]
 ];
-*/

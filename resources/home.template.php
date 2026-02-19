@@ -976,7 +976,6 @@
         
         // Escuchar cambios en el datepicker
         datepicker.addEventListener('changeDate', function(e) {
-            console.log('changeDate disparado:', e.detail); // Para debug
     
             // Flowbite guarda la fecha en e.detail.date (objeto Date)
             if (e.detail && e.detail.date) {
@@ -999,7 +998,7 @@
         // También escuchar el evento input para mayor compatibilidad
         datepicker.addEventListener('input', function(e) {
             const val = e.target.value;
-            console.log('input disparado:', val); // Para debug
+
             if (val) {
                 mostrarMapasConFecha(val);
             }
@@ -1008,7 +1007,6 @@
         //Fallback con blur (cuando el usuario sale del campo)
         datepicker.addEventListener('blur', function(e) {
             const val = e.target.value;
-            console.log('blur disparado:', val); // Para debug
             if (val) {
                 mostrarMapasConFecha(val);
             }
