@@ -1,17 +1,18 @@
 <?php
-/* 
+/*
 // Configuración local comentada
 return[
     'host' => '127.0.0.1',
     'dbname' => 'parqueadero_system',
     'username' => 'root',
-    'password' => '1213123Shape',
+    'password' => '',
     'charset' => 'utf8mb4',
     'options' => [
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     ]
-]; */
+]; 
 
+*/
 // Configuración de Railway (sincronizada con config.php)
 return[
     'host' => 'interchange.proxy.rlwy.net:18270', // Incluye el puerto

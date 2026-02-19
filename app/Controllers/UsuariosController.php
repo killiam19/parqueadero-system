@@ -27,9 +27,27 @@ class UsuariosController
 
     public function editarCuenta()
     {
-        view('editar-cuenta',[
-            'title' => 'Editar Cuenta',
-            ]);
+        $currentUser = session()->get('user');
+
+        if (!$currentUser) {
+            redirect('login');
+        }
+
+        $usuario = db()->query(
+            'SELECT p_nombre, s_nombre, p_apellido, s_apellido, email, telefono 
+            FROM usuarios 
+            WHERE id = :id',
+            ['id' => $currentUser['id']]
+        )->first();
+
+        if (!$usuario) {
+            redirect('login');
+        }
+
+        return view('editar-cuenta', [
+            'usuario' => $usuario,
+            'title' => 'Editar Cuenta'
+        ]);
     }
 
     public function cambiarContraseña()
@@ -43,7 +61,8 @@ class UsuariosController
     {
         // Validación básica
         \Framework\Validator::make($_POST, [
-            'nombre'   => 'required|min:2',
+            'p_nombre' => 'required|min:2',
+            'p_apellido' => 'required|min:2',
             'email'    => 'required|email|domain:3shape.com',
             'telefono' => 'required|min:7',
         ]);
@@ -68,9 +87,12 @@ class UsuariosController
         }
 
         db()->query(
-            'UPDATE usuarios SET nombre = :nombre, email = :email, telefono = :telefono WHERE id = :id',
+            'UPDATE usuarios SET p_nombre = :p_nombre, s_nombre = :s_nombre, p_apellido = :p_apellido, s_apellido = :s_apellido, email = :email, telefono = :telefono WHERE id = :id',
             [
-                'nombre'   => trim($_POST['nombre']),
+                'p_nombre'   => trim($_POST['p_nombre']),
+                's_nombre'  => trim($_POST['s_nombre']),
+                'p_apellido'   => trim($_POST['p_apellido']),
+                's_apellido'  => trim($_POST['s_apellido']),
                 'email'    => $nuevoEmail,
                 'telefono' => trim($_POST['telefono']),
                 'id'       => $currentUser['id'],
@@ -81,15 +103,26 @@ class UsuariosController
         session()->set('user', [
             'id'    => $currentUser['id'],
             'email' => $nuevoEmail,
-            'name'  => trim($_POST['nombre'])
+            'name'  => trim
+                ($_POST['p_nombre'].' '.
+                ($_POST['s_nombre'] ? $user['s_nombre'].' ' : '').
+                $_POST['p_apellido'].' '.
+                ($_POST['s_apellido'] ?? '')
+                )      
         ]);
 
         // También sincronizar variables usadas en templates
-        $_SESSION['usuario_nombre'] = trim($_POST['nombre']);
+        $_SESSION['usuario_nombre'] = trim(
+            $_POST['p_nombre'].' '.
+            ($_POST['s_nombre'] ?? '').' '.
+            $_POST['p_apellido'].' '.
+            ($_POST['s_apellido'] ?? '')
+        );
         $_SESSION['usuario_email'] = $nuevoEmail;
         $_SESSION['usuario_telefono'] = trim($_POST['telefono']);
 
-        redirect('/configuracion/editar-cuenta', 'Datos actualizados correctamente');
+        session()->setFlash('success', 'Datos actualizados correctamente');
+        redirect('/editar-cuenta');
     }
 
     public function passwordUpdate()
@@ -131,7 +164,8 @@ class UsuariosController
             'id'       => $currentUser['id']
         ]);
 
-        redirect('/configuracion/cambiar-password', 'Contraseña actualizada correctamente');
+        redirect('/cambiar-password', 'Contraseña actualizada correctamente');
     }
+
 }
 

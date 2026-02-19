@@ -14,21 +14,20 @@ class AuthController
 
     public function authenticate()
     {
-         Validator::make($_POST, [
-            'email'    => 'required|email|domain:3shape.com',
+         \Framework\Validator::make($_POST, [
+            'email'    => 'required|email',
             'password' => 'required|min:6',
         ]);
 
-          $login = (new Authenticate())->login($_POST['email'],$_POST['password']);
+        $auth = new \Framework\Authenticate();
 
-          if(!$login){
-            session()->setFlash ('errors', 'Invalid email or password');
-            session()->setFlash ('old_email', $_POST['email'] ?? '');
-
+        if (!$auth->login($_POST['email'], $_POST['password'])) {
+            session()->setFlash('errors', 'Credenciales incorrectas');
             back();
-          }
-          redirect('/');
         }
+
+        redirect('/');
+    }
 
 
     public function logout()
@@ -53,8 +52,10 @@ public function store()
 {
     // Validar los datos del formulario
     Validator::make($_POST, [
-        'name'            => 'required|min:2',
+        'primer_nombre'   => 'required|min:2',
+        'primer_apellido' => 'required|min:2',
         'email'           => 'required|email|domain:3shape.com',
+        'telefono'        => 'required|min:10',
         'password'        => 'required|min:6',
         'repeat-password' => 'required|min:6',
         'terms'          =>  'required'
@@ -75,7 +76,7 @@ public function store()
 
     if ($existingUser) {
         session()->setFlash('errors', 'Ya existe una cuenta con este correo electrónico');
-        session()->setFlash('old_name', $_POST['name'] ?? '');
+        session()->setFlash('old_primer_nombre', $_POST['primer_nombre'] ?? '');
         session()->setFlash('old_email', $_POST['email'] ?? '');
         back();
     }
@@ -83,25 +84,25 @@ public function store()
     // Crear el nuevo usuario
     $hashedPassword = password_hash($_POST['password'], PASSWORD_DEFAULT);
     
-    db()->query('INSERT INTO usuarios (nombre, email, password, fecha_registro) VALUES (:nombre, :email, :password, NOW())', [
-        'nombre'     => $_POST['name'],
-        'email'    => $_POST['email'],
-        'password' => $hashedPassword
-    ]);
+    try {
+        
+        db()->query('INSERT INTO usuarios (p_nombre, s_nombre, p_apellido, s_apellido, telefono, email, password, fecha_registro) VALUES (:p_nombre, :s_nombre, :p_apellido, :s_apellido, :telefono, :email, :password, NOW())', [
+            'p_nombre'  =>  $_POST['primer_nombre'],
+            's_nombre'  =>  $_POST['segundo_nombre'] ?? null,
+            'p_apellido'  =>  $_POST['primer_apellido'],
+            's_apellido'  =>   $_POST['segundo_apellido'] ?? null,
+            'email'    => $_POST['email'],
+            'telefono' => $_POST['telefono'],
+            'password' => $hashedPassword
+        ]);
 
-    // Obtener el usuario recién creado para iniciar sesión
-    $newUser = db()->query('SELECT * FROM usuarios WHERE email = :email', [
-        'email' => $_POST['email']
-    ])->first();
-
-    // Iniciar sesión automáticamente después del registro
-    session()->set('user', [
-        'id'    => $newUser['id'],
-        'email' => $newUser['email'],
-        'name'  => $newUser['nombre']
-    ]);
+    } catch (\Throwable $e) {
+        echo $e->getMessage();
+        die();
+    }
 
     // Redirigir al usuario a la página principal
-    redirect('/');
+    session()->setFlash('success', 'Cuenta creada correctamente. Inicia sesión.');
+    redirect('/login');
 }
 }

@@ -10,6 +10,7 @@ class MisReservasController
 {
     public function index()
     {
+        $reservas = [];
         // Verificar autenticación
         if (!isset($_SESSION['usuario_id'])) {
             redirect('login');
@@ -40,26 +41,49 @@ db()->query('UPDATE reservas SET estado = "completada" WHERE estado = "activa" A
         }
 
         // Obtener reservas según el rol del usuario
-        if ($_SESSION['usuario_rol'] == 'admin') {
+        if ($_SESSION['usuario_rol'] ==='admin') {
             // Admin ve todas las reservas
-            $reservas = db()->query('
-                SELECT r.*, u.nombre, u.email 
+            $reservas = db()->query(
+                'SELECT 
+                    r.*,
+                    r.usuario_id,
+                    r.numero_espacio,
+                    u.email,
+                    CONCAT(
+                        u.p_nombre, " ",
+                        IFNULL(u.s_nombre, ""), " ",
+                        u.p_apellido, " ",
+                        IFNULL(u.s_apellido, "")
+                    ) AS nombre
                 FROM reservas r
-                JOIN usuarios u ON r.usuario_id = u.id
-                ORDER BY r.fecha_reserva DESC
-            ')->get();
+                INNER JOIN usuarios u ON r.usuario_id = u.id
+                ORDER BY r.fecha_reserva DESC',
+            )->get();
+
         } else {
-            // Usuario normal solo ve sus reservas
-            $reservas = db()->query('
-                SELECT r.*, u.nombre, u.email 
+            //Usuario normal ve solo sus reservas
+             $reservas = db()->query(
+                'SELECT 
+                    r.*,
+                    r.usuario_id,
+                    r.numero_espacio,
+                    u.email,
+                    CONCAT(
+                        u.p_nombre, " ",
+                        IFNULL(u.s_nombre, ""), " ",
+                        u.p_apellido, " ",
+                        IFNULL(u.s_apellido, "")
+                    ) AS nombre
                 FROM reservas r
-                JOIN usuarios u ON r.usuario_id = u.id
+                INNER JOIN usuarios u ON r.usuario_id = u.id
                 WHERE r.usuario_id = :usuario_id
-                ORDER BY r.fecha_reserva DESC
-            ', [
-                'usuario_id' => $_SESSION['usuario_id']
-            ])->get();
+                ORDER BY r.fecha_reserva DESC, r.fecha_creacion DESC',
+                [
+                    'usuario_id' => $_SESSION['usuario_id']
+                ]
+            )->get();
         }
+
 
         // Agrupar reservas por fecha
         $reservas_por_fecha = [];
@@ -115,7 +139,7 @@ db()->query('UPDATE reservas SET estado = "completada" WHERE estado = "activa" A
             }
 
             // Eliminar la reserva
-            $resultado = db()->query('DELETE FROM reservas WHERE id = :id', [
+            $resultado = db()->query('UPDATE reservas SET estado = "cancelada" WHERE id = :id', [
                 'id' => $reserva_id
             ]);
 

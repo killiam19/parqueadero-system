@@ -2,33 +2,23 @@
 
 <div class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
     <div class="container mx-auto px-4 py-8">
-        <!-- Header -->
-        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8 border border-gray-100">
-            <div class="text-center">
-                <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full mb-4">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                    </svg>
+        <div class="border-b border-gray-200 pb-8 mb-8">
+            <div class="flex flex-col items-center">
+                <div class="flex items-center gap-4">
+                    <img src="assets/images/3shape-intraoral-logo.png" alt="3Shape Logo" class="w-12 h-12">
+                    <h1 class="text-4xl font-bold text-gray-900"><?php echo $_SESSION['usuario_rol'] == 'admin' ? 'Todas las Reservas' : 'Mis Reservas'; ?></h1>
                 </div>
-                <h1 class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black"><?php echo $_SESSION['usuario_rol'] == 'admin' ? 'Todas las Reservas' : 'Mis Reservas'; ?></h1>
-<p class="mb-6 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400"><?php echo $_SESSION['usuario_rol'] == 'admin' ? 'Gestiona y visualiza todas las reservas del parqueadero' : 'Gestiona tus reservas de parqueadero'; ?></p>
+                <p class="mt-2 text-lg text-gray-500"><?php echo $_SESSION['usuario_rol'] == 'admin' ? 'Gestiona y visualiza todas las reservas del parqueadero' : 'Gestiona tus reservas de parqueadero'; ?></p>
             </div>
         </div>
 
         <!-- Navigation (only for admin) -->
         <?php if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] == 'admin'): ?>
         <div class="flex justify-center space-x-4 mb-8">
-            <a href="/usuarios" class="inline-flex items-center px-6 py-3 bg-white rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 text-gray-700 hover:text-blue-600 border border-gray-200">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-2.239"></path>
-                </svg>
+            <a href="/usuarios" class="inline-block px-4 py-2 mx-2 text-red-700 border border-red-700 rounded hover:bg-red-700 hover:text-white transition">
                 Usuarios
             </a>
-            <a href="/admin" class="inline-flex items-center px-6 py-3 bg-white rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 text-gray-700 hover:text-blue-600 border border-gray-200">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                </svg>
+            <a href="/admin" class="inline-block px-4 py-2 mx-2 text-red-700 border border-red-700 rounded hover:bg-red-700 hover:text-white transition">
                 Administración
             </a>
         </div>
@@ -68,11 +58,13 @@
                 <?php echo $_SESSION['usuario_rol'] == 'admin' ? 'Aún no se han realizado reservas en el sistema.' : 'Aún no has realizado ninguna reserva.'; ?>
             </p>
             <?php if ($_SESSION['usuario_rol'] != 'admin'): ?>
-            <a href="/reservar" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg hover:from-blue-600 hover:to-indigo-700 transform hover:-translate-y-1 transition-all duration-300 shadow-lg">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <a href="/" class="inline-flex items-center px-6 py-3 bg-red-700 text-white rounded-lg shadow-lg">
+                <svg class="w-5 h-5 mr-2 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
+                <span>
                 Hacer primera reserva
+                </span>
             </a>
             <?php endif; ?>
         </div>
@@ -116,12 +108,12 @@
                 <!-- Reservations list -->
                 <div class="p-6 space-y-4">
                     <?php foreach ($reservas_fecha as $reserva): ?>
-                    <div class="<?php echo $reserva['estado'] == 'activa' ? 'border-l-green-500 bg-green-50' : ($reserva['estado'] == 'cancelada' ? 'border-l-red-500 bg-red-50' : 'border-l-gray-500 bg-gray-50'); ?> border-l-4 rounded-lg p-4 transition-all duration-300 hover:shadow-md">
+                    <div class="<?php echo $reserva['estado'] == 'activa' ? 'border-l-blue-500 bg-blue-50' : ($reserva['estado'] == 'cancelada' ? 'border-l-red-500 bg-red-50' : 'border-l-gray-500 bg-gray-50'); ?> border-l-4 rounded-lg p-4 transition-all duration-300 hover:shadow-md">
                         <div class="flex items-start justify-between">
                             <div class="flex-1">
                                 <div class="flex items-center mb-2">
                                     <h4 class="text-lg font-semibold text-gray-800 mr-3"><?php echo htmlspecialchars($reserva['nombre']); ?></h4>
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium <?php echo $reserva['estado'] == 'activa' ? 'bg-green-100 text-green-800' : ($reserva['estado'] == 'cancelada' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'); ?>">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium <?php echo $reserva['estado'] == 'activa' ? 'bg-blue-100 text-blue-800' : ($reserva['estado'] == 'cancelada' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'); ?>">
                                         <?php echo ucfirst($reserva['estado']); ?>
                                     </span>
                                 </div>
@@ -182,7 +174,7 @@
                                         <input type="hidden" name="reserva_id" value="<?php echo $reserva['id']; ?>">
                                         <button type="submit" 
                                                 onclick="return confirm('¿Estás seguro de que quieres cancelar esta reserva?')"
-                                                class="inline-flex items-center px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-lg hover:bg-red-600 transform hover:-translate-y-1 transition-all duration-300 shadow-md hover:shadow-lg">
+                                                class="inline-flex items-center px-4 py-2 bg-red-700 text-white text-sm font-medium rounded-lg hover:bg-red-600 transform hover:transition-all duration-300 shadow-md hover:bg-red-800">
                                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                             </svg>
@@ -201,15 +193,15 @@
         </div>
         <?php endif; ?>
 
-        <!-- Back to dashboard button -->
-       <!--  <div class="text-center mt-8">
-            <a href="/dashboard" class="inline-flex items-center px-6 py-3 bg-white text-gray-700 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 border border-gray-200">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+       <div class="text-center mt-8">
+            <a href="/" 
+            class="inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-700 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transform hover:-translate-y-1 active:translate-y-0 transition-all duration-200">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                 </svg>
                 Volver al Dashboard
             </a>
-        </div> -->
+        </div>
     </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>

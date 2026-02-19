@@ -44,14 +44,6 @@ function enviarCorreoReserva($to, $nombre, $datosReserva) {
                         <td style="padding: 8px 0;">' . htmlspecialchars($datosReserva['fecha']) . '</td>
                     </tr>
                     <tr>
-                        <td style="padding: 8px 0; font-weight: bold;">Hora inicio:</td>
-                        <td style="padding: 8px 0;">' . htmlspecialchars($datosReserva['hora_inicio']) . '</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 8px 0; font-weight: bold;">Hora fin:</td>
-                        <td style="padding: 8px 0;">' . htmlspecialchars($datosReserva['hora_fin']) . '</td>
-                    </tr>
-                    <tr>
                         <td style="padding: 8px 0; font-weight: bold;">Placa:</td>
                         <td style="padding: 8px 0;">' . htmlspecialchars($datosReserva['placa']) . '</td>
                     </tr>
@@ -67,7 +59,7 @@ function enviarCorreoReserva($to, $nombre, $datosReserva) {
             </div>
         </div>
         ';
-        $mail->AltBody = "Reserva realizada para el {$datosReserva['fecha']} de {$datosReserva['hora_inicio']} a {$datosReserva['hora_fin']}, placa: {$datosReserva['placa']}, tipo de vehículo: {$datosReserva['tipo_vehiculo']}.";
+        $mail->AltBody = "Reserva realizada para el {$datosReserva['fecha']}, placa: {$datosReserva['placa']}, tipo de vehículo: {$datosReserva['tipo_vehiculo']}.";
 
         $mail->send();
         return true;

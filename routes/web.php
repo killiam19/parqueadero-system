@@ -8,11 +8,12 @@ use App\Controllers\UsuariosController;
 use App\Controllers\AdminController;
 use Framework\Middleware\Authenticated;
 use Framework\Middleware\Guest;
+use App\Controllers\ExportarReservasController;
 
 // Rutas principales
 $router->get('/',                      [HomeController::class,     'index']);
-$router->post('/',                     [HomeController::class,     'store']);
-$router->get('/api/disponibilidad',    [HomeController::class,     'availability']);
+$router->post('/',                     [HomeController::class,     'index']);
+$router->get('/api/disponibilidad',        [HomeController::class,     'availability']);
 $router->get('/about',                 [AboutController::class,    'index']);
 
 // Rutas de reservas - 
@@ -34,17 +35,23 @@ $router->post('/register',   [AuthController::class, 'store']);
 $router->get('/reglamento',  [AuthController::class, 'reglamento']);
 
 // Rutas de administración
-$router->get('/admin',            [AdminController::class, 'index'],       Authenticated::class);
-$router->post('/admin',           [AdminController::class, 'index'],       Authenticated::class);
-$router->get('/usuarios',         [AdminController::class, 'usuarios'],    Authenticated::class);
-$router->post('/usuarios',        [AdminController::class, 'usuarios'],    Authenticated::class);
-$router->get('/admin/usuarios',   [AdminController::class, 'usuarios'],    Authenticated::class);
-$router->post('/admin/usuarios',  [AdminController::class, 'usuarios'],    Authenticated::class);
+$router->get('/admin',                           [AdminController::class, 'index'],                 Authenticated::class);
+$router->post('/admin',                          [AdminController::class, 'index'],                 Authenticated::class);
+$router->get('/usuarios',                        [AdminController::class, 'usuarios'],              Authenticated::class);
+$router->post('/usuarios',                       [AdminController::class, 'usuarios'],              Authenticated::class);
+$router->get('/admin/usuarios',                  [AdminController::class, 'usuarios'],              Authenticated::class);
+$router->post('/admin/usuarios',                 [AdminController::class, 'usuarios'],              Authenticated::class);
+$router->get('/admin/exportar-reservas',         [AdminController::class, 'reporteReservas']);
+$router->get('/admin/datos-grafico-reservas',    [AdminController::class, 'datosGraficoReservas'],  Authenticated::class);
+
 
 //Rutas para usuario
-$router->get('/configuracion',                     [UsuariosController::class, 'configuracion']);
-$router->get('/configuracion/cambiar-password',    [UsuariosController::class, 'cambiarContraseña']);
-$router->put('/configuracion/cambiar-password',    [UsuariosController::class, 'passwordUpdate']);
-$router->get('/cuenta',                            [UsuariosController::class, 'cuenta']);
-$router->put('/cuenta',                            [UsuariosController::class, 'updateCuenta']);
-$router->get('/configuracion/editar-cuenta',                     [UsuariosController::class, 'editarCuenta']);
+$router->get('/configuracion',       [UsuariosController::class, 'configuracion']);
+$router->get('/cambiar-password',    [UsuariosController::class, 'cambiarContraseña']);
+$router->put('/cambiar-password',    [UsuariosController::class, 'passwordUpdate']);
+$router->get('/cuenta',              [UsuariosController::class, 'cuenta']);
+$router->put('/cuenta',              [UsuariosController::class, 'updateCuenta']);
+$router->put('/cuenta',              [UsuariosController::class, 'updateCuenta']);
+$router->get('/editar-cuenta',       [UsuariosController::class, 'editarCuenta']);
+$router->get('/test-excel',          [AdminController::class, 'testExcel']);
+

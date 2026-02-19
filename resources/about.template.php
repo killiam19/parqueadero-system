@@ -1,81 +1,205 @@
 <?php require resource_path('partials/header.php'); ?>
-
-<div class="relative isolate overflow-hidden bg-white px-6 py-24 sm:py-32 lg:overflow-visible lg:px-0">
-  <div class="absolute inset-0 -z-10 overflow-hidden">
-    <svg aria-hidden="true" class="absolute top-0 left-[max(50%,25rem)] h-256 w-512 -translate-x-1/2 mask-[radial-gradient(64rem_64rem_at_top,white,transparent)] stroke-gray-200">
-      <defs>
-        <pattern id="e813992c-7d03-4cc4-a2bd-151760b470a0" width="200" height="200" x="50%" y="-1" patternUnits="userSpaceOnUse">
-          <path d="M100 200V.5M.5 .5H200" fill="none" />
-        </pattern>
-      </defs>
-      <svg x="50%" y="-1" class="overflow-visible fill-gray-50">
-        <path d="M-100.5 0h201v201h-201Z M699.5 0h201v201h-201Z M499.5 400h201v201h-201Z M-300.5 600h201v201h-201Z" stroke-width="0" />
-      </svg>
-      <rect width="100%" height="100%" fill="url(#e813992c-7d03-4cc4-a2bd-151760b470a0)" stroke-width="0" />
-    </svg>
-  </div>
-  <div class="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 lg:mx-0 lg:max-w-none lg:grid-cols-2 lg:items-start lg:gap-y-10">
-    <div class="lg:col-span-2 lg:col-start-1 lg:row-start-1 lg:mx-auto lg:grid lg:w-full lg:max-w-7xl lg:grid-cols-2 lg:gap-x-8 lg:px-8">
-      <div class="lg:pr-4">
-        <div class="lg:max-w-lg">
-          
-
-<div class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
-    <a href="#">
-        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Normas y políticas del parqueadero</h5>
-    </a>
-    <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Es importante que estés al tanto del reglamento para el correcto uso de nuestros espacios de parqueadero para darle el mejor servicio a nuestros empleados y evitar inconvenientes.</p>
-    <a href="/reglamento" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
-        Leer reglamento
-        <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
-        </svg>
-    </a>
-</div>
-<br>
-          <p class="text-base/7 font-semibold text-indigo-600">Gestión inteligente</p>
-          <h1 class="mt-2 text-4xl font-semibold tracking-tight text-pretty text-gray-900 sm:text-5xl">Sistema de Parqueadero Empresarial</h1>
-          <p class="mt-6 text-xl/8 text-gray-700">Optimiza el uso del parqueadero de tu empresa con nuestro sistema de reservas inteligente. Reserva tu espacio, recibe confirmaciones automáticas y gestiona tus agendamientos de forma sencilla y eficiente.</p>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reglamento de Uso de Parqueaderos - 3Shape</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        '3shape-blue': '#003366',
+                        '3shape-red': '#bb3d3d',
+                        '3shape-light': '#f5f7fa'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        .policy-section {
+            border-left: 4px solid #003366;
+        }
+    </style>
+</head>
+<body>
+  <div class="container mx-auto px-4 py-8">
+      <!-- Header Section -->
+      <div class="border-b border-gray-200 pb-8 mb-8">
+        <div class="flex items-center justify-center mb-4">
+            <img src="assets/images/3shape-intraoral-logo.png" alt="3Shape Logo" width="50" height="50" class="mr-4">
+            <h1 class="text-4xl font-bold text-gray-900">Politica de Uso de Parqueaderos 3Shape</h1>
         </div>
-      </div>
+        <p class="text-center text-gray-600">Política oficial de 3Shape Colombia</p>
     </div>
-    <div class="-mt-12 -ml-12 p-12 lg:sticky lg:top-4 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:overflow-hidden">
-      <img src="https://images.unsplash.com/photo-1590674899484-d5640e854abe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Sistema de parqueadero moderno" class="w-3xl max-w-none rounded-xl bg-gray-900 shadow-xl ring-1 ring-gray-400/10 sm:w-228" />
+
+      <!-- Main Content -->
+      <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <!-- Objective Section -->
+          <section class="bg-white rounded-lg shadow-md p-8 mb-8 policy-section">
+              <div class="flex items-center mb-6">
+                  <h2 class="text-2xl font-bold text-3shape-blue">1. Objetivo</h2>
+              </div>
+              <div class="pl-16">
+                  <p class="text-gray-700 leading-relaxed">
+                      Establecer normas claras que garanticen el uso adecuado, seguro y ordenado de los espacios de estacionamiento asignados para 3Shape. Se busca garantizar la disponibilidad de espacios, priorizando el acceso y control exclusivos para los colaboradores lo cual contribuye a reducir el mal uso y promover eficientemente los espacios de parqueo, evitando bloqueos en las áreas, dando seguridad dentro de las instalaciones.
+                  </p>
+              </div>
+          </section>
+
+          <!-- General Rules Section -->
+          <section class="bg-white rounded-lg shadow-md p-8 mb-8">
+              <div class="flex items-center mb-8">
+                  <h2 class="text-2xl font-bold text-3shape-blue">2. Normas Generales</h2>
+              </div>
+
+              <!-- 2.1 Asignación de Espacios -->
+              <div class="mb-8 pl-4">
+                  <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                      <span class="w-8 h-8 bg-3shape-blue text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">2.1</span>
+                      Asignación de Espacios de Estacionamiento
+                  </h3>
+                  <div class="bg-gray-100 rounded-lg p-6 space-y-4 ml-11">
+                      <div class="flex items-start">
+                          <div class="w-2 h-2 bg-3shape-blue rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                          <p class="text-gray-700">Para acceder a los parqueaderos de uso exclusivo de 3Shape los vehículos, previamente deberán ser <strong>registrados y autorizados</strong> por administración de 3Shape. Si no lo está puede incurrir en multas o pagos tarifarios al edificio. Todas las placas deben estar registradas y autorizadas (tenga esto en cuenta cuando cambie de vehículo).</p>
+                      </div>
+                      <div class="flex items-start">
+                          <div class="w-2 h-2 bg-3shape-blue rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                          <p class="text-gray-700">Todos los espacios de estacionamiento son asignados exclusivamente a los colaboradores de 3Shape. Para estacionar los vehículos es necesario reservar por la aplicación los espacios con anterioridad.</p>
+                      </div>
+                      <div class="flex items-start">
+                          <div class="w-2 h-2 bg-3shape-blue rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                          <p class="text-gray-700">En caso de que se complete el cupo de espacios de estacionamiento reservados, los colaboradores que deseen traer sus vehículos deberán estacionar en los parqueaderos de visitantes acogiéndose a la tarifa establecida por el edificio.</p>
+                      </div>
+                      <div class="flex items-start">
+                          <div class="w-2 h-2 bg-3shape-blue rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                          <p class="text-gray-700">Cada colaborador tendrá una semana disponible para reservar con antelación y programe con tiempo los días que requiera el estacionamiento.</p>
+                      </div>
+                      <div class="bg-red-50 border border-red-200 rounded-lg p-4 mt-4">
+                          <div class="flex items-center">
+                              <svg class="w-5 h-5 text-red-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16c-.77.833.192 2.5 1.732 2.5z"></path>
+                              </svg>
+                              <span class="font-semibold text-red-800">Importante:</span>
+                          </div>
+                          <p class="text-red-700 mt-2 ml-7">Si no va a asistir, por medio del aplicativo deberá cancelar la reserva. Si no lo hace y no asiste tendrá una suspensión del servicio por un mes.</p>
+                      </div>
+                  </div>
+              </div>
+
+              <!-- 2.2 Zonas de No Estacionamiento -->
+              <div class="mb-8 pl-4">
+                  <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                      <span class="w-8 h-8 bg-3shape-blue text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">2.2</span>
+                      Respeto por las Zonas de No Estacionamiento
+                  </h3>
+                  <div class="bg-gray-100 rounded-lg p-6 space-y-4 ml-11">
+                      <div class="flex items-start">
+                          <div class="w-2 h-2 bg-red-600 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                          <p class="text-gray-700">No se permite estacionar en zonas designadas como áreas de no estacionamiento, como pasillos de acceso, áreas de carga y descarga y zonas marcadas como prohibido estacionar.</p>
+                      </div>
+                      <div class="flex items-start">
+                          <div class="w-2 h-2 bg-red-600 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                          <p class="text-gray-700">No se permite estacionar en un parqueadero que no esté demarcado como de <strong>3Shape</strong>.</p>
+                      </div>
+                      <div class="flex items-start">
+                          <div class="w-2 h-2 bg-red-600 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                          <p class="text-gray-700">No se permite estacionar en lugares que no están designados para el tipo de vehículo del colaborador (por ejemplo, estacionar motos en espacios para autos o viceversa). Las motos de alto cilindraje tienen sus espacios designados, por ende, no está permitido que las de bajo cilindraje ocupen estos espacios y viceversa.</p>
+                      </div>
+                  </div>
+              </div>
+
+              <!-- 2.3 Seguridad del Vehículo -->
+              <div class="mb-8 pl-4">
+                  <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                      <span class="w-8 h-8 bg-3shape-blue text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">2.3</span>
+                      Seguridad del Vehículo
+                  </h3>
+                  <div class="bg-gray-100 rounded-lg p-6 ml-11">
+                      <div class="flex items-start">
+                          <div class="w-2 h-2 bg-green-600 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                          <p class="text-gray-700">Los colaboradores son responsables de la seguridad de sus vehículos. Se recomienda el uso de dispositivos de seguridad, como cerraduras o candados, cuando sea necesario y no dejar sus pertenencias a la mano como cascos, guantes, chaquetas, zapatos, maletas, etc.</p>
+                      </div>
+                  </div>
+              </div>
+          </section>
+
+          <!-- Sanctions Section -->
+          <section class="bg-white rounded-lg shadow-md p-8 mb-8">
+              <div class="flex items-center mb-8">
+                  <div class="w-12 h-12 bg-3shape-red rounded-lg flex items-center justify-center mr-4">
+                      <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16c-.77.833.192 2.5 1.732 2.5z"></path>
+                      </svg>
+                  </div>
+                  <h2 class="text-2xl font-bold text-3shape-blue">3. Sanciones</h2>
+              </div>
+
+              <div class="grid md:grid-cols-2 gap-6">
+                  <div class="bg-red-50 border border-red-200 rounded-lg p-6">
+                      <h3 class="font-bold text-red-800 mb-3 flex items-center">
+                          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                          </svg>
+                          Mal Parqueo
+                      </h3>
+                      <p class="text-gray-700 mb-3">En caso de infringir las normas establecidas (por ejemplo, estacionar en el parqueadero No designado a 3Shape, zonas prohibidas, ocupar espacios reservados sin autorización, o estacionarse fuera de los límites marcados), se aplicará una multa.</p>
+                      <div class="bg-red-100 rounded-lg p-3">
+                          <p class="font-bold text-red-800 text-center">Multa: 3 días de SMLMV</p>
+                      </div>
+                  </div>
+
+                  <div class="bg-orange-50 border border-orange-200 rounded-lg p-6">
+                      <h3 class="font-bold text-orange-800 mb-3 flex items-center">
+                          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                          </svg>
+                          Daño en Propiedad
+                      </h3>
+                      <p class="text-gray-700">Si el mal uso del estacionamiento por parte de un empleado resulta en daño a la infraestructura del edificio, o vehículos de otros usuarios, el empleado, visitante o contratista serán responsables de cubrir los costos de reparación o reemplazo. Esto incluye, pero no se limita a, daños causados por colisiones, derrame de líquidos o sustancias, y vandalismo.</p>
+                  </div>
+              </div>
+          </section>
+
+          <!-- Procedure Section -->
+          <section class="bg-white rounded-lg shadow-md p-8 mb-8">
+              <div class="flex items-center mb-8">
+                  <div class="w-12 h-12 bg-3shape-blue rounded-lg flex items-center justify-center mr-4">
+                      <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                      </svg>
+                  </div>
+                  <h2 class="text-2xl font-bold text-3shape-blue">4. Procedimiento de Sanciones</h2>
+              </div>
+
+              <div class="space-y-6">
+                  <div class="flex items-start">
+                      <div class="w-8 h-8 bg-3shape-blue text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mr-4">1</div>
+                      <div>
+                          <h3 class="font-semibold text-gray-800 mb-2">Verificación y Aviso al Infractor</h3>
+                          <p class="text-gray-700">Una vez se tenga conocimiento del mal parqueo se informará al propietario del vehículo que figure en el sistema de control de acceso del edificio; el conductor dispone de <span class="font-bold text-blue-600">10 minutos</span> para mover el carro y liberar el garaje afectado. Si la conducta se corrige en este tiempo la multa no se cobrará. Pero si reincide en la falta deberá hacer el debido proceso de pago de esta.</p>
+                      </div>
+                  </div>
+
+                  <div class="flex items-start">
+                      <div class="w-8 h-8 bg-3shape-blue text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mr-4">2</div>
+                      <div>
+                          <h3 class="font-semibold text-gray-800 mb-2">Cobro de la Multa</h3>
+                          <p class="text-gray-700">Se hace efectivo después de los 10 minutos. El infractor deberá cancelar el valor de la multa de <span class="font-bold text-red-600">3 días de SMLMV</span>, que será depositada en la cuenta bancaria de la administración habilitada para este fin.</p>
+                      </div>
+                  </div>
+              </div>
+          </section>
+
+          <!-- Footer  -->
+      </main>
     </div>
-    <div class="lg:col-span-2 lg:col-start-1 lg:row-start-2 lg:mx-auto lg:grid lg:w-full lg:max-w-7xl lg:grid-cols-2 lg:gap-x-8 lg:px-8">
-      <div class="lg:pr-4">
-        <div class="max-w-xl text-base/7 text-gray-600 lg:max-w-lg">
-          <p>Nuestro sistema de parqueadero empresarial está diseñado para eliminar la frustración de buscar espacio de estacionamiento en tu lugar de trabajo. Con una interfaz intuitiva y funcionalidades avanzadas, garantizamos una experiencia fluida tanto para empleados como para visitantes de la empresa.</p>
-          <ul role="list" class="mt-8 space-y-8 text-gray-600">
-            <li class="flex gap-x-3">
-              <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="mt-1 size-5 flex-none text-indigo-600">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.236 4.53L8.107 10.5a.75.75 0 1 0-1.214 1.007l1.643 2.25a.75.75 0 0 0 1.214 0l4-5.5Z" clip-rule="evenodd" />
-              </svg>
-              <span><strong class="font-semibold text-gray-900">Reserva instantánea.</strong> Selecciona tu horario y reserva tu espacio de parqueadero en segundos. El sistema te muestra la disponibilidad en tiempo real para una experiencia sin contratiempos.</span>
-            </li>
-            <li class="flex gap-x-3">
-              <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="mt-1 size-5 flex-none text-indigo-600">
-                <path d="M3 4a2 2 0 0 0-2 2v1.161l8.441 4.221a1.25 1.25 0 0 0 1.118 0L19 7.162V6a2 2 0 0 0-2-2H3Z" />
-                <path d="m19 8.839-7.77 3.885a2.75 2.75 0 0 1-2.46 0L1 8.839V14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.839Z" />
-              </svg>
-              <span><strong class="font-semibold text-gray-900">Confirmación por email.</strong> Recibe confirmaciones automáticas de tus reservas con todos los detalles: fecha, hora, ubicación del espacio para agendamiento . No te preocupes por olvidar nada.</span>
-            </li>
-            <li class="flex gap-x-3">
-              <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="mt-1 size-5 flex-none text-indigo-600">
-                <path fill-rule="evenodd" d="M4.25 2A2.25 2.25 0 0 0 2 4.25v11.5A2.25 2.25 0 0 0 4.25 18h11.5A2.25 2.25 0 0 0 18 15.75V4.25A2.25 2.25 0 0 0 15.75 2H4.25Zm4.03 6.28a.75.75 0 0 0-1.06-1.06L4.97 9.47a.75.75 0 0 0 0 1.06l2.25 2.25a.75.75 0 0 0 1.06-1.06L6.56 10l1.72-1.72Zm4.5-1.06a.75.75 0 1 0-1.06 1.06L13.44 10l-1.72 1.72a.75.75 0 1 0 1.06 1.06l2.25-2.25a.75.75 0 0 0 0-1.06l-2.25-2.25Z" clip-rule="evenodd" />
-              </svg>
-              <span><strong class="font-semibold text-gray-900">Gestión completa.</strong> Consulta todas tus reservas activas, modifica horarios cuando sea necesario y cancela agendamientos con total flexibilidad desde tu panel de usuario.</span>
-            </li>
-          </ul>
-          <p class="mt-8">El sistema integra tecnología de punta para ofrecer reportes en tiempo real sobre ocupación, estadísticas de uso y optimización de espacios. Los administradores pueden gestionar usuarios, configurar horarios especiales y generar reportes detallados para una mejor toma de decisiones.</p>
-          <h2 class="mt-16 text-2xl font-bold tracking-tight text-gray-900">Eficiencia y comodidad garantizada.</h2>
-          <p class="mt-6">Diseñado específicamente para entornos empresariales, nuestro sistema reduce significativamente el tiempo perdido buscando estacionamiento y elimina conflictos por espacios. Con notificaciones inteligentes, recordatorios automáticos y soporte 24/7, tu experiencia de parqueadero nunca había sido tan fluida y organizada.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+</body>
+</html>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
-<script src="js/dropdown.js"></script>
-    
 <?php require resource_path('partials/new.footer.php'); ?>

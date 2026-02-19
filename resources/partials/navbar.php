@@ -5,11 +5,6 @@
     <img src="assets/images/3shape-logo.png" 
          class="h-8 block dark:hidden" 
          alt="3Shape Logo" />
-    <!-- Logo oscuro -->
-    <img src="assets/images/3shape-logo-dark.png" 
-         class="h-8 hidden dark:block" 
-         alt="3Shape Logo Dark" />
-         
     <p class="text-sm text-gray-600 dark:text-gray-300">
         Let's change dentistry together
     </p>
@@ -51,7 +46,7 @@
           <a href="/" class="block py-2 px-3 <?= requestIs('/') ? 'text-white bg-red-700 rounded-sm md:bg-transparent md:text-red-700 md:p-0 md:dark:text-red-500 dark:bg-red-600 md:dark:bg-transparent' : 'text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-red-700 md:p-0 dark:text-white md:dark:hover:text-red-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent' ?>" aria-current="page">Inicio <i class="fas fa-home"></i></a>
         </li>
         <li>
-          <a href="/about" class="block py-2 px-3 <?= requestIs('/about') ? 'text-white bg-red-700 rounded-sm md:bg-transparent md:text-red-700 md:p-0 md:dark:text-red-500 dark:bg-red-600 md:dark:bg-transparent' : 'text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-red-700 md:p-0 dark:text-white md:dark:hover:text-red-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent' ?>">Acerca de</a>
+          <a href="/about" class="block py-2 px-3 <?= requestIs('/about') ? 'text-white bg-red-700 rounded-sm md:bg-transparent md:text-red-700 md:p-0 md:dark:text-red-500 dark:bg-red-600 md:dark:bg-transparent' : 'text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-red-700 md:p-0 dark:text-white md:dark:hover:text-red-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent' ?>">Política de uso <i class="fas fa-file-alt"></i></a>
         </li>
         <li>
           <a href="/mis-reservas" class="block py-2 px-3 <?= requestIs('/mis-reservas') ? 'text-white bg-red-700 rounded-sm md:bg-transparent md:text-red-700 md:p-0 md:dark:text-red-500 dark:bg-red-600 md:dark:bg-transparent' : 'text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-red-700 md:p-0 dark:text-white md:dark:hover:text-red-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent' ?>">Mis reservas <i class="fas fa-calendar-alt"></i></a>
@@ -79,13 +74,15 @@
         
         <li>
             <?php if (isAuthenticated()): ?>
-            <form action="/logout" method="POST">
-                <button type="submit" class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-red-700 md:p-0 dark:text-white md:dark:hover:text-red-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
-                    Cerrar sesión
+            <form action="/logout" method="POST"
+                  onsubmit="return confirm('¿Cerrar sesión?');">
+                <button type="submit"
+                        class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-red-700 md:p-0 dark:text-white md:dark:hover:text-red-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
+                    Cerrar sesión <i class="fas fa-sign-out-alt"></i>
                 </button>
             </form>
             <?php else: ?>
-            <a href="/login" class="block py-2 px-3 <?= requestIs('/login') ? 'text-white bg-red-700 rounded-sm md:bg-transparent md:text-red-700 md:p-0 md:dark:text-red-500 dark:bg-red-600 md:dark:bg-transparent' : 'text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-red-700 md:p-0 dark:text-white md:dark:hover:text-red-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent' ?>">Iniciar sesión</a>
+            <a href="/login" class="block py-2 px-3 <?= requestIs('/login') ? 'text-white bg-red-700 rounded-sm md:bg-transparent md:text-red-700 md:p-0 md:dark:text-red-500 dark:bg-red-600 md:dark:bg-transparent' : 'text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-red-700 md:p-0 dark:text-white md:dark:hover:text-red-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent' ?>">Iniciar sesión <i class="fas fa-sign-in-alt"></i></a>
             <?php endif; ?>
         </li>
     </ul>

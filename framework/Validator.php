@@ -22,7 +22,7 @@ class Validator
     {
         foreach ($this->rules as $field => $rules) {
             $rules = explode('|', $rules);
-            $value = trim($this->data[$field]);
+            $value = isset($this->data[$field]) ? trim($this->data[$field]) : '';
 
             foreach ($rules as $rule) {
                 [$name, $param] = array_pad(explode(':', $rule), 2, null);

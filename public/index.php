@@ -1,5 +1,6 @@
 <?php
 
+require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/../bootstrap.php';
 
 // var_dump(
@@ -16,4 +17,5 @@ require __DIR__ . '/../bootstrap.php';
 use Framework\Router;
 
 $router = new Router();
+require __DIR__ . '/../routes/web.php';
 $router->run();

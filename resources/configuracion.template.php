@@ -3,53 +3,42 @@
 <div class="min-h-screen bg-gray-50 py-8">
   <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Título principal -->
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">Configuración</h1>
+    <div class="border-b border-gray-200 pb-8 mb-8">
+        <div class="flex items-center justify-center mb-4">
+            <img src="assets/images/3shape-intraoral-logo.png" alt="3Shape Logo" width="50" height="50" class="mr-4">
+            <h1 class="text-4xl font-bold text-gray-900">Configuración</h1>
+        </div>
+        <p class="text-center text-gray-600">Encuentra ajustes</p>
     </div>
 
     <!-- Grid de opciones de configuración -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
       
       <!-- Editar información personal -->
-      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200 cursor-pointer group">
-        <div class="flex items-center justify-between">
-          <div class="flex-1">
-            <h3 class="text-lg font-semibold text-blue-600 group-hover:text-blue-700 mb-2">
-              <a href="/configuracion/editar-cuenta"> Editar información personal</a>
-            </h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
-              Cambia tus datos personales, solo serán usados para el registro y permanecerán privados
-            </p>
-          </div>
-          <div class="ml-4">
-            <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
+      <a href="/editar-cuenta" class="block bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-center hover:shadow-md transition">
+        <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 6.75a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"></path>
+            <path stroke-linecape="round" stroke-linejoin="round" stroke-width="1.5"
+            d="M4.5 20.25a8.25 8.25 0 0115 0" />
+          </svg>
         </div>
-      </div>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">Editar información personal</h3>
+        <p class="text-sm text-gray-600">Cambia tus datos personales, solo serán usados para el registro y permanecerán privados</p>
+      </a>
 
       <!-- Cambiar contraseña -->
-      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200 cursor-pointer group">
-        <div class="flex items-center justify-between">
-          <div class="flex-1">
-            <h3 class="text-lg font-semibold text-blue-600 group-hover:text-blue-700 mb-2">
-               <a href="/configuracion/cambiar-password"> Cambiar contraseña</a>        
-            </h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
-              Cambia tu contraseña
-            </p>
-          </div>
-          <div class="ml-4">
-            <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        <a href="/cambiar-password" class="block bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-center hover:shadow-md transition">
+          <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.5 10.5V7.875a4.125 4.125 0 10-8.25 0V10.5"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M6.75 10.5h10.5v8.25a1.5 1.5 0 01-1.5 1.5h-7.5a1.5 1.5 0 01-1.5-1.5V10.5"></path>
             </svg>
           </div>
-        </div>
-      </div>
-
-     
-
+          <h3 class="text-lg font-medium text-gray-900 mb-2">Cambiar contraseña</h3>
+          <p class="text-sm text-gray-600">Cambia tu contraseña</p>
+        </a>
     </div>
   </div>
 </div>
@@ -79,13 +68,12 @@
   document.querySelectorAll('.cursor-pointer').forEach(card => {
     card.addEventListener('click', function() {
       // Aquí puedes agregar la lógica de navegación
-      const title = this.querySelector('h3').textContent.trim();
-      console.log('Navegando a:', title);
+      const action = this.dataset.action;
       
       // Ejemplo de navegación (personaliza según tu estructura de rutas)
-      switch(title) {
-        case 'Editar información personal':
-          // window.location.href = '/configuracion/perfil';
+      switch(action) {
+        case 'perfil':
+          window.location.href = '/configuracion/perfil';
           break;
         case 'Cambiar contraseña':
           // window.location.href = '/configuracion/password';

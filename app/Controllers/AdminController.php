@@ -3,6 +3,8 @@
 namespace App\Controllers;
 
 use Framework\Database;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class AdminController
 {
@@ -87,18 +89,22 @@ class AdminController
 
         // Procesar formulario de nuevo usuario
         if (isset($_POST['action']) && $_POST['action'] == 'agregar') {
-            $nombre = $_POST['nombre'];
+            $p_nombre = $_POST['p_nombre'];
+            $s_nombre = $_POST['s_nombre'];
+            $p_apellido = $_POST['p_apellido'];
+            $s_apellido = $_POST['s_apellido'];
             $email = $_POST['email'];
             $telefono = $_POST['telefono'];
             $password = $_POST['password'];
+            $nombre_completo = trim("$p_nombre $s_nombre $p_apellido $s_apellido");
             
-            if (empty($nombre) || empty($email) || empty($password)) {
+            if (empty($p_nombre) || empty($p_apellido) || empty($email) || empty($password)) {
                 $mensaje = 'El nombre, email y contraseña son obligatorios';
                 $tipo_mensaje = 'error';
             } else {
                 try {
                     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-                    $this->db->query("INSERT INTO usuarios (nombre, email, telefono, password) VALUES (?, ?, ?, ?)", [$nombre, $email, $telefono, $hashed_password]);
+                    $this->db->query("INSERT INTO usuarios (p_nombre, s_nombre, p_apellido, s_apellido, email, telefono, password) VALUES (?, ?, ?, ?, ?, ?, ?)", [$p_nombre, $s_nombre, $p_apellido, $s_apellido, $email, $telefono, $hashed_password]);
                     $mensaje = 'Usuario agregado exitosamente';
                     $tipo_mensaje = 'success';
                 } catch (Exception $e) {
@@ -204,33 +210,52 @@ class AdminController
     private function getUsuariosActivos()
     {
         return $this->db->query("
-            SELECT 
-                u.nombre, 
-                u.email,
+            SELECT
+                u.id,
+                CONCAT(
+                    u.p_nombre, ' ',
+                    IFNULL(u.s_nombre, ''), ' ',
+                    u.p_apellido, ' ',
+                    IFNULL(u.s_apellido, '')
+                ) AS nombres,
+                u.email, u.telefono, u.fecha_registro, u.rol, u.bloqueado,
+
                 COUNT(r.id) as total_reservas,
-                COUNT(CASE WHEN r.estado = 'activa' THEN 1 END) as reservas_activas
+                COUNT(CASE WHEN r.estado = 'activa' THEN 1 END) as reservas_activas,
+                COUNT(CASE WHEN r.estado = 'completada' THEN 1 END) AS reservas_completadas,
+                COUNT(CASE WHEN r.estado = 'cancelada' THEN 1 END) AS reservas_canceladas
+
             FROM usuarios u
             LEFT JOIN reservas r ON u.id = r.usuario_id
-            GROUP BY u.id, u.nombre, u.email
+            GROUP BY u.id, u.p_nombre, u.s_nombre, u.p_apellido, u.s_apellido, u.email, u.telefono, u.fecha_registro, u.rol, u.bloqueado
             HAVING total_reservas > 0
             ORDER BY total_reservas DESC
             LIMIT 5
-        ")->get();
+            ")->get();
     }
 
     private function getUsuariosConEstadisticas()
     {
         return $this->db->query("
-            SELECT 
-                u.*,
+            SELECT
+                u.id,
+                CONCAT(
+                    u.p_nombre, ' ',
+                    IFNULL(u.s_nombre, ''), ' ',
+                    u.p_apellido, ' ',
+                    IFNULL(u.s_apellido, '')
+                ) AS nombres,
+                u.email, u.telefono, u.fecha_registro, u.rol, u.bloqueado,
+
                 COUNT(r.id) as total_reservas,
-                COUNT(CASE WHEN r.estado = 'activa' THEN 1 END) as reservas_activas,
-                COUNT(CASE WHEN r.estado = 'completada' THEN 1 END) as reservas_completadas,
-                COUNT(CASE WHEN r.estado = 'cancelada' THEN 1 END) as reservas_canceladas
+                SUM(CASE WHEN r.estado = 'activa' THEN 1 ELSE 0 END) as reservas_activas,
+                SUM(CASE WHEN r.estado = 'completada' THEN 1 ELSE 0 END) AS reservas_completadas,
+                SUM(CASE WHEN r.estado = 'cancelada' THEN 1 ELSE 0 END) AS reservas_canceladas
+
             FROM usuarios u
-            LEFT JOIN reservas r ON u.id = r.usuario_id
-            GROUP BY u.id, u.nombre, u.email, u.telefono, u.fecha_registro, u.rol, u.bloqueado
-            ORDER BY u.nombre
+            LEFT JOIN reservas r ON r.usuario_id = u.id
+            GROUP BY u.id
+            ORDER BY U.fecha_registro DESc
         ")->get();
     }
 
@@ -251,5 +276,133 @@ class AdminController
 
         return $total_cupos - $reservas_activas;
     }
+
+    public function reporteReservas()
+    {
+
+        $sql = "
+            SELECT
+                r.fecha_reserva AS fecha_reserva, r.estado, 
+                CONCAT(
+                    u.p_nombre, ' ',
+                    u.s_nombre, ' ',
+                    u.p_apellido, ' ',
+                    u.s_apellido
+                    
+                ) AS usuario,
+                 
+                u.email,
+                r.numero_espacio
+
+            FROM reservas r
+            INNER JOIN usuarios u ON r.usuario_id = u.id
+            ORDER BY r.fecha_reserva DESC
+        
+        ";
+        
+        $reservas = db()->query($sql)->get();
+
+        //crear hoja excel
+        $excel = new Spreadsheet();
+        $hoja = $excel->getActivesheet();
+
+        //encebezados
+        $hoja->setCellValue('A1', 'Fecha');
+        $hoja->setCellValue('B1', 'Estado');
+        $hoja->setCellValue('C1', 'Usuario');
+        $hoja->setCellValue('D1', 'Email');
+        $hoja->setCellValue('E1', 'Espacio');
+
+        //llenar filas
+        $fila = 2;
+
+        foreach ($reservas as $r) {
+            $hoja->setCellValue('A'.$fila, $r['fecha_reserva']);
+            $hoja->setCellValue('B'.$fila, $r['estado']);
+            $hoja->setCellValue('C'.$fila, $r['usuario']);
+            $hoja->setCellValue('D'.$fila, $r['email']);
+            $hoja->setCellValue('E'.$fila, $r['numero_espacio']);
+            $fila++;
+        }
+
+        //preparar la descarga
+        $writer = new Xlsx($excel);
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="reporte_reservas.xlsx"');
+        header('Cache-Control: max-age=0');
+
+        $writer->save('php://output');
+        exit;
+
+    }
+
+    public function datosGraficoReservas() {
+        $tipo = $_GET['tipo'] ?? 'dia';
+    
+        switch ($tipo) {
+    
+            case 'semana':
+                $sql = "
+                    SELECT 
+                        CONCAT(YEAR(fecha_reserva), '-S', WEEK(fecha_reserva)) as periodo,
+                        COUNT(*) as total,
+                        SUM(estado = 'activa') as activas,
+                        SUM(estado = 'completada') as completadas,
+                        SUM(estado = 'cancelada') as canceladas
+                    FROM reservas
+                    GROUP BY YEAR(fecha_reserva), WEEK(fecha_reserva)
+                    ORDER BY YEAR(fecha_reserva), WEEK(fecha_reserva)
+                ";
+                break;
+            
+            case 'mes':
+                $sql = "
+                    SELECT 
+                        DATE_FORMAT(fecha_reserva, '%Y-%m') as periodo,
+                        COUNT(*) as total,
+                        SUM(estado = 'activa') as activas,
+                        SUM(estado = 'completada') as completadas,
+                        SUM(estado = 'cancelada') as canceladas
+                    FROM reservas
+                    GROUP BY DATE_FORMAT(fecha_reserva, '%Y-%m')
+                    ORDER BY periodo
+                ";
+                break;
+            
+            case 'anio':
+                $sql = "
+                    SELECT 
+                        YEAR(fecha_reserva) as periodo,
+                        COUNT(*) as total,
+                        SUM(estado = 'activa') as activas,
+                        SUM(estado = 'completada') as completadas,
+                        SUM(estado = 'cancelada') as canceladas
+                    FROM reservas
+                    GROUP BY YEAR(fecha_reserva)
+                    ORDER BY periodo
+                ";
+                break;
+            
+            default: // DIA
+                $sql = "
+                    SELECT 
+                        DATE(fecha_reserva) as periodo,
+                        COUNT(*) as total,
+                        SUM(estado = 'activa') as activas,
+                        SUM(estado = 'completada') as completadas,
+                        SUM(estado = 'cancelada') as canceladas
+                    FROM reservas
+                    GROUP BY DATE(fecha_reserva)
+                    ORDER BY periodo
+                ";
+        }
+            
+        $datos = $this->db->query($sql)->get();
+            
+        header('Content-Type: application/json');
+        echo json_encode($datos);
+        exit;
+}   
 }
 ?>
