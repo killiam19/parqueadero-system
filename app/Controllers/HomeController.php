@@ -674,7 +674,7 @@ class HomeController
         $fechaFormateada = $this->formatearFecha($datosReserva['fecha']);
         
         return "Confirmación de Reserva\n\n" .
-               "Hola {$nombre},\n\n" .
+               "Hola {$p_nombre},\n\n" .
                "Tu reserva ha sido registrada con éxito:\n\n" .
                "Fecha: {$fechaFormateada}\n" .
                "Espacio: {$datosReserva['numero_espacio']}\n" .
