@@ -126,10 +126,6 @@
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
-<<<<<<< HEAD
-            color: #c7264e;
-=======
->>>>>>> main
         }
         
         input, select, textarea {
