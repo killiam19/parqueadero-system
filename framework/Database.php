@@ -13,9 +13,9 @@ class Database
     {
         $dsn = sprintf(
             'mysql:host=%s;dbname=%s;charset=%s',
-            $_ENV['MYSQL_HOST'] ?? 'db',
-            $_ENV['MYSQL_DATABASE'] ?? 'parqueadero_system',
-            'utf8mb4'
+            config('host', 'localhost'),
+            config('dbname', 'parqueadero-system'),
+            config('charset')
         );
 
         // var_dump($dsn); die();
